@@ -2,8 +2,11 @@ package com.vvnuts.shop.services.implementation;
 
 import com.vvnuts.shop.dtos.CategoryDTO;
 import com.vvnuts.shop.entities.Category;
+import com.vvnuts.shop.entities.Characteristic;
 import com.vvnuts.shop.repositories.CategoryRepository;
+import com.vvnuts.shop.repositories.CharacteristicRepository;
 import com.vvnuts.shop.services.interfaces.CategoryService;
+import com.vvnuts.shop.services.interfaces.CharacteristicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
@@ -17,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CategoryServiceImplementation extends AbstractCrudService<Category, Integer> implements CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CharacteristicService characteristicService;
     @Override
     JpaRepository<Category, Integer> getRepository() {
         return categoryRepository;
@@ -50,6 +54,7 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
             updCategory.setParents(transferIdToListCategory(categoryDTO.getParentsId(), updCategory));
         }
 
+        updCategory.setCharacteristics(characteristicService.transferIdsToCharacteristicList(categoryDTO.getCharacteristicsId(), updCategory));  //TODO Поправить. Ужасно это
     }
 
     @Override

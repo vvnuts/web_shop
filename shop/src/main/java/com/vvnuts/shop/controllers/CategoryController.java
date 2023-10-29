@@ -3,6 +3,7 @@ package com.vvnuts.shop.controllers;
 import com.vvnuts.shop.dtos.CategoryDTO;
 import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.services.interfaces.CategoryService;
+import com.vvnuts.shop.services.interfaces.CharacteristicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import java.util.Optional;
 @RequestMapping("/api/v1/catalog")
 public class CategoryController{
     private final CategoryService categoryService;
+    private final CharacteristicService characteristicService;
 
     @PostMapping()
     public ResponseEntity<HttpStatus> createNewCategory(@RequestBody CategoryDTO categoryDTO) {
@@ -22,6 +24,7 @@ public class CategoryController{
                 .categoryName(categoryDTO.getCategoryName())
                 .build();
         newCategory.setParents(categoryService.transferIdToListCategory(categoryDTO.getParentsId(), newCategory));
+        newCategory.setCharacteristics(characteristicService.transferIdsToCharacteristicList(categoryDTO.getCharacteristicsId(), newCategory));
         categoryService.create(newCategory);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }

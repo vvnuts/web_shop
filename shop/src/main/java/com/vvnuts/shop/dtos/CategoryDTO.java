@@ -8,4 +8,5 @@ import java.util.List;
 public class CategoryDTO {
     private String categoryName;
     private List<Integer> parentsId;
+    private List<Integer> characteristicsId;
 }
