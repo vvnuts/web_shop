@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface CharacteristicService extends CrudService<Characteristic, Integer>{
     List<Characteristic> transferIdsToCharacteristicList(List<Integer> ids, Category newCategory);
+
+    List<Characteristic> getCharacteristicListFromDTO(List<Characteristic> characteristicsDTO);
 }

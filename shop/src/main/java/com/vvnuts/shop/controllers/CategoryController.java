@@ -20,11 +20,7 @@ public class CategoryController{
 
     @PostMapping()
     public ResponseEntity<HttpStatus> createNewCategory(@RequestBody CategoryDTO categoryDTO) {
-        Category newCategory = Category.builder()
-                .categoryName(categoryDTO.getCategoryName())
-                .build();
-        newCategory.setParents(categoryService.transferIdToListCategory(categoryDTO.getParentsId(), newCategory));
-        newCategory.setCharacteristics(characteristicService.transferIdsToCharacteristicList(categoryDTO.getCharacteristicsId(), newCategory));
+        Category newCategory = categoryService.transferCategoryDtoToCategory(categoryDTO);
         categoryService.create(newCategory);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
@@ -38,7 +34,12 @@ public class CategoryController{
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> updateCategory(@PathVariable Integer id,
                                                      @RequestBody CategoryDTO categoryDTO) {
-        categoryService.update(categoryDTO, id);
+        Category oldCategory = categoryService.findById(id);
+        if (oldCategory == null) {
+            return ResponseEntity.ok(HttpStatus.BAD_REQUEST); //TODO throw
+        }
+        Category updateCategory = categoryService.transferCategoryDtoToCategory(categoryDTO);
+        categoryService.update(updateCategory);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

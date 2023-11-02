@@ -20,6 +20,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CategoryServiceImplementation extends AbstractCrudService<Category, Integer> implements CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CharacteristicRepository characteristicRepository;
     private final CharacteristicService characteristicService;
     @Override
     JpaRepository<Category, Integer> getRepository() {
@@ -28,10 +29,25 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
 
     @Override
     public void create(Category entity) {
+        for (Category parent: entity.getParents()) {
+            parent.getChildren().add(entity);
+        }
+        for (Characteristic characteristic: entity.getCharacteristics()) {
+            characteristic.getCategories().add(entity);
+        }
         super.create(entity);
     }
 
     @Override
+    public void update(Category entity) {
+        Category oldCategory = categoryRepository.findById(entity.getCategoryId()).orElseThrow();
+        super.update(entity);
+    }
+
+    public void update(Category oldCategory, Category updateCategory) {
+
+    }
+
     public void update(CategoryDTO categoryDTO, Integer id) {
         Optional<Category> updateCategory = categoryRepository.findById(id);
         if (updateCategory.isEmpty()) {
@@ -58,6 +74,19 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
     }
 
     @Override
+    public Category transferCategoryDtoToCategory(CategoryDTO categoryDTO) {
+        Category category = Category.builder()
+                .categoryName(categoryDTO.getCategoryName())
+                .parents(getCategoryListFromDTO(categoryDTO.getParents()))
+                .characteristics(characteristicService.getCharacteristicListFromDTO(categoryDTO.getCharacteristics()))
+                .build();
+//        for (Category parent: category.getParents()) {
+//            parent.getChildren().add(category);
+//        }
+        return category;
+    }
+
+    @Override
     public List<Category> transferIdToListCategory(List<Integer> ids, Category newCategory) {
         List<Category> categories = new ArrayList<>();
         Collections.sort(ids);
@@ -68,6 +97,18 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
             }
             categories.add(category.get());
             category.get().getChildren().add(newCategory);
+        }
+        return categories;
+    }
+
+    public List<Category> getCategoryListFromDTO (List<Category> categoriesDTO) {
+        List<Category> categories = new ArrayList<>();
+        for (Category categoryDTO: categoriesDTO) {
+            Optional<Category> category = categoryRepository.findByCategoryName(categoryDTO.getCategoryName());
+            if (category.isEmpty()){
+                return null; //TODO throw
+            }
+            categories.add(category.get());
         }
         return categories;
     }
