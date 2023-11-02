@@ -39,7 +39,7 @@ public class CategoryController{
             return ResponseEntity.ok(HttpStatus.BAD_REQUEST); //TODO throw
         }
         Category updateCategory = categoryService.transferCategoryDtoToCategory(categoryDTO);
-        categoryService.update(updateCategory);
+        categoryService.update(oldCategory, updateCategory);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

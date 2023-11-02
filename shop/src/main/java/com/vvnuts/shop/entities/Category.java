@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "Categories")
-public class Category {
+public class Category implements Comparable<Category>{
     @Id
     @Column(name = "category_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,4 +45,9 @@ public class Category {
     @OneToMany(mappedBy = "category")
     @JsonIgnore
     private List<Item> items;
+
+    @Override
+    public int compareTo(Category o) {
+        return this.getCategoryId() - o.getCategoryId();
+    }
 }

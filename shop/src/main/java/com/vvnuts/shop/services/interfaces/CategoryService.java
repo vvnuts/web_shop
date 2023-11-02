@@ -7,5 +7,6 @@ import java.util.List;
 
 public interface CategoryService extends CrudService<Category, Integer>{
     Category transferCategoryDtoToCategory(CategoryDTO categoryDTO);
-    List<Category> transferIdToListCategory(List<Integer> ids, Category newCategory);
+
+    void update(Category oldCategory, Category updateCategory);
 }

@@ -11,10 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -39,39 +36,70 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
     }
 
     @Override
-    public void update(Category entity) {
-        Category oldCategory = categoryRepository.findById(entity.getCategoryId()).orElseThrow();
-        super.update(entity);
-    }
-
     public void update(Category oldCategory, Category updateCategory) {
-
-    }
-
-    public void update(CategoryDTO categoryDTO, Integer id) {
-        Optional<Category> updateCategory = categoryRepository.findById(id);
-        if (updateCategory.isEmpty()) {
-            return; //TODO throw
-        }
-        Category updCategory = updateCategory.get();
-        if (!updCategory.getCategoryName().equals(categoryDTO.getCategoryName())) {
-            updCategory.setCategoryName(categoryDTO.getCategoryName());
-        }
-
-        List<Category> currentParents = updCategory.getParents();
-        List<Integer> parentsId = new ArrayList<>();
-        for (Category parent: updCategory.getParents()) {
-            parentsId.add(parent.getCategoryId());
-        }
-        if (!parentsId.equals(categoryDTO.getParentsId())) {
-            for (Category currentParent : currentParents) {
-                currentParent.getChildren().remove(updCategory);
+        Collections.sort(updateCategory.getParents());
+        boolean isParentsChange = false;
+        if (oldCategory.getParents().size() != updateCategory.getParents().size()) {
+            isParentsChange = true;
+        } else {
+            int minSize = Math.min(oldCategory.getParents().size(), updateCategory.getParents().size());
+            for (int i = 0; i < minSize; i++) {
+                if (oldCategory.getParents().get(i) != updateCategory.getParents().get(i)) {
+                    isParentsChange = true;
+                    break;
+                }
             }
-            updCategory.setParents(transferIdToListCategory(categoryDTO.getParentsId(), updCategory));
         }
-
-        updCategory.setCharacteristics(characteristicService.transferIdsToCharacteristicList(categoryDTO.getCharacteristicsId(), updCategory));  //TODO Поправить. Ужасно это
+        if (isParentsChange) {
+            for (Category oldParent: oldCategory.getParents()) {
+                oldParent.getChildren().remove(oldCategory);
+                categoryRepository.save(oldParent);
+            }
+            for (Category updateParent: updateCategory.getParents()) {
+                updateParent.getChildren().add(updateCategory);
+                categoryRepository.save(updateParent);
+            }
+        }
+        Set<Characteristic> oldCharacteristic = new HashSet<>(oldCategory.getCharacteristics());
+        for (Characteristic newCharacteristic: updateCategory.getCharacteristics()) {
+            if (!oldCharacteristic.contains(newCharacteristic)) {
+                newCharacteristic.getCategories().add(updateCategory);
+                characteristicRepository.save(newCharacteristic);
+            } // TODO СДЕЛАТЬ ДОБАВЛЕНИЕ И УДАЛЕНИЕ ХАРАКТЕРИСТИК У ТОВАРОВ ПРИНАДЛЕЖАЩИХ ОБНОВЛЯЕМОЙ ХАР-КИ.
+            oldCharacteristic.remove(newCharacteristic);
+        }
+        if (oldCharacteristic.size() > 0) {
+            for (Characteristic removeCharacteristic: oldCharacteristic) {
+                removeCharacteristic.getCategories().remove(oldCategory);
+                characteristicRepository.save(removeCharacteristic);
+            }
+        }
     }
+
+//    public void update(CategoryDTO categoryDTO, Integer id) {
+//        Optional<Category> updateCategory = categoryRepository.findById(id);
+//        if (updateCategory.isEmpty()) {
+//            return; //TODO throw
+//        }
+//        Category updCategory = updateCategory.get();
+//        if (!updCategory.getCategoryName().equals(categoryDTO.getCategoryName())) {
+//            updCategory.setCategoryName(categoryDTO.getCategoryName());
+//        }
+//
+//        List<Category> currentParents = updCategory.getParents();
+//        List<Integer> parentsId = new ArrayList<>();
+//        for (Category parent: updCategory.getParents()) {
+//            parentsId.add(parent.getCategoryId());
+//        }
+//        if (!parentsId.equals(categoryDTO.getParentsId())) {
+//            for (Category currentParent : currentParents) {
+//                currentParent.getChildren().remove(updCategory);
+//            }
+//            updCategory.setParents(transferIdToListCategory(categoryDTO.getParentsId(), updCategory));
+//        }
+//
+//        updCategory.setCharacteristics(characteristicService.transferIdsToCharacteristicList(categoryDTO.getCharacteristicsId(), updCategory));  //TODO Поправить. Ужасно это
+//    }
 
     @Override
     public Category transferCategoryDtoToCategory(CategoryDTO categoryDTO) {
@@ -86,22 +114,7 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
         return category;
     }
 
-    @Override
-    public List<Category> transferIdToListCategory(List<Integer> ids, Category newCategory) {
-        List<Category> categories = new ArrayList<>();
-        Collections.sort(ids);
-        for (Integer id: ids) {
-            Optional<Category> category = categoryRepository.findById(id);
-            if (category.isEmpty()){
-                return null; //TODO throw
-            }
-            categories.add(category.get());
-            category.get().getChildren().add(newCategory);
-        }
-        return categories;
-    }
-
-    public List<Category> getCategoryListFromDTO (List<Category> categoriesDTO) {
+    public List<Category> getCategoryListFromDTO (List<Category> categoriesDTO) { //TODO проверка на уникальность категорий. В идеале - Set
         List<Category> categories = new ArrayList<>();
         for (Category categoryDTO: categoriesDTO) {
             Optional<Category> category = categoryRepository.findByCategoryName(categoryDTO.getCategoryName());
@@ -110,6 +123,7 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
             }
             categories.add(category.get());
         }
+        Collections.sort(categories);
         return categories;
     }
 }
