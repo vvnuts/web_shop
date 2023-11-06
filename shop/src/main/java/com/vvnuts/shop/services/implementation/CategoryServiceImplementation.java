@@ -3,6 +3,7 @@ package com.vvnuts.shop.services.implementation;
 import com.vvnuts.shop.dtos.CategoryDTO;
 import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.Characteristic;
+import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.repositories.CharacteristicRepository;
 import com.vvnuts.shop.services.interfaces.CategoryService;
@@ -35,6 +36,12 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
             characteristic.getCategories().add(entity);
         }
         super.create(entity);
+    }
+
+    @Override
+    public List<Item> getItemsFromCategory(Integer categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow();
+        return category.getItems();
     }
 
     @Override

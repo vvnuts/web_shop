@@ -1,19 +1,29 @@
 package com.vvnuts.shop.controllers;
 
+import com.vvnuts.shop.dtos.ItemDTO;
 import com.vvnuts.shop.entities.Item;
-import com.vvnuts.shop.services.interfaces.CrudService;
 import com.vvnuts.shop.services.interfaces.ItemService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/item")
-public class ItemController extends AbstractCrudController<Item, Integer>{
+public class ItemController{
     private final ItemService itemService;
-    @Override
-    CrudService<Item, Integer> getService() {
-        return itemService;
+
+    @PostMapping()
+    public ResponseEntity<HttpStatus> createItem(@RequestBody ItemDTO itemDTO) {
+        Item newItem = itemService.transferItemDtoToItem(itemDTO);
+        itemService.create(newItem);
+        return ResponseEntity.ok(HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Item> getItemInfo(@PathVariable Integer id) {
+        Item item = itemService.findById(id);
+        return ResponseEntity.ok(item);
     }
 }

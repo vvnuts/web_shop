@@ -1,5 +1,6 @@
 package com.vvnuts.shop.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,6 +17,7 @@ public class CharacterItem {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private Integer id;
 
     @Column(name = "value")
@@ -30,6 +32,7 @@ public class CharacterItem {
 
     @ManyToOne
     @JoinColumn(name = "item_id")
+    @JsonIgnore
     private Item item;
 
 }
