@@ -23,7 +23,7 @@ public class Category implements Comparable<Category>{
 
     @ManyToMany
     @JoinTable(
-            name = "child_parent",
+            name = "parent_child",
             joinColumns = @JoinColumn(name = "parent_id"),
             inverseJoinColumns = @JoinColumn(name = "child_id")
     )

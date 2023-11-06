@@ -10,5 +10,4 @@ import java.util.Optional;
 @Repository
 public interface CharacteristicRepository extends JpaRepository<Characteristic, Integer> {
     Optional<Characteristic> findByName(String name);
-    List<Characteristic> getCharacteristicListFromDTO(List<Characteristic> characteristicsDTO);
 }

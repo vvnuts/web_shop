@@ -1,6 +1,9 @@
 package com.vvnuts.shop.services.implementation;
 
+import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.CharacterItem;
+import com.vvnuts.shop.entities.Characteristic;
+import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.repositories.CharacterItemRepository;
 import com.vvnuts.shop.services.interfaces.CharacterItemService;
 import lombok.RequiredArgsConstructor;
@@ -14,5 +17,25 @@ public class CharacterItemServiceImplementation extends AbstractCrudService<Char
     @Override
     JpaRepository<CharacterItem, Integer> getRepository() {
         return characterItemRepository;
+    }
+
+    @Override
+    public void addCategoryItemsCharacteristic(Category category, Characteristic characteristic) {
+        for (Item item: category.getItems()) {
+             CharacterItem characterItem = CharacterItem.builder()
+                     .item(item)
+                     .characteristic(characteristic)
+                     .build();
+             characterItemRepository.save(characterItem);
+        }
+    }
+
+    @Override
+    public void removeCategoryItemsCharacteristic(Category category, Characteristic characteristic) {
+        for (Item item: category.getItems()) {
+            CharacterItem removeCharacterItem = characterItemRepository.findByCharacteristicAndItem(characteristic, item)
+                    .orElseThrow();
+            characterItemRepository.delete(removeCharacterItem);
+        }
     }
 }

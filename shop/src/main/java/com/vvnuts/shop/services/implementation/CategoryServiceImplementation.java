@@ -6,6 +6,7 @@ import com.vvnuts.shop.entities.Characteristic;
 import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.repositories.CharacteristicRepository;
 import com.vvnuts.shop.services.interfaces.CategoryService;
+import com.vvnuts.shop.services.interfaces.CharacterItemService;
 import com.vvnuts.shop.services.interfaces.CharacteristicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,6 +18,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class CategoryServiceImplementation extends AbstractCrudService<Category, Integer> implements CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CharacterItemService characterItemService;
     private final CharacteristicRepository characteristicRepository;
     private final CharacteristicService characteristicService;
     @Override
@@ -42,7 +44,7 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
         if (oldCategory.getParents().size() != updateCategory.getParents().size()) {
             isParentsChange = true;
         } else {
-            int minSize = Math.min(oldCategory.getParents().size(), updateCategory.getParents().size());
+            int minSize = updateCategory.getParents().size();
             for (int i = 0; i < minSize; i++) {
                 if (oldCategory.getParents().get(i) != updateCategory.getParents().get(i)) {
                     isParentsChange = true;
@@ -64,42 +66,21 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
         for (Characteristic newCharacteristic: updateCategory.getCharacteristics()) {
             if (!oldCharacteristic.contains(newCharacteristic)) {
                 newCharacteristic.getCategories().add(updateCategory);
+                characterItemService.addCategoryItemsCharacteristic(oldCategory, newCharacteristic); // TODO Проверить работает ли. Есть сомнение по отсутсвию id в newCharacteristic
                 characteristicRepository.save(newCharacteristic);
-            } // TODO СДЕЛАТЬ ДОБАВЛЕНИЕ И УДАЛЕНИЕ ХАРАКТЕРИСТИК У ТОВАРОВ ПРИНАДЛЕЖАЩИХ ОБНОВЛЯЕМОЙ ХАР-КИ.
+            }
             oldCharacteristic.remove(newCharacteristic);
         }
         if (oldCharacteristic.size() > 0) {
             for (Characteristic removeCharacteristic: oldCharacteristic) {
                 removeCharacteristic.getCategories().remove(oldCategory);
+                characterItemService.removeCategoryItemsCharacteristic(oldCategory, removeCharacteristic);  //TODO смущает Category
                 characteristicRepository.save(removeCharacteristic);
             }
         }
+        updateCategory.setCategoryId(oldCategory.getCategoryId());
+        categoryRepository.save(updateCategory);
     }
-
-//    public void update(CategoryDTO categoryDTO, Integer id) {
-//        Optional<Category> updateCategory = categoryRepository.findById(id);
-//        if (updateCategory.isEmpty()) {
-//            return; //TODO throw
-//        }
-//        Category updCategory = updateCategory.get();
-//        if (!updCategory.getCategoryName().equals(categoryDTO.getCategoryName())) {
-//            updCategory.setCategoryName(categoryDTO.getCategoryName());
-//        }
-//
-//        List<Category> currentParents = updCategory.getParents();
-//        List<Integer> parentsId = new ArrayList<>();
-//        for (Category parent: updCategory.getParents()) {
-//            parentsId.add(parent.getCategoryId());
-//        }
-//        if (!parentsId.equals(categoryDTO.getParentsId())) {
-//            for (Category currentParent : currentParents) {
-//                currentParent.getChildren().remove(updCategory);
-//            }
-//            updCategory.setParents(transferIdToListCategory(categoryDTO.getParentsId(), updCategory));
-//        }
-//
-//        updCategory.setCharacteristics(characteristicService.transferIdsToCharacteristicList(categoryDTO.getCharacteristicsId(), updCategory));  //TODO Поправить. Ужасно это
-//    }
 
     @Override
     public Category transferCategoryDtoToCategory(CategoryDTO categoryDTO) {
@@ -108,9 +89,6 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
                 .parents(getCategoryListFromDTO(categoryDTO.getParents()))
                 .characteristics(characteristicService.getCharacteristicListFromDTO(categoryDTO.getCharacteristics()))
                 .build();
-//        for (Category parent: category.getParents()) {
-//            parent.getChildren().add(category);
-//        }
         return category;
     }
 
