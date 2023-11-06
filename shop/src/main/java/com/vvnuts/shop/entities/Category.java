@@ -16,12 +16,14 @@ public class Category implements Comparable<Category>{
     @Id
     @Column(name = "category_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private int categoryId;
 
     @Column(name = "category_name")
     private String categoryName;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(
             name = "parent_child",
             joinColumns = @JoinColumn(name = "parent_id"),
