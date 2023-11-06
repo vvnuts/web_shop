@@ -1,5 +1,7 @@
 package com.vvnuts.shop.dtos;
 
+import com.vvnuts.shop.entities.Category;
+import com.vvnuts.shop.entities.Characteristic;
 import lombok.Data;
 
 import java.util.List;
@@ -7,6 +9,6 @@ import java.util.List;
 @Data
 public class CategoryDTO {
     private String categoryName;
-    private List<Integer> parentsId;
-    private List<Integer> characteristicsId;
+    private List<Category> parents;
+    private List<Characteristic> characteristics;
 }

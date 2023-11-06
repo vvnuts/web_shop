@@ -3,7 +3,6 @@ package com.vvnuts.shop.controllers;
 import com.vvnuts.shop.dtos.CategoryDTO;
 import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.services.interfaces.CategoryService;
-import com.vvnuts.shop.services.interfaces.CharacteristicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,15 +15,10 @@ import java.util.Optional;
 @RequestMapping("/api/v1/catalog")
 public class CategoryController{
     private final CategoryService categoryService;
-    private final CharacteristicService characteristicService;
 
     @PostMapping()
     public ResponseEntity<HttpStatus> createNewCategory(@RequestBody CategoryDTO categoryDTO) {
-        Category newCategory = Category.builder()
-                .categoryName(categoryDTO.getCategoryName())
-                .build();
-        newCategory.setParents(categoryService.transferIdToListCategory(categoryDTO.getParentsId(), newCategory));
-        newCategory.setCharacteristics(characteristicService.transferIdsToCharacteristicList(categoryDTO.getCharacteristicsId(), newCategory));
+        Category newCategory = categoryService.transferCategoryDtoToCategory(categoryDTO);
         categoryService.create(newCategory);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
@@ -38,7 +32,12 @@ public class CategoryController{
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> updateCategory(@PathVariable Integer id,
                                                      @RequestBody CategoryDTO categoryDTO) {
-        categoryService.update(categoryDTO, id);
+        Category oldCategory = categoryService.findById(id);
+        if (oldCategory == null) {
+            return ResponseEntity.ok(HttpStatus.BAD_REQUEST); //TODO throw
+        }
+        Category updateCategory = categoryService.transferCategoryDtoToCategory(categoryDTO);
+        categoryService.update(oldCategory, updateCategory);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

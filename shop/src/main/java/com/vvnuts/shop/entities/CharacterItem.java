@@ -1,11 +1,17 @@
 package com.vvnuts.shop.entities;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 @Entity
-@Table
+@Table(name = "character_item")
 public class CharacterItem {
     @Id
     @Column(name = "id")

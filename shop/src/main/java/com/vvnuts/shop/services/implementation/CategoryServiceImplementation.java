@@ -6,20 +6,20 @@ import com.vvnuts.shop.entities.Characteristic;
 import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.repositories.CharacteristicRepository;
 import com.vvnuts.shop.services.interfaces.CategoryService;
+import com.vvnuts.shop.services.interfaces.CharacterItemService;
 import com.vvnuts.shop.services.interfaces.CharacteristicService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class CategoryServiceImplementation extends AbstractCrudService<Category, Integer> implements CategoryService {
     private final CategoryRepository categoryRepository;
+    private final CharacterItemService characterItemService;
+    private final CharacteristicRepository characteristicRepository;
     private final CharacteristicService characteristicService;
     @Override
     JpaRepository<Category, Integer> getRepository() {
@@ -28,47 +28,87 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
 
     @Override
     public void create(Category entity) {
+        for (Category parent: entity.getParents()) {
+            parent.getChildren().add(entity);
+        }
+        for (Characteristic characteristic: entity.getCharacteristics()) {
+            characteristic.getCategories().add(entity);
+        }
         super.create(entity);
     }
 
     @Override
-    public void update(CategoryDTO categoryDTO, Integer id) {
-        Optional<Category> updateCategory = categoryRepository.findById(id);
-        if (updateCategory.isEmpty()) {
-            return; //TODO throw
+    public void update(Category updateCategory, Category updateDTO) {
+        if (!updateCategory.getCategoryName().equals(updateDTO.getCategoryName())) {
+            updateCategory.setCategoryName(updateDTO.getCategoryName());
         }
-        Category updCategory = updateCategory.get();
-        if (!updCategory.getCategoryName().equals(categoryDTO.getCategoryName())) {
-            updCategory.setCategoryName(categoryDTO.getCategoryName());
-        }
-
-        List<Category> currentParents = updCategory.getParents();
-        List<Integer> parentsId = new ArrayList<>();
-        for (Category parent: updCategory.getParents()) {
-            parentsId.add(parent.getCategoryId());
-        }
-        if (!parentsId.equals(categoryDTO.getParentsId())) {
-            for (Category currentParent : currentParents) {
-                currentParent.getChildren().remove(updCategory);
+        Collections.sort(updateDTO.getParents());
+        boolean isParentsChange = false;
+        if (updateCategory.getParents().size() != updateDTO.getParents().size()) {
+            isParentsChange = true;
+        } else {
+            int minSize = updateDTO.getParents().size();
+            for (int i = 0; i < minSize; i++) {
+                if (updateCategory.getParents().get(i) != updateDTO.getParents().get(i)) {
+                    isParentsChange = true;
+                    break;
+                }
             }
-            updCategory.setParents(transferIdToListCategory(categoryDTO.getParentsId(), updCategory));
         }
-
-        updCategory.setCharacteristics(characteristicService.transferIdsToCharacteristicList(categoryDTO.getCharacteristicsId(), updCategory));  //TODO Поправить. Ужасно это
+        if (isParentsChange) {
+            for (Category oldParent: updateCategory.getParents()) {
+                oldParent.getChildren().remove(updateCategory);
+                categoryRepository.save(oldParent);
+            }
+            for (Category updateParent: updateDTO.getParents()) {
+                updateParent.getChildren().add(updateCategory);
+                categoryRepository.save(updateParent);
+            }
+        }
+        Set<Characteristic> oldCharacteristic = new HashSet<>(updateCategory.getCharacteristics());
+        for (Characteristic newCharacteristic: updateDTO.getCharacteristics()) {
+            if (!oldCharacteristic.contains(newCharacteristic)) {
+                updateCategory.getCharacteristics().add(newCharacteristic);
+                if (newCharacteristic.getCategories() == null) {
+                    List<Category> temp = new ArrayList<>();
+                    temp.add(updateCategory);
+                    newCharacteristic.setCategories(temp);
+                } else {
+                    newCharacteristic.getCategories().add(updateCategory);
+                }
+                characterItemService.addCategoryItemsCharacteristic(updateCategory, newCharacteristic); // TODO Проверить работает ли. Есть сомнение по отсутсвию id в newCharacteristic
+                characteristicRepository.save(newCharacteristic);
+            } else {
+                oldCharacteristic.remove(newCharacteristic);
+            }
+        }
+        if (oldCharacteristic.size() > 0) {
+            for (Characteristic removeCharacteristic: oldCharacteristic) {
+                updateCategory.getCharacteristics().remove(removeCharacteristic);
+                removeCharacteristic.getCategories().remove(updateCategory);
+                characterItemService.removeCategoryItemsCharacteristic(updateCategory, removeCharacteristic);  //TODO смущает Category
+                characteristicRepository.save(removeCharacteristic);
+            }
+        }
+        categoryRepository.save(updateCategory);
     }
 
     @Override
-    public List<Category> transferIdToListCategory(List<Integer> ids, Category newCategory) {
+    public Category transferCategoryDtoToCategory(CategoryDTO categoryDTO) {
+        return Category.builder()
+                .categoryName(categoryDTO.getCategoryName())
+                .parents(getCategoryListFromDTO(categoryDTO.getParents()))
+                .characteristics(characteristicService.getCharacteristicListFromDTO(categoryDTO.getCharacteristics()))
+                .build();
+    }
+
+    public List<Category> getCategoryListFromDTO (List<Category> categoriesDTO) { //TODO проверка на уникальность категорий. В идеале - Set
         List<Category> categories = new ArrayList<>();
-        Collections.sort(ids);
-        for (Integer id: ids) {
-            Optional<Category> category = categoryRepository.findById(id);
-            if (category.isEmpty()){
-                return null; //TODO throw
-            }
-            categories.add(category.get());
-            category.get().getChildren().add(newCategory);
+        for (Category categoryDTO: categoriesDTO) {
+            Category category = categoryRepository.findByCategoryName(categoryDTO.getCategoryName()).orElseThrow();
+            categories.add(category);
         }
+        Collections.sort(categories);
         return categories;
     }
 }

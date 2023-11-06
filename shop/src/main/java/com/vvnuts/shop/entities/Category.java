@@ -12,18 +12,20 @@ import java.util.List;
 @NoArgsConstructor
 @Entity
 @Table(name = "Categories")
-public class Category {
+public class Category implements Comparable<Category>{
     @Id
     @Column(name = "category_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonIgnore
     private int categoryId;
 
     @Column(name = "category_name")
     private String categoryName;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(
-            name = "child_parent",
+            name = "parent_child",
             joinColumns = @JoinColumn(name = "parent_id"),
             inverseJoinColumns = @JoinColumn(name = "child_id")
     )
@@ -45,4 +47,9 @@ public class Category {
     @OneToMany(mappedBy = "category")
     @JsonIgnore
     private List<Item> items;
+
+    @Override
+    public int compareTo(Category o) {
+        return this.getCategoryId() - o.getCategoryId();
+    }
 }
