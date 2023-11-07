@@ -56,7 +56,7 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
         } else {
             int minSize = updateDTO.getParents().size();
             for (int i = 0; i < minSize; i++) {
-                if (updateCategory.getParents().get(i) != updateDTO.getParents().get(i)) {
+                if (updateCategory.getParents().get(i).equals(updateDTO.getParents().get(i))) {
                     isParentsChange = true;
                     break;
                 }

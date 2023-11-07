@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface CategoryService extends CrudService<Category, Integer>{
     Category transferCategoryDtoToCategory(CategoryDTO categoryDTO);
-    void update(Category oldCategory, Category updateCategory);
+    void update(Category updateCategory, Category updateDTO);
     List<Item> getItemsFromCategory(Integer categoryId);
 }

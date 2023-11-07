@@ -38,12 +38,12 @@ public class CategoryController{
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> updateCategory(@PathVariable Integer id,
                                                      @RequestBody CategoryDTO categoryDTO) {
-        Category oldCategory = categoryService.findById(id);
-        if (oldCategory == null) {
+        Category updateCategory = categoryService.findById(id);
+        if (updateCategory == null) {
             return ResponseEntity.notFound().build(); //TODO throw
         }
-        Category updateCategory = categoryService.transferCategoryDtoToCategory(categoryDTO);
-        categoryService.update(oldCategory, updateCategory);
+        Category updateDTO = categoryService.transferCategoryDtoToCategory(categoryDTO);
+        categoryService.update(updateCategory, updateDTO);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

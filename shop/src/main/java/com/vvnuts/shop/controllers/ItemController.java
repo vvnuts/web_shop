@@ -1,6 +1,7 @@
 package com.vvnuts.shop.controllers;
 
 import com.vvnuts.shop.dtos.ItemDTO;
+import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.services.interfaces.ItemService;
 import lombok.RequiredArgsConstructor;
@@ -25,5 +26,22 @@ public class ItemController{
     public ResponseEntity<Item> getItemInfo(@PathVariable Integer id) {
         Item item = itemService.findById(id);
         return ResponseEntity.ok(item);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<HttpStatus> updateItem(@PathVariable Integer id, @RequestBody ItemDTO itemDTO) {
+        Item updateItem = itemService.findById(id);
+        if (updateItem == null) {
+            return ResponseEntity.notFound().build(); //TODO throw
+        }
+        Item updateDTO = itemService.transferItemDtoToItem(itemDTO);
+        itemService.update(updateItem, updateDTO);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> deleteItem(@PathVariable Item id) {
+        itemService.delete(id);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 }
