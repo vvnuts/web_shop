@@ -6,6 +6,7 @@ import com.vvnuts.shop.auth.dtos.AuthenticationResponse;
 import com.vvnuts.shop.auth.dtos.RefreshResponse;
 import com.vvnuts.shop.auth.dtos.RegisterRequest;
 import com.vvnuts.shop.configs.JwtService;
+import com.vvnuts.shop.entities.Role;
 import com.vvnuts.shop.entities.User;
 import com.vvnuts.shop.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,6 +33,7 @@ public class AuthenticationService {
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
                 .email(request.getEmail())
+                .role(Role.ROLE_USER)
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
         repository.save(user);

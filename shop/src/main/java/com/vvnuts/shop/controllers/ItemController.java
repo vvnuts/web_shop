@@ -3,7 +3,9 @@ package com.vvnuts.shop.controllers;
 import com.vvnuts.shop.dtos.ItemDTO;
 import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.Item;
+import com.vvnuts.shop.entities.Review;
 import com.vvnuts.shop.services.interfaces.ItemService;
+import com.vvnuts.shop.services.interfaces.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,9 +33,6 @@ public class ItemController{
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> updateItem(@PathVariable Integer id, @RequestBody ItemDTO itemDTO) {
         Item updateItem = itemService.findById(id);
-        if (updateItem == null) {
-            return ResponseEntity.notFound().build(); //TODO throw
-        }
         Item updateDTO = itemService.transferItemDtoToItem(itemDTO);
         itemService.update(updateItem, updateDTO);
         return ResponseEntity.ok(HttpStatus.OK);
