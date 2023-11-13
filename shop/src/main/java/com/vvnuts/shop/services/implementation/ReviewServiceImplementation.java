@@ -1,16 +1,13 @@
 package com.vvnuts.shop.services.implementation;
 
 import com.vvnuts.shop.dtos.ReviewDTO;
-import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.entities.Review;
-import com.vvnuts.shop.entities.User;
 import com.vvnuts.shop.repositories.ReviewRepository;
 import com.vvnuts.shop.services.interfaces.ItemService;
 import com.vvnuts.shop.services.interfaces.ReviewService;
 import com.vvnuts.shop.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -31,15 +28,17 @@ public class ReviewServiceImplementation extends AbstractCrudService<Review, Rev
 
     @Override
     Review transferToCreateEntity(ReviewDTO dto) {
-        return null;
+        return Review.builder()
+                .mark(dto.getMark())
+                .item(itemService.findById(dto.getItem().getItemId()))
+                .text(dto.getText())
+                .user(userService.findById(dto.getUser().getUserId()))
+                .build();
     }
-
-//    @Override
-//    public void create(Review entity) {
-//        Item item = itemService.findById(entity.getItem().getItemId());
-//        entity.setItem(item);
-//        User user = userService.findById(entity.getUser().getUserId());
-//        entity.setUser(user);
-//        super.create(entity);
-//    }
+    @Override
+    public void create(ReviewDTO dtoEntity) {
+        Review review = transferToCreateEntity(dtoEntity);
+        reviewRepository.save(review);
+        itemService.calculateRatingItem(review.getItem());
+    }
 }

@@ -3,6 +3,7 @@ package com.vvnuts.shop.services.implementation;
 import com.vvnuts.shop.dtos.ItemDTO;
 import com.vvnuts.shop.entities.CharacterItem;
 import com.vvnuts.shop.entities.Item;
+import com.vvnuts.shop.entities.Review;
 import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.repositories.CharacterItemRepository;
 import com.vvnuts.shop.repositories.CharacteristicRepository;
@@ -86,6 +87,16 @@ public class ItemServiceImplementation extends AbstractCrudService<Item, ItemDTO
                 .build();
         item.setCharacterItems(createListCharacterItems(itemDTO));
         return item;
+    }
+
+    public void calculateRatingItem (Item item) {
+        float sumMark = 0;
+        int countMark = 0;
+        for (Review review: item.getReviews()) {
+            sumMark += review.getMark();
+            countMark += 1;
+        }
+        item.setMark(sumMark/countMark);
     }
 
     public List<CharacterItem> createListCharacterItems(ItemDTO itemDTO) {

@@ -1,4 +1,4 @@
-package com.vvnuts.shop.entities;
+package com.vvnuts.shop.entities.enums;
 
 import lombok.RequiredArgsConstructor;
 

@@ -6,7 +6,7 @@ import com.vvnuts.shop.auth.dtos.AuthenticationResponse;
 import com.vvnuts.shop.auth.dtos.RefreshResponse;
 import com.vvnuts.shop.auth.dtos.RegisterRequest;
 import com.vvnuts.shop.configs.JwtService;
-import com.vvnuts.shop.entities.Role;
+import com.vvnuts.shop.entities.enums.Role;
 import com.vvnuts.shop.entities.User;
 import com.vvnuts.shop.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
