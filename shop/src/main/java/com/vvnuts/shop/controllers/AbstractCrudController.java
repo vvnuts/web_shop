@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-public abstract class AbstractCrudController<E, K> {
-    abstract CrudService<E, K> getService();
+public abstract class AbstractCrudController<E, D, K> {
+    abstract CrudService<E, D, K> getService();
 
     @PostMapping()
-    public ResponseEntity<HttpStatus> create(@RequestBody E entity){
-        getService().create(entity);
+    public ResponseEntity<HttpStatus> create(@RequestBody D dtoEntity){
+        getService().create(dtoEntity);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
@@ -31,9 +31,10 @@ public abstract class AbstractCrudController<E, K> {
         return ResponseEntity.ok(entity);
     }
 
-    @PutMapping()
-    public ResponseEntity<HttpStatus> update(@RequestBody E entity) {
-        getService().update(entity);
+    @PutMapping("/{id}")
+    public ResponseEntity<HttpStatus> update(@PathVariable K id,
+            @RequestBody D dtoEntity) {
+        getService().update(dtoEntity, id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

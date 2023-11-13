@@ -36,6 +36,9 @@ public class Item {
     @Column(name = "sale")
     private float sale;
 
+    @Column(name = "mark")
+    private float mark;
+
     @OneToMany(mappedBy = "item")
     private List<CharacterItem> characterItems;
 
@@ -43,5 +46,5 @@ public class Item {
     private List<Review> reviews;
 
     @OneToMany(mappedBy = "item")
-    private List<Bucket> buckets;
+    private List<BucketItem> bucketItems;
 }

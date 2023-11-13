@@ -1,5 +1,6 @@
 package com.vvnuts.shop.services.implementation;
 
+import com.vvnuts.shop.dtos.CharacteristicDTO;
 import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.Characteristic;
 import com.vvnuts.shop.repositories.CharacteristicRepository;
@@ -14,11 +15,21 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CharacteristicServiceImplementation extends AbstractCrudService<Characteristic, Integer> implements CharacteristicService {
+public class CharacteristicServiceImplementation extends AbstractCrudService<Characteristic, CharacteristicDTO, Integer> implements CharacteristicService {
     private final CharacteristicRepository characteristicRepository;
     @Override
     JpaRepository<Characteristic, Integer> getRepository() {
         return characteristicRepository;
+    }
+
+    @Override
+    Characteristic transferToUpdateEntity(CharacteristicDTO dto, Characteristic updateEntity) {
+        return null;
+    }
+
+    @Override
+    Characteristic transferToCreateEntity(CharacteristicDTO dto) {
+        return null;
     }
 
     @Override
@@ -43,7 +54,7 @@ public class CharacteristicServiceImplementation extends AbstractCrudService<Cha
             if (characteristic.isEmpty()){
                 Characteristic newCharacteristic = new Characteristic();
                 newCharacteristic.setName(characteristicDTO.getName());
-                super.create(newCharacteristic);
+                characteristicRepository.save(newCharacteristic);
                 characteristics.add(newCharacteristic);
             } else {
                 characteristics.add(characteristic.get());

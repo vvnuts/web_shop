@@ -1,5 +1,7 @@
 package com.vvnuts.shop.services.implementation;
 
+import com.vvnuts.shop.dtos.CharacterItemDTO;
+import com.vvnuts.shop.dtos.CharacteristicDTO;
 import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.CharacterItem;
 import com.vvnuts.shop.entities.Characteristic;
@@ -12,11 +14,21 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class CharacterItemServiceImplementation extends AbstractCrudService<CharacterItem, Integer> implements CharacterItemService {
+public class CharacterItemServiceImplementation extends AbstractCrudService<CharacterItem, CharacterItemDTO, Integer> implements CharacterItemService {
     private final CharacterItemRepository characterItemRepository;
     @Override
     JpaRepository<CharacterItem, Integer> getRepository() {
         return characterItemRepository;
+    }
+
+    @Override
+    CharacterItem transferToUpdateEntity(CharacterItemDTO dto, CharacterItem updateEntity) {
+        return null;
+    }
+
+    @Override
+    CharacterItem transferToCreateEntity(CharacterItemDTO dto) {
+        return null;
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.vvnuts.shop.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.List;
@@ -11,7 +13,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "Categories")
+@Table(name = "Categories",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = "category_name")
+        })
 public class Category implements Comparable<Category>{
     @Id
     @Column(name = "category_id")
@@ -20,9 +25,11 @@ public class Category implements Comparable<Category>{
     private int categoryId;
 
     @Column(name = "category_name")
+    @Size(max = 40)
+    @NotNull
     private String categoryName;
 
-    @ManyToMany
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE})
     @JsonIgnore
     @JoinTable(
             name = "parent_child",
@@ -35,7 +42,7 @@ public class Category implements Comparable<Category>{
     @JsonIgnore
     private List<Category> parents;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.MERGE)
     @JoinTable(
             name = "category_characteristic",
             joinColumns = @JoinColumn(name = "category_id"),

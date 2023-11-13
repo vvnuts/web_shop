@@ -4,6 +4,7 @@ import com.vvnuts.shop.dtos.ItemDTO;
 import com.vvnuts.shop.entities.CharacterItem;
 import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.repositories.CategoryRepository;
+import com.vvnuts.shop.repositories.CharacterItemRepository;
 import com.vvnuts.shop.repositories.CharacteristicRepository;
 import com.vvnuts.shop.repositories.ItemRepository;
 import com.vvnuts.shop.services.interfaces.CharacterItemService;
@@ -19,55 +20,58 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ItemServiceImplementation extends AbstractCrudService<Item, Integer> implements ItemService {
+public class ItemServiceImplementation extends AbstractCrudService<Item, ItemDTO, Integer> implements ItemService {
     private final ItemRepository itemRepository;
+
     private final CategoryRepository categoryRepository;
     private final CharacteristicRepository characteristicRepository;
-    private final CharacterItemService characterItemService;
+    private final CharacterItemRepository characterItemRepository;
     @Override
     JpaRepository<Item, Integer> getRepository() {
         return itemRepository;
     }
 
     @Override
-    public void create(Item entity) {
-        for (CharacterItem characterItem: entity.getCharacterItems()) {
-            characterItem.setItem(entity);
-            characterItemService.create(characterItem);
-        }
-        super.create(entity);
-    }
-
-    @Override
-    public void update(Item updateItem, Item updateDTO) {
-        if (!updateItem.getItemName().equals(updateDTO.getItemName())) {
-            updateItem.setItemName(updateDTO.getItemName());
+    Item transferToUpdateEntity(ItemDTO dto, Item updateEntity) {
+        Item updateDTO = transferItemDtoToItem(dto);
+        if (!updateEntity.getItemName().equals(updateDTO.getItemName())) {
+            updateEntity.setItemName(updateDTO.getItemName());
         }
         int minSize = updateDTO.getCharacterItems().size();
         for (int i = 0; i < minSize; i++) {
-            updateItem.getCharacterItems().get(i).setValue(updateDTO.getCharacterItems().get(i).getValue());
-            updateItem.getCharacterItems().get(i).setNumValue(updateDTO.getCharacterItems().get(i).getNumValue());
+            updateEntity.getCharacterItems().get(i).setValue(updateDTO.getCharacterItems().get(i).getValue());
+            updateEntity.getCharacterItems().get(i).setNumValue(updateDTO.getCharacterItems().get(i).getNumValue());
         }
-        if (!updateItem.getCategory().equals(updateDTO.getCategory())) {
-            updateItem.getCategory().getItems().remove(updateItem);
-            categoryRepository.save(updateItem.getCategory());
-            updateItem.setCategory(updateDTO.getCategory());
-            updateDTO.getCategory().getItems().add(updateItem);
+        if (!updateEntity.getCategory().equals(updateDTO.getCategory())) {
+            updateEntity.getCategory().getItems().remove(updateEntity);
+            categoryRepository.save(updateEntity.getCategory());
+            updateEntity.setCategory(updateDTO.getCategory());
+            updateDTO.getCategory().getItems().add(updateEntity);
             categoryRepository.save(updateDTO.getCategory());
         }
-        if (!updateItem.getDescription().equals(updateDTO.getDescription())) {
-            updateItem.setDescription(updateDTO.getDescription());
+        if (!updateEntity.getDescription().equals(updateDTO.getDescription())) {
+            updateEntity.setDescription(updateDTO.getDescription());
         }
-        if (updateItem.getPrice() != updateDTO.getPrice()) {
-            updateItem.setPrice(updateDTO.getPrice());
+        if (updateEntity.getPrice() != updateDTO.getPrice()) {
+            updateEntity.setPrice(updateDTO.getPrice());
         }
-        if (updateItem.getQuantity() != updateDTO.getQuantity()) {
-            updateItem.setQuantity(updateDTO.getQuantity());
+        if (updateEntity.getQuantity() != updateDTO.getQuantity()) {
+            updateEntity.setQuantity(updateDTO.getQuantity());
         }
-        if (updateItem.getSale() != updateDTO.getSale()) {
-            updateItem.setSale(updateDTO.getSale());
+        if (updateEntity.getSale() != updateDTO.getSale()) {
+            updateEntity.setSale(updateDTO.getSale());
         }
-        itemRepository.save(updateItem);
+        return null;
+    }
+
+    @Override
+    Item transferToCreateEntity(ItemDTO dto) {
+        Item newItem = transferItemDtoToItem(dto);
+        for (CharacterItem characterItem: newItem.getCharacterItems()) {
+            characterItem.setItem(newItem);
+            characterItemRepository.save(characterItem);
+        }
+        return null;
     }
 
     @Override

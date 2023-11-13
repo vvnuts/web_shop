@@ -1,5 +1,6 @@
 package com.vvnuts.shop.services.implementation;
 
+import com.vvnuts.shop.dtos.ReviewDTO;
 import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.entities.Review;
 import com.vvnuts.shop.entities.User;
@@ -14,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class ReviewServiceImplementation extends AbstractCrudService<Review, Integer> implements ReviewService {
+public class ReviewServiceImplementation extends AbstractCrudService<Review, ReviewDTO, Integer> implements ReviewService {
     private final ReviewRepository reviewRepository;
     private final ItemService itemService;
     private final UserService userService;
@@ -24,11 +25,21 @@ public class ReviewServiceImplementation extends AbstractCrudService<Review, Int
     }
 
     @Override
-    public void create(Review entity) {
-        Item item = itemService.findById(entity.getItem().getItemId());
-        entity.setItem(item);
-        User user = userService.findById(entity.getUser().getUserId());
-        entity.setUser(user);
-        super.create(entity);
+    Review transferToUpdateEntity(ReviewDTO dto, Review updateEntity) {
+        return null;
     }
+
+    @Override
+    Review transferToCreateEntity(ReviewDTO dto) {
+        return null;
+    }
+
+//    @Override
+//    public void create(Review entity) {
+//        Item item = itemService.findById(entity.getItem().getItemId());
+//        entity.setItem(item);
+//        User user = userService.findById(entity.getUser().getUserId());
+//        entity.setUser(user);
+//        super.create(entity);
+//    }
 }

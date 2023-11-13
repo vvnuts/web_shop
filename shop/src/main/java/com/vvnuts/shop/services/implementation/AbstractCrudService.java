@@ -6,11 +6,14 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class AbstractCrudService<E, K> implements CrudService<E, K> {
+public abstract class AbstractCrudService<E, D, K> implements CrudService<E, D, K>{
     abstract JpaRepository<E, K> getRepository();
+    abstract E transferToUpdateEntity(D dto, E updateEntity);
+    abstract E transferToCreateEntity(D dto);
 
     @Override
-    public void create(E entity) {
+    public void create(D dtoEntity) {
+        E entity = transferToCreateEntity(dtoEntity);
         getRepository().save(entity);
     }
 
@@ -25,7 +28,9 @@ public abstract class AbstractCrudService<E, K> implements CrudService<E, K> {
     }
 
     @Override
-    public void update(E entity) {
+    public void update(D dtoEntity, K id) {
+        E updateEntity = findById(id);
+        E entity = transferToUpdateEntity(dtoEntity, updateEntity);
         getRepository().save(entity);
     }
 

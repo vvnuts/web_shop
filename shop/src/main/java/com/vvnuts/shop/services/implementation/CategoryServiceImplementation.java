@@ -17,7 +17,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class CategoryServiceImplementation extends AbstractCrudService<Category, Integer> implements CategoryService {
+public class CategoryServiceImplementation extends AbstractCrudService<Category, CategoryDTO, Integer> implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CharacterItemService characterItemService;
     private final CharacteristicRepository characteristicRepository;
@@ -28,52 +28,23 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
     }
 
     @Override
-    public void create(Category entity) {
-        for (Category parent: entity.getParents()) {
-            parent.getChildren().add(entity);
-        }
-        for (Characteristic characteristic: entity.getCharacteristics()) {
-            characteristic.getCategories().add(entity);
-        }
-        super.create(entity);
-    }
-
-    @Override
-    public List<Item> getItemsFromCategory(Integer categoryId) {
-        Category category = categoryRepository.findById(categoryId).orElseThrow();
-        return category.getItems();
-    }
-
-    @Override
-    public void update(Category updateCategory, Category updateDTO) {
+    Category transferToUpdateEntity(CategoryDTO dto, Category updateCategory) {
+        Category updateDTO = transferCategoryDtoToCategory(dto);
         if (!updateCategory.getCategoryName().equals(updateDTO.getCategoryName())) {
             updateCategory.setCategoryName(updateDTO.getCategoryName());
         }
-        Collections.sort(updateDTO.getParents());
-        boolean isParentsChange = false;
-        if (updateCategory.getParents().size() != updateDTO.getParents().size()) {
-            isParentsChange = true;
-        } else {
-            int minSize = updateDTO.getParents().size();
-            for (int i = 0; i < minSize; i++) {
-                if (updateCategory.getParents().get(i).equals(updateDTO.getParents().get(i))) {
-                    isParentsChange = true;
-                    break;
-                }
-            }
+
+        for (Category oldParent : updateCategory.getParents()) {
+            oldParent.getChildren().remove(updateCategory);
+            categoryRepository.save(oldParent);
         }
-        if (isParentsChange) {
-            for (Category oldParent: updateCategory.getParents()) {
-                oldParent.getChildren().remove(updateCategory);
-                categoryRepository.save(oldParent);
-            }
-            for (Category updateParent: updateDTO.getParents()) {
-                updateParent.getChildren().add(updateCategory);
-                categoryRepository.save(updateParent);
-            }
+        for (Category updateParent : updateDTO.getParents()) {
+            updateParent.getChildren().add(updateCategory);
+            categoryRepository.save(updateParent);
         }
+
         Set<Characteristic> oldCharacteristic = new HashSet<>(updateCategory.getCharacteristics());
-        for (Characteristic newCharacteristic: updateDTO.getCharacteristics()) {
+        for (Characteristic newCharacteristic : updateDTO.getCharacteristics()) {
             if (!oldCharacteristic.contains(newCharacteristic)) {
                 updateCategory.getCharacteristics().add(newCharacteristic);
                 if (newCharacteristic.getCategories() == null) {
@@ -90,14 +61,38 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
             }
         }
         if (oldCharacteristic.size() > 0) {
-            for (Characteristic removeCharacteristic: oldCharacteristic) {
+            for (Characteristic removeCharacteristic : oldCharacteristic) {
                 updateCategory.getCharacteristics().remove(removeCharacteristic);
                 removeCharacteristic.getCategories().remove(updateCategory);
                 characterItemService.removeCategoryItemsCharacteristic(updateCategory, removeCharacteristic);  //TODO смущает Category
                 characteristicRepository.save(removeCharacteristic);
             }
         }
-        categoryRepository.save(updateCategory);
+
+        return updateCategory;
+    }
+
+    @Override
+    Category transferToCreateEntity(CategoryDTO dto) {
+        Category newCategory = transferCategoryDtoToCategory(dto);
+        for (Category parent: newCategory.getParents()) {
+            parent.getChildren().add(newCategory);
+        }
+        for (Characteristic characteristic: newCategory.getCharacteristics()) {
+            characteristic.getCategories().add(newCategory);
+        }
+        return newCategory;
+    }
+
+    @Override
+    public List<Item> getItemsFromCategory(Integer categoryId) {
+        Category category = categoryRepository.findById(categoryId).orElseThrow();
+        return category.getItems();
+    }
+
+    @Override
+    public void update(Category updateCategory, Category updateDTO) {
+
     }
 
     @Override

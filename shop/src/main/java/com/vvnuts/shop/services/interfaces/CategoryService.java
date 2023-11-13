@@ -6,7 +6,7 @@ import com.vvnuts.shop.entities.Item;
 
 import java.util.List;
 
-public interface CategoryService extends CrudService<Category, Integer>{
+public interface CategoryService extends CrudService<Category, CategoryDTO, Integer>{
     Category transferCategoryDtoToCategory(CategoryDTO categoryDTO);
     void update(Category updateCategory, Category updateDTO);
     List<Item> getItemsFromCategory(Integer categoryId);
