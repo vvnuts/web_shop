@@ -25,6 +25,7 @@ public class OrderItem {
     @Column(name = "quantity")
     private Integer quantity;
 
-    @OneToMany(mappedBy = "orderItems")
+    @ManyToOne
+    @JoinColumn(name = "order_id")
     private Order order;
 }

@@ -1,5 +1,6 @@
 package com.vvnuts.shop.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,7 +16,7 @@ public class Item {
     @Id
     @Column(name = "item_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int itemId;
+    private Integer itemId;
 
     @ManyToOne
     @JoinColumn(name = "category_id", referencedColumnName = "category_id")
@@ -28,16 +29,16 @@ public class Item {
     private String description;
 
     @Column(name = "quantity")
-    private int quantity;
+    private Integer quantity;
 
     @Column(name = "price")
-    private int price;
+    private Integer price;
 
     @Column(name = "sale")
-    private float sale;
+    private Float sale;
 
     @Column(name = "mark")
-    private float mark;
+    private Float mark;
 
     @OneToMany(mappedBy = "item")
     private List<CharacterItem> characterItems;
@@ -46,5 +47,6 @@ public class Item {
     private List<Review> reviews;
 
     @OneToMany(mappedBy = "item")
+    @JsonIgnore
     private List<BucketItem> bucketItems;
 }

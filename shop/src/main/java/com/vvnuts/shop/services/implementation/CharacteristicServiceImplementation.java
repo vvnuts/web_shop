@@ -47,9 +47,9 @@ public class CharacteristicServiceImplementation extends AbstractCrudService<Cha
     }
 
     @Override
-    public List<Characteristic> getCharacteristicListFromDTO(List<Characteristic> characteristicsDTO) {
+    public List<Characteristic> getCharacteristicListFromDTO(List<CharacteristicDTO> characteristicsDTO) {
         List<Characteristic> characteristics = new ArrayList<>();
-        for (Characteristic characteristicDTO: characteristicsDTO) {
+        for (CharacteristicDTO characteristicDTO: characteristicsDTO) {
             Optional<Characteristic> characteristic = characteristicRepository.findByName(characteristicDTO.getName());
             if (characteristic.isEmpty()){
                 Characteristic newCharacteristic = new Characteristic();

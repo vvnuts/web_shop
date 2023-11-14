@@ -26,7 +26,7 @@ public class BucketServiceImplementation extends AbstractCrudService<Bucket, Buc
 
     @Override
     Bucket transferToUpdateEntity(BucketDTO dto, Bucket updateEntity) { //TODO переписать controller on update
-        updateEntity.setBucketItems(bucketItemService.transferBucketItemDtoToList(dto.getOrderItemDTOs()));
+        updateEntity.setBucketItems(bucketItemService.transferBucketItemDtoToList(dto.getOrderItem()));
         return updateEntity;
     }
 
@@ -42,7 +42,7 @@ public class BucketServiceImplementation extends AbstractCrudService<Bucket, Buc
     Bucket transferToCreateEntity(BucketDTO dto) {
         Bucket bucket = Bucket.builder()
                 .user(userService.findById(dto.getUser().getUserId()))
-                .bucketItems(bucketItemService.transferBucketItemDtoToList(dto.getOrderItemDTOs()))
+                .bucketItems(bucketItemService.transferBucketItemDtoToList(dto.getOrderItem()))
                 .build();
         calculationQuantityAndPrice(bucket);
         return bucket;

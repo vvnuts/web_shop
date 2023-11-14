@@ -29,7 +29,6 @@ public class Category implements Comparable<Category>{
     private String categoryName;
 
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REMOVE})
-    @JsonIgnore
     @JoinTable(
             name = "parent_child",
             joinColumns = @JoinColumn(name = "parent_id"),

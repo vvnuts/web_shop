@@ -1,5 +1,6 @@
 package com.vvnuts.shop.services.implementation;
 
+import com.vvnuts.shop.dtos.CharacterItemDTO;
 import com.vvnuts.shop.dtos.ItemDTO;
 import com.vvnuts.shop.entities.CharacterItem;
 import com.vvnuts.shop.entities.Item;
@@ -101,7 +102,7 @@ public class ItemServiceImplementation extends AbstractCrudService<Item, ItemDTO
 
     public List<CharacterItem> createListCharacterItems(ItemDTO itemDTO) {
         List<CharacterItem> characterItems = new ArrayList<>();
-        for (CharacterItem characterItemDto: itemDTO.getCharacterItems()) {
+        for (CharacterItemDTO characterItemDto: itemDTO.getCharacterItems()) {
             CharacterItem newCharacterItem = CharacterItem.builder()
                     .characteristic(characteristicRepository.findByName(characterItemDto.getCharacteristic().getName())
                             .orElseThrow())

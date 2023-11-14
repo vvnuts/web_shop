@@ -78,3 +78,19 @@ VALUES (1, 1, 1),
 (4, 4, 8),
 (4, 4, 9),
 (4, 4, 10);
+
+INSERT INTO users (firstname, lastname, email, user_password, role)
+VALUES
+    ('John', 'Doe', 'johndoe@example.com', '$2a$10$QUoIBFYtMK92NFKkwjdSFexA7l9DNOHwxFM5RHFsx2DE8uCvAUC8W', 'ROLE_ADMIN'),
+    ('Jane', 'Smith', 'janesmith@example.com', '$2a$10$a/vDCAy2121lCK1xfDXfWuSV4.4sH7DDj7AMIu1nPj4OwkgUBhdgm', 'ROLE_USER'),
+    ('Michael', 'Johnson', 'michaeljohnson@example.com', '$2a$10$wyGIHpBcunI7CvMGIeiKMOwOg8ZM6QTvaFPzUvZcIm39VrLECvhYu', 'ROLE_USER'),
+    ('Emily', 'Williams', 'emilywilliams@example.com', '$2a$10$TU3i7bfUQ6tEXSpcgwQojuuvwGMZVN2lFNhsM0Oj9QLZbw9XinOz2', 'ROLE_USER');
+
+
+INSERT INTO reviews (mark, review_text, item_id, user_id)
+VALUES (5, 'Great product!', 1, 4),
+       (4, 'Good value for money.', 1, 2),
+       (3, 'Average quality.', 1, 3),
+       (2, 'Not as expected.', 4, 4),
+       (1, 'Poor quality.', 4, 2);
+

@@ -21,7 +21,6 @@ public class Characteristic {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonIgnore
     private Integer id;
 
     @Column(name = "name")

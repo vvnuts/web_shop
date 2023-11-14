@@ -14,11 +14,12 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemDTO {
+    private Integer itemId;
     private Category category;
     private String itemName;
     private String description;
-    private int quantity;
-    private int price;
-    private float sale;
-    private List<CharacterItem> characterItems;
+    private Integer quantity;
+    private Integer price;
+    private Float sale;
+    private List<CharacterItemDTO> characterItems;
 }

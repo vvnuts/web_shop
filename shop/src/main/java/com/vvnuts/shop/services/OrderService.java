@@ -1,11 +1,10 @@
-package com.vvnuts.shop.services.implementation;
+package com.vvnuts.shop.services;
 
 import com.vvnuts.shop.dtos.OrderDTO;
 import com.vvnuts.shop.entities.Order;
 import com.vvnuts.shop.entities.OrderItem;
 import com.vvnuts.shop.entities.enums.Status;
 import com.vvnuts.shop.repositories.OrderRepository;
-import com.vvnuts.shop.services.OrderItemService;
 import com.vvnuts.shop.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,13 +24,27 @@ public class OrderService {
         orderRepository.save(newOrder);
     }
 
-    public void approveOrder(Order order) {
+    public void approveOrder(Integer orderId) {
+        Order order = findById(orderId);
+        if (order == null) {
+            return; //TODO throw
+        }
+        //TODO списать товары
         order.setStatus(Status.SUCCESS);
     }
 
-    public void cancelingOrder(Order order) {
+    public void cancelingOrder(Integer orderId) {
+        Order order = findById(orderId);
+        if (order == null) {
+            return; //TODO throw
+        }
         order.setStatus(Status.CANCEL);
     }
+
+    public Order findById(Integer id) {
+        return orderRepository.findById(id).orElse(null);
+    }
+
 
     Order transferToCreateEntity(OrderDTO dto) {
         return Order.builder()

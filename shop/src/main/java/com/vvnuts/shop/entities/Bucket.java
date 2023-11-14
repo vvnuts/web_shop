@@ -21,10 +21,6 @@ public class Bucket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToMany
-    @JoinColumn(name = "bucket_items_id")
-    private List<BucketItem> bucketItems;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -34,4 +30,7 @@ public class Bucket {
 
     @Column(name = "total_quantity")
     private Integer totalQuantity;
+
+    @OneToMany(mappedBy = "bucket")
+    private List<BucketItem> bucketItems;
 }

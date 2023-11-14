@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class OrderItemDTO {
-    private Item item;
+    private ItemDTO item;
     private Integer quantity;
 }

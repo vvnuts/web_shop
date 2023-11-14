@@ -25,6 +25,7 @@ public class BucketItem {
     @Column(name = "quantity")
     private Integer quantity;
 
-    @OneToMany(mappedBy = "bucketItems")
+    @ManyToOne
+    @JoinColumn(name = "bucket_id")
     private Bucket bucket;
 }

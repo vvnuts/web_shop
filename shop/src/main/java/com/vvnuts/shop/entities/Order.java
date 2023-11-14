@@ -34,8 +34,7 @@ public class Order {
     @Column(name = "status")
     private Status status;
 
-    @OneToMany
-    @JoinColumn(name = "order_item_id")
+    @OneToMany(mappedBy = "order")
     private List<OrderItem> orderItems;
 
     @ManyToOne

@@ -1,6 +1,5 @@
 package com.vvnuts.shop.dtos;
 
-import com.vvnuts.shop.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,6 +12,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class BucketDTO {
-    private List<OrderItemDTO> orderItemDTOs;
-    private User user;
+    private List<OrderItemDTO> orderItem;
+    private UserDTO user;
 }

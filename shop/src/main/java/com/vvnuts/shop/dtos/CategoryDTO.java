@@ -15,6 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 public class CategoryDTO {
     private String categoryName;
-    private List<Category> parents;
-    private List<Characteristic> characteristics;
+    private List<CategoryDTO> parents;
+    private List<CharacteristicDTO> characteristics;
 }

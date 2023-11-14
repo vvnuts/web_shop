@@ -104,9 +104,9 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
                 .build();
     }
 
-    public List<Category> getCategoryListFromDTO (List<Category> categoriesDTO) { //TODO проверка на уникальность категорий. В идеале - Set
+    public List<Category> getCategoryListFromDTO (List<CategoryDTO> categoriesDTO) { //TODO проверка на уникальность категорий. В идеале - Set
         List<Category> categories = new ArrayList<>();
-        for (Category categoryDTO: categoriesDTO) {
+        for (CategoryDTO categoryDTO: categoriesDTO) {
             Category category = categoryRepository.findByCategoryName(categoryDTO.getCategoryName()).orElseThrow();
             categories.add(category);
         }
