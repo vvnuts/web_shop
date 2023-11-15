@@ -1,7 +1,6 @@
-package com.vvnuts.shop.dtos;
+package com.vvnuts.shop.dtos.requests;
 
 import com.vvnuts.shop.entities.Category;
-import com.vvnuts.shop.entities.CharacterItem;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,7 +12,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemDTO {
+public class CreateItemRequest {
     private Integer itemId;
     private Category category;
     private String itemName;
@@ -21,5 +20,5 @@ public class ItemDTO {
     private Integer quantity;
     private Integer price;
     private Float sale;
-    private List<CharacterItemDTO> characterItems;
+    private List<CharacterItemRequest> characterItems;
 }

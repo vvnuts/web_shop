@@ -1,5 +1,9 @@
 package com.vvnuts.shop.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.vvnuts.shop.utils.Views;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,16 +25,19 @@ public class Bucket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
+    @JsonView(Views.Low.class)
     private User user;
 
     @Column(name = "total_price")
+    @JsonView(Views.Low.class)
     private BigDecimal totalPrice;
 
     @Column(name = "total_quantity")
+    @JsonView(Views.Low.class)
     private Integer totalQuantity;
 
-    @OneToMany(mappedBy = "bucket")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bucket")
     private List<BucketItem> bucketItems;
 }

@@ -1,31 +1,55 @@
 package com.vvnuts.shop.controllers;
 
-import com.vvnuts.shop.dtos.ReviewDTO;
-import com.vvnuts.shop.dtos.responses.ReviewResponse;
+import com.vvnuts.shop.dtos.requests.ReviewRequest;
+import com.vvnuts.shop.dtos.requests.ReviewUpdateRequest;
 import com.vvnuts.shop.entities.Review;
-import com.vvnuts.shop.services.interfaces.CrudService;
-import com.vvnuts.shop.services.interfaces.ReviewService;
+import com.vvnuts.shop.services.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/review")
-public class ReviewController extends AbstractCrudController<Review, ReviewDTO, Integer>{
+public class ReviewController{
     private final ReviewService reviewService;
-    private final ModelMapper modelMapper;
 
-    @Override
-    CrudService<Review, ReviewDTO, Integer> getService() {
-        return reviewService;
+    @PostMapping()
+    public ResponseEntity<HttpStatus> create(@RequestBody ReviewRequest dtoEntity){
+        reviewService.create(dtoEntity);
+        return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
-    private ReviewResponse convertReviewToReviewResponse(Review review) {
-        return modelMapper.map(review, ReviewResponse.class);
+    @GetMapping()
+    public ResponseEntity<List<Review>> findAll(){
+        List<Review> entities = reviewService.findAll();
+        return ResponseEntity.ok(entities);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Review> findOne(@PathVariable Integer id) {
+        Review entity = reviewService.findById(id);
+        if(entity == null) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(entity);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<HttpStatus> update(@PathVariable Integer id,
+                                             @RequestBody ReviewUpdateRequest dtoEntity) {
+        reviewService.update(dtoEntity, id);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> delete(@PathVariable Integer id) {
+        Review entity = reviewService.findById(id);
+        reviewService.delete(entity);
+        return ResponseEntity.ok(HttpStatus.OK);
     }
 }

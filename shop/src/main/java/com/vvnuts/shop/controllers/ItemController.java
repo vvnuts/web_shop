@@ -1,29 +1,34 @@
 package com.vvnuts.shop.controllers;
 
-import com.vvnuts.shop.dtos.ItemDTO;
-import com.vvnuts.shop.entities.Category;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.vvnuts.shop.dtos.requests.CreateItemRequest;
 import com.vvnuts.shop.entities.Item;
-import com.vvnuts.shop.entities.Review;
 import com.vvnuts.shop.services.interfaces.CrudService;
 import com.vvnuts.shop.services.interfaces.ItemService;
-import com.vvnuts.shop.services.interfaces.ReviewService;
+import com.vvnuts.shop.utils.Views;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/item")
-public class ItemController extends AbstractCrudController<Item, ItemDTO, Integer>{
+public class ItemController extends AbstractCrudController<Item, CreateItemRequest, Integer>{
     private final ItemService itemService;
 
     @Override
-    CrudService<Item, ItemDTO, Integer> getService() {
+    CrudService<Item, CreateItemRequest, Integer> getService() {
         return itemService;
     }
 
-//    @PostMapping()
+    @JsonView(Views.Medium.class)
+    @GetMapping("/{id}")
+    @Override
+    public ResponseEntity<Item> findOne(@PathVariable Integer id) {
+        return super.findOne(id);
+    }
+
+    //    @PostMapping()
 //    public ResponseEntity<HttpStatus> createItem(@RequestBody ItemDTO itemDTO) {
 //        Item newItem = itemService.transferItemDtoToItem(itemDTO);
 //        itemService.create(newItem);

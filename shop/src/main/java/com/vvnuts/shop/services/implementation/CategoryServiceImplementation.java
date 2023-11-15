@@ -1,6 +1,7 @@
 package com.vvnuts.shop.services.implementation;
 
-import com.vvnuts.shop.dtos.CategoryDTO;
+import com.vvnuts.shop.dtos.requests.CreateCategoryRequest;
+import com.vvnuts.shop.dtos.requests.ParentRequest;
 import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.Characteristic;
 import com.vvnuts.shop.entities.Item;
@@ -17,7 +18,7 @@ import java.util.*;
 
 @Service
 @RequiredArgsConstructor
-public class CategoryServiceImplementation extends AbstractCrudService<Category, CategoryDTO, Integer> implements CategoryService {
+public class CategoryServiceImplementation extends AbstractCrudService<Category, CreateCategoryRequest, Integer> implements CategoryService {
     private final CategoryRepository categoryRepository;
     private final CharacterItemService characterItemService;
     private final CharacteristicRepository characteristicRepository;
@@ -28,7 +29,7 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
     }
 
     @Override
-    Category transferToUpdateEntity(CategoryDTO dto, Category updateCategory) {
+    Category transferToUpdateEntity(CreateCategoryRequest dto, Category updateCategory) {
         Category updateDTO = transferCategoryDtoToCategory(dto);
         if (!updateCategory.getCategoryName().equals(updateDTO.getCategoryName())) {
             updateCategory.setCategoryName(updateDTO.getCategoryName());
@@ -73,7 +74,7 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
     }
 
     @Override
-    Category transferToCreateEntity(CategoryDTO dto) {
+    Category transferToCreateEntity(CreateCategoryRequest dto) {
         Category newCategory = transferCategoryDtoToCategory(dto);
         for (Category parent: newCategory.getParents()) {
             parent.getChildren().add(newCategory);
@@ -96,18 +97,18 @@ public class CategoryServiceImplementation extends AbstractCrudService<Category,
     }
 
     @Override
-    public Category transferCategoryDtoToCategory(CategoryDTO categoryDTO) {
+    public Category transferCategoryDtoToCategory(CreateCategoryRequest createCategoryRequest) {
         return Category.builder()
-                .categoryName(categoryDTO.getCategoryName())
-                .parents(getCategoryListFromDTO(categoryDTO.getParents()))
-                .characteristics(characteristicService.getCharacteristicListFromDTO(categoryDTO.getCharacteristics()))
+                .categoryName(createCategoryRequest.getCategoryName())
+                .parents(getCategoryListFromDTO(createCategoryRequest.getParents()))
+                .characteristics(characteristicService.getCharacteristicListFromDTO(createCategoryRequest.getCharacteristics()))
                 .build();
     }
 
-    public List<Category> getCategoryListFromDTO (List<CategoryDTO> categoriesDTO) { //TODO проверка на уникальность категорий. В идеале - Set
+    public List<Category> getCategoryListFromDTO (List<ParentRequest> parentRequests) { //TODO проверка на уникальность категорий. В идеале - Set
         List<Category> categories = new ArrayList<>();
-        for (CategoryDTO categoryDTO: categoriesDTO) {
-            Category category = categoryRepository.findByCategoryName(categoryDTO.getCategoryName()).orElseThrow();
+        for (ParentRequest parentRequest: parentRequests) {
+            Category category = categoryRepository.findByCategoryName(parentRequest.getCategoryName()).orElseThrow();
             categories.add(category);
         }
         Collections.sort(categories);

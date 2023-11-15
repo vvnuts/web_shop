@@ -1,5 +1,7 @@
 package com.vvnuts.shop.utils;
 
 public class Views {
-    public interface ItemResponse{}
+    public interface Low{}
+    public interface Medium extends Low {}
+    public interface CategoryCatalog{}
 }

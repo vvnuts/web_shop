@@ -1,6 +1,6 @@
 package com.vvnuts.shop.services.implementation;
 
-import com.vvnuts.shop.dtos.UserDTO;
+import com.vvnuts.shop.dtos.requests.CreateUserRequest;
 import com.vvnuts.shop.entities.User;
 import com.vvnuts.shop.repositories.UserRepository;
 import com.vvnuts.shop.services.interfaces.UserService;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImplementation extends AbstractCrudService<User, UserDTO, Integer> implements UserService {
+public class UserServiceImplementation extends AbstractCrudService<User, CreateUserRequest, Integer> implements UserService {
     private final UserRepository userRepository;
 
     @Override
@@ -19,12 +19,12 @@ public class UserServiceImplementation extends AbstractCrudService<User, UserDTO
     }
 
     @Override
-    User transferToUpdateEntity(UserDTO dto, User updateEntity) {
+    User transferToUpdateEntity(CreateUserRequest dto, User updateEntity) {
         return null;
     }
 
     @Override
-    User transferToCreateEntity(UserDTO dto) {
+    User transferToCreateEntity(CreateUserRequest dto) {
         return null;
     }
 }

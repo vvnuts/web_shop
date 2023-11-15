@@ -1,6 +1,8 @@
 package com.vvnuts.shop.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.vvnuts.shop.utils.Views;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -21,18 +23,20 @@ public class Characteristic {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(Views.Low.class)
     private Integer id;
 
     @Column(name = "name")
     @Size(max = 40)
     @NotNull
+    @JsonView(Views.Low.class)
     private String name;
 
-    @ManyToMany(mappedBy = "characteristics")
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "characteristics")
     @JsonIgnore
     private List<Category> categories;
 
-    @OneToMany(mappedBy = "characteristic", cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "characteristic")
     @JsonIgnore
     private List<CharacterItem> characterItems;
 }

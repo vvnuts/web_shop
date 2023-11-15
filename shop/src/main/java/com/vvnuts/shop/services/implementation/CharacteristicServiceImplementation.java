@@ -1,6 +1,6 @@
 package com.vvnuts.shop.services.implementation;
 
-import com.vvnuts.shop.dtos.CharacteristicDTO;
+import com.vvnuts.shop.dtos.requests.CharacteristicRequest;
 import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.Characteristic;
 import com.vvnuts.shop.repositories.CharacteristicRepository;
@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CharacteristicServiceImplementation extends AbstractCrudService<Characteristic, CharacteristicDTO, Integer> implements CharacteristicService {
+public class CharacteristicServiceImplementation extends AbstractCrudService<Characteristic, CharacteristicRequest, Integer> implements CharacteristicService {
     private final CharacteristicRepository characteristicRepository;
     @Override
     JpaRepository<Characteristic, Integer> getRepository() {
@@ -23,12 +23,12 @@ public class CharacteristicServiceImplementation extends AbstractCrudService<Cha
     }
 
     @Override
-    Characteristic transferToUpdateEntity(CharacteristicDTO dto, Characteristic updateEntity) {
+    Characteristic transferToUpdateEntity(CharacteristicRequest dto, Characteristic updateEntity) {
         return null;
     }
 
     @Override
-    Characteristic transferToCreateEntity(CharacteristicDTO dto) {
+    Characteristic transferToCreateEntity(CharacteristicRequest dto) {
         return null;
     }
 
@@ -47,13 +47,13 @@ public class CharacteristicServiceImplementation extends AbstractCrudService<Cha
     }
 
     @Override
-    public List<Characteristic> getCharacteristicListFromDTO(List<CharacteristicDTO> characteristicsDTO) {
+    public List<Characteristic> getCharacteristicListFromDTO(List<CharacteristicRequest> characteristicsDTO) {
         List<Characteristic> characteristics = new ArrayList<>();
-        for (CharacteristicDTO characteristicDTO: characteristicsDTO) {
-            Optional<Characteristic> characteristic = characteristicRepository.findByName(characteristicDTO.getName());
+        for (CharacteristicRequest characteristicRequest : characteristicsDTO) {
+            Optional<Characteristic> characteristic = characteristicRepository.findByName(characteristicRequest.getName());
             if (characteristic.isEmpty()){
                 Characteristic newCharacteristic = new Characteristic();
-                newCharacteristic.setName(characteristicDTO.getName());
+                newCharacteristic.setName(characteristicRequest.getName());
                 characteristicRepository.save(newCharacteristic);
                 characteristics.add(newCharacteristic);
             } else {

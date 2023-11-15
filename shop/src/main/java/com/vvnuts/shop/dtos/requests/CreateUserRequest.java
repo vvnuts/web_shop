@@ -1,4 +1,4 @@
-package com.vvnuts.shop.dtos;
+package com.vvnuts.shop.dtos.requests;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserDTO {
+public class CreateUserRequest {
     private Integer userId;
     private String firstname;
     private String lastname;

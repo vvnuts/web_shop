@@ -1,7 +1,7 @@
 package com.vvnuts.shop.services.implementation;
 
-import com.vvnuts.shop.dtos.CharacterItemDTO;
-import com.vvnuts.shop.dtos.ItemDTO;
+import com.vvnuts.shop.dtos.requests.CharacterItemRequest;
+import com.vvnuts.shop.dtos.requests.CreateItemRequest;
 import com.vvnuts.shop.entities.CharacterItem;
 import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.entities.Review;
@@ -9,20 +9,17 @@ import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.repositories.CharacterItemRepository;
 import com.vvnuts.shop.repositories.CharacteristicRepository;
 import com.vvnuts.shop.repositories.ItemRepository;
-import com.vvnuts.shop.services.interfaces.CharacterItemService;
 import com.vvnuts.shop.services.interfaces.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class ItemServiceImplementation extends AbstractCrudService<Item, ItemDTO, Integer> implements ItemService {
+public class ItemServiceImplementation extends AbstractCrudService<Item, CreateItemRequest, Integer> implements ItemService {
     private final ItemRepository itemRepository;
 
     private final CategoryRepository categoryRepository;
@@ -34,7 +31,7 @@ public class ItemServiceImplementation extends AbstractCrudService<Item, ItemDTO
     }
 
     @Override
-    Item transferToUpdateEntity(ItemDTO dto, Item updateEntity) {
+    Item transferToUpdateEntity(CreateItemRequest dto, Item updateEntity) {
         Item updateDTO = transferItemDtoToItem(dto);
         if (!updateEntity.getItemName().equals(updateDTO.getItemName())) {
             updateEntity.setItemName(updateDTO.getItemName());
@@ -67,7 +64,7 @@ public class ItemServiceImplementation extends AbstractCrudService<Item, ItemDTO
     }
 
     @Override
-    Item transferToCreateEntity(ItemDTO dto) {
+    Item transferToCreateEntity(CreateItemRequest dto) {
         Item newItem = transferItemDtoToItem(dto);
         for (CharacterItem characterItem: newItem.getCharacterItems()) {
             characterItem.setItem(newItem);
@@ -77,16 +74,16 @@ public class ItemServiceImplementation extends AbstractCrudService<Item, ItemDTO
     }
 
     @Override
-    public Item transferItemDtoToItem(ItemDTO itemDTO) {
+    public Item transferItemDtoToItem(CreateItemRequest createItemRequest) {
         Item item = Item.builder()
-                .category(categoryRepository.findByCategoryName(itemDTO.getCategory().getCategoryName()).orElseThrow())
-                .itemName(itemDTO.getItemName())
-                .description(itemDTO.getDescription())
-                .price(itemDTO.getPrice())
-                .quantity(itemDTO.getQuantity())
-                .sale(itemDTO.getSale())
+                .category(categoryRepository.findByCategoryName(createItemRequest.getCategory().getCategoryName()).orElseThrow())
+                .itemName(createItemRequest.getItemName())
+                .description(createItemRequest.getDescription())
+                .price(createItemRequest.getPrice())
+                .quantity(createItemRequest.getQuantity())
+                .sale(createItemRequest.getSale())
                 .build();
-        item.setCharacterItems(createListCharacterItems(itemDTO));
+        item.setCharacterItems(createListCharacterItems(createItemRequest));
         return item;
     }
 
@@ -98,16 +95,17 @@ public class ItemServiceImplementation extends AbstractCrudService<Item, ItemDTO
             countMark += 1;
         }
         item.setMark(sumMark/countMark);
+        itemRepository.save(item);
     }
 
-    public List<CharacterItem> createListCharacterItems(ItemDTO itemDTO) {
+    public List<CharacterItem> createListCharacterItems(CreateItemRequest createItemRequest) {
         List<CharacterItem> characterItems = new ArrayList<>();
-        for (CharacterItemDTO characterItemDto: itemDTO.getCharacterItems()) {
+        for (CharacterItemRequest characterItemRequest : createItemRequest.getCharacterItems()) {
             CharacterItem newCharacterItem = CharacterItem.builder()
-                    .characteristic(characteristicRepository.findByName(characterItemDto.getCharacteristic().getName())
+                    .characteristic(characteristicRepository.findByName(characterItemRequest.getCharacteristic().getName())
                             .orElseThrow())
-                    .numValue(characterItemDto.getNumValue())
-                    .value(characterItemDto.getValue())
+                    .numValue(characterItemRequest.getNumValue())
+                    .value(characterItemRequest.getValue())
                     .build();
             characterItems.add(newCharacterItem);
         }

@@ -1,6 +1,6 @@
 package com.vvnuts.shop.controllers;
 
-import com.vvnuts.shop.dtos.OrderDTO;
+import com.vvnuts.shop.dtos.requests.CreateOrderRequest;
 import com.vvnuts.shop.entities.Order;
 import com.vvnuts.shop.services.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +24,7 @@ public class OrderController {
     }
 
     @PostMapping()
-    public ResponseEntity<HttpStatus> create(@RequestBody OrderDTO dtoEntity){
+    public ResponseEntity<HttpStatus> create(@RequestBody CreateOrderRequest dtoEntity){
         orderService.create(dtoEntity);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }

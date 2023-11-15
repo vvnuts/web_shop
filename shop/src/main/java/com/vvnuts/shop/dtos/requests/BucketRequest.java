@@ -1,6 +1,5 @@
-package com.vvnuts.shop.dtos;
+package com.vvnuts.shop.dtos.requests;
 
-import com.vvnuts.shop.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,8 +11,7 @@ import java.util.List;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderDTO {
-    private String email;
-    private List<OrderItemDTO> orderItemDTOs;
-    private User user;
+public class BucketRequest {
+    private List<OrderItemRequest> orderItem;
+    private UserRequest user;
 }

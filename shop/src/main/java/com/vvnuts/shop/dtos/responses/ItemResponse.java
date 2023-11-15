@@ -1,6 +1,5 @@
-package com.vvnuts.shop.dtos;
+package com.vvnuts.shop.dtos.responses;
 
-import com.vvnuts.shop.entities.Item;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,7 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderItemDTO {
-    private ItemDTO item;
+public class ItemResponse {
+    private Integer itemId;
+    private String itemName;
     private Integer quantity;
+    private Integer price;
+    private Float sale;
 }

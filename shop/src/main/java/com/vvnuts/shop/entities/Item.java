@@ -1,6 +1,8 @@
 package com.vvnuts.shop.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonView;
+import com.vvnuts.shop.utils.Views;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,8 +20,9 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer itemId;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id", referencedColumnName = "category_id")
+    @JsonIgnore
     private Category category;
 
     @Column(name = "item_name")
@@ -40,13 +43,13 @@ public class Item {
     @Column(name = "mark")
     private Float mark;
 
-    @OneToMany(mappedBy = "item")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
     private List<CharacterItem> characterItems;
 
-    @OneToMany(mappedBy = "item")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
     private List<Review> reviews;
 
-    @OneToMany(mappedBy = "item")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "item")
     @JsonIgnore
     private List<BucketItem> bucketItems;
 }

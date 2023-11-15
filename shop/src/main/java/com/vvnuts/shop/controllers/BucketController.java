@@ -1,6 +1,6 @@
 package com.vvnuts.shop.controllers;
 
-import com.vvnuts.shop.dtos.BucketDTO;
+import com.vvnuts.shop.dtos.requests.BucketRequest;
 import com.vvnuts.shop.entities.Bucket;
 import com.vvnuts.shop.services.interfaces.BucketService;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +15,14 @@ public class BucketController {
     private final BucketService bucketService;
 
     @PostMapping()
-    public ResponseEntity<HttpStatus> create(@RequestBody BucketDTO dtoEntity){
+    public ResponseEntity<HttpStatus> create(@RequestBody BucketRequest dtoEntity){
         bucketService.create(dtoEntity);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Bucket> findOne(@PathVariable Integer id) {
-        Bucket bucket = bucketService.findBucketByUserId(id);
+        Bucket bucket = bucketService.findById(id);
         if(bucket == null) {
             return ResponseEntity.notFound().build();
         }
@@ -31,7 +31,7 @@ public class BucketController {
 
     @PutMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable Integer id,
-                                             @RequestBody BucketDTO dtoEntity) {
+                                             @RequestBody BucketRequest dtoEntity) {
 
         bucketService.update(dtoEntity, id);
         return ResponseEntity.ok(HttpStatus.OK);

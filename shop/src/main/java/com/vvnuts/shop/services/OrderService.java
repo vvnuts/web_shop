@@ -1,6 +1,6 @@
 package com.vvnuts.shop.services;
 
-import com.vvnuts.shop.dtos.OrderDTO;
+import com.vvnuts.shop.dtos.requests.CreateOrderRequest;
 import com.vvnuts.shop.entities.Order;
 import com.vvnuts.shop.entities.OrderItem;
 import com.vvnuts.shop.entities.enums.Status;
@@ -18,7 +18,7 @@ public class OrderService {
     private final OrderItemService orderItemService;
     private final UserService userService;
 
-    public void create(OrderDTO dtoEntity) {
+    public void create(CreateOrderRequest dtoEntity) {
         Order newOrder = transferToCreateEntity(dtoEntity);
         calculationQuantityAndPrice(newOrder);
         orderRepository.save(newOrder);
@@ -46,10 +46,10 @@ public class OrderService {
     }
 
 
-    Order transferToCreateEntity(OrderDTO dto) {
+    Order transferToCreateEntity(CreateOrderRequest dto) {
         return Order.builder()
                 .email(dto.getEmail())
-                .orderItems(orderItemService.transferOrderItemDtoToList(dto.getOrderItemDTOs()))
+                .orderItems(orderItemService.transferOrderItemDtoToList(dto.getOrderItemRequests()))
                 .user(userService.findById(dto.getUser().getUserId()))
                 .status(Status.WAITING)
                 .build();

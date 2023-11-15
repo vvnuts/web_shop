@@ -1,7 +1,5 @@
-package com.vvnuts.shop.dtos;
+package com.vvnuts.shop.dtos.requests;
 
-import com.vvnuts.shop.entities.Item;
-import com.vvnuts.shop.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewDTO {
+public class ReviewUpdateRequest {
     private Integer mark;
     private String text;
-    private Item item;
-    private UserDTO user;
 }

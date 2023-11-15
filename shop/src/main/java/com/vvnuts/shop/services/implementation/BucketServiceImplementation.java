@@ -1,6 +1,6 @@
 package com.vvnuts.shop.services.implementation;
 
-import com.vvnuts.shop.dtos.BucketDTO;
+import com.vvnuts.shop.dtos.requests.BucketRequest;
 import com.vvnuts.shop.entities.Bucket;
 import com.vvnuts.shop.entities.BucketItem;
 import com.vvnuts.shop.repositories.BucketRepository;
@@ -15,7 +15,7 @@ import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
-public class BucketServiceImplementation extends AbstractCrudService<Bucket, BucketDTO, Integer> implements BucketService {
+public class BucketServiceImplementation extends AbstractCrudService<Bucket, BucketRequest, Integer> implements BucketService {
     private final BucketRepository bucketRepository;
     private final BucketItemService bucketItemService;
     private final UserService userService;
@@ -25,13 +25,13 @@ public class BucketServiceImplementation extends AbstractCrudService<Bucket, Buc
     }
 
     @Override
-    Bucket transferToUpdateEntity(BucketDTO dto, Bucket updateEntity) { //TODO переписать controller on update
+    Bucket transferToUpdateEntity(BucketRequest dto, Bucket updateEntity) { //TODO переписать controller on update
         updateEntity.setBucketItems(bucketItemService.transferBucketItemDtoToList(dto.getOrderItem()));
         return updateEntity;
     }
 
     @Override
-    public void update(BucketDTO dtoEntity, Integer id) {
+    public void update(BucketRequest dtoEntity, Integer id) {
         Bucket updateEntity = findBucketByUserId(id);
         Bucket bucket = transferToUpdateEntity(dtoEntity, updateEntity);
         calculationQuantityAndPrice(bucket);
@@ -39,11 +39,12 @@ public class BucketServiceImplementation extends AbstractCrudService<Bucket, Buc
     }
 
     @Override
-    Bucket transferToCreateEntity(BucketDTO dto) {
+    Bucket transferToCreateEntity(BucketRequest dto) {
         Bucket bucket = Bucket.builder()
                 .user(userService.findById(dto.getUser().getUserId()))
                 .bucketItems(bucketItemService.transferBucketItemDtoToList(dto.getOrderItem()))
                 .build();
+        bucketItemService.linkBucket(bucket);
         calculationQuantityAndPrice(bucket);
         return bucket;
     }
