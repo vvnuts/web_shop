@@ -2,6 +2,7 @@ package com.vvnuts.shop.services.implementation;
 
 import com.vvnuts.shop.dtos.requests.CharacterItemRequest;
 import com.vvnuts.shop.dtos.requests.CreateItemRequest;
+import com.vvnuts.shop.dtos.responses.ItemResponse;
 import com.vvnuts.shop.entities.CharacterItem;
 import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.entities.Review;
@@ -11,6 +12,7 @@ import com.vvnuts.shop.repositories.CharacteristicRepository;
 import com.vvnuts.shop.repositories.ItemRepository;
 import com.vvnuts.shop.services.interfaces.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ItemServiceImplementation extends AbstractCrudService<Item, CreateItemRequest, Integer> implements ItemService {
     private final ItemRepository itemRepository;
-
+    private final ModelMapper modelMapper;
     private final CategoryRepository categoryRepository;
     private final CharacteristicRepository characteristicRepository;
     private final CharacterItemRepository characterItemRepository;
@@ -110,5 +112,9 @@ public class ItemServiceImplementation extends AbstractCrudService<Item, CreateI
             characterItems.add(newCharacterItem);
         }
         return characterItems;
+    }
+
+    public ItemResponse convertEntityToResponse(Item item) {
+        return  modelMapper.map(item, ItemResponse.class);
     }
 }

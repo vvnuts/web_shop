@@ -1,11 +1,13 @@
 package com.vvnuts.shop.services;
 
 import com.vvnuts.shop.dtos.requests.OrderItemRequest;
+import com.vvnuts.shop.dtos.responses.OrderItemResponse;
 import com.vvnuts.shop.entities.Bucket;
 import com.vvnuts.shop.entities.BucketItem;
 import com.vvnuts.shop.repositories.BucketItemRepository;
 import com.vvnuts.shop.services.interfaces.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -37,5 +39,25 @@ public class BucketItemService {
             bucketItem.setBucket(bucket);
             bucketItemRepository.save(bucketItem);
         }
+    }
+
+    public void removeBucket(BucketItem bucketItem) {
+        bucketItem.setBucket(null);
+        bucketItemRepository.save(bucketItem);
+    }
+
+    public List<OrderItemResponse> convertEntityToListResponse (List<BucketItem> bucketItems) {
+        List<OrderItemResponse> orderItemResponses = new ArrayList<>();
+        for (BucketItem bucketItem: bucketItems) {
+            orderItemResponses.add(convertEntityToResponse(bucketItem));
+        }
+        return orderItemResponses;
+    }
+
+    public OrderItemResponse convertEntityToResponse (BucketItem bucketItem) {
+        return OrderItemResponse.builder()
+                .item(itemService.convertEntityToResponse(bucketItem.getItem()))
+                .quantity(bucketItem.getQuantity())
+                .build();
     }
 }

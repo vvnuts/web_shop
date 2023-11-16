@@ -23,7 +23,7 @@ public class BucketItem {
     @JsonView(Views.Low.class)
     private Integer id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "item_id")
     @JsonView(Views.Low.class)
     private Item item;

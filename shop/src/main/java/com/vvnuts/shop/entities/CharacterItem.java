@@ -29,12 +29,12 @@ public class CharacterItem {
     @JsonView(Views.Low.class)
     private Integer numValue;
 
-    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.REMOVE})
+    @ManyToOne()
     @JoinColumn(name = "characteristic_id")
     @JsonView(Views.Low.class)
     private Characteristic characteristic;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "item_id")
     @JsonIgnore
     private Item item;

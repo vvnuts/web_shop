@@ -5,10 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ParentRequest {
+public class CategoryRequest {
     private String categoryName;
+    private List<Integer> parents;
+    private List<Integer> characteristics;
 }
