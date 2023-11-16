@@ -3,7 +3,6 @@ package com.vvnuts.shop.entities;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.vvnuts.shop.entities.enums.Role;
-import com.vvnuts.shop.utils.Views;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,19 +26,15 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    @JsonView(Views.Low.class)
     private Integer userId;
 
     @Column(name = "firstname")
-    @JsonView(Views.Low.class)
     private String firstname;
 
     @Column(name = "lastname")
-    @JsonView(Views.Low.class)
     private String lastname;
 
     @Column(name = "email")
-    @JsonView(Views.Low.class)
     private String email;
 
     @Column(name = "user_password")

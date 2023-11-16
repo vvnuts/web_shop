@@ -2,7 +2,6 @@ package com.vvnuts.shop.entities;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.vvnuts.shop.entities.enums.Status;
-import com.vvnuts.shop.utils.Views;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -24,11 +23,9 @@ public class Order {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
-    @JsonView(Views.Low.class)
     private UUID id;
 
     @Column(name = "date")
-    @JsonView(Views.Low.class)
     private Date dateCreation;
 
     @Column(name = "email")
@@ -39,7 +36,6 @@ public class Order {
     private Status status;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
-    @JsonView(Views.Low.class)
     private List<OrderItem> orderItems;
 
     @ManyToOne(cascade = CascadeType.ALL)
@@ -47,10 +43,8 @@ public class Order {
     private User user;
 
     @Column(name = "total_price")
-    @JsonView(Views.Low.class)
     private BigDecimal totalPrice;
 
     @Column(name = "total_quantity")
-    @JsonView(Views.Low.class)
     private Integer totalQuantity;
 }

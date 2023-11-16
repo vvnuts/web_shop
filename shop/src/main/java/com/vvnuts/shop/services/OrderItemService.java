@@ -3,7 +3,6 @@ package com.vvnuts.shop.services;
 import com.vvnuts.shop.dtos.requests.OrderItemRequest;
 import com.vvnuts.shop.entities.OrderItem;
 import com.vvnuts.shop.repositories.OrderItemRepository;
-import com.vvnuts.shop.services.interfaces.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,17 +1,14 @@
-package com.vvnuts.shop.services.implementation;
+package com.vvnuts.shop.services;
 
 import com.vvnuts.shop.dtos.requests.BucketRequest;
 import com.vvnuts.shop.dtos.responses.BucketResponse;
 import com.vvnuts.shop.entities.Bucket;
 import com.vvnuts.shop.entities.BucketItem;
 import com.vvnuts.shop.repositories.BucketRepository;
-import com.vvnuts.shop.services.BucketItemService;
-import com.vvnuts.shop.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor

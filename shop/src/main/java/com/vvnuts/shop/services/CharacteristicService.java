@@ -1,4 +1,4 @@
-package com.vvnuts.shop.services.implementation;
+package com.vvnuts.shop.services;
 
 import com.vvnuts.shop.dtos.requests.CharacteristicRequest;
 import com.vvnuts.shop.dtos.responses.CharacteristicResponse;
@@ -6,7 +6,6 @@ import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.Characteristic;
 import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.repositories.CharacteristicRepository;
-import com.vvnuts.shop.services.interfaces.CharacterItemService;
 import com.vvnuts.shop.utils.CategoryUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -56,61 +55,38 @@ public class CharacteristicService {
                 .categories(categoryUtils.getCategoryListFromIds(request.getCategories()))
                 .build();
         updateCharacteristic.setName(request.getName());
-        Set<Category> oldCategory = new HashSet<>(updateCharacteristic.getCategories());
-        for (Characteristic newCharacteristic : updateDTO.getCharacteristics()) {
-            if (!oldCategory.contains(newCharacteristic)) {
-                updateCategory.getCharacteristics().add(newCharacteristic);
-                if (newCharacteristic.getCategories() == null) {
-                    List<Category> temp = new ArrayList<>();
-                    temp.add(updateCategory);
-                    newCharacteristic.setCategories(temp);
-                } else {
-                    newCharacteristic.getCategories().add(updateCategory);
-                }
-                characterItemService.addCategoryItemsCharacteristic(updateCategory, newCharacteristic); // TODO Проверить работает ли. Есть сомнение по отсутсвию id в newCharacteristic
-                characteristicRepository.save(newCharacteristic);
+
+        Set<Category> oldCategories = new HashSet<>(updateCharacteristic.getCategories());
+        for (Category newCategory : updateDto.getCategories()) {
+            if (!oldCategories.contains(newCategory)) {
+                updateCharacteristic.getCategories().add(newCategory);
+                newCategory.getCharacteristics().add(updateCharacteristic);
+                characterItemService.addCategoryItemsCharacteristic(newCategory, updateCharacteristic);
+                categoryRepository.save(newCategory);
             } else {
-                oldCategory.remove(newCharacteristic);
+                oldCategories.remove(newCategory);
+            }
+        }
+        if (oldCategories.size() > 0) {
+            for (Category removeCategory : oldCategories) {
+                updateCharacteristic.getCategories().remove(removeCategory);
+                removeCategory.getCharacteristics().remove(updateCharacteristic);
+                characterItemService.removeCategoryItemsCharacteristic(removeCategory, updateCharacteristic);  //TODO смущает Category
+                categoryRepository.save(removeCategory);
             }
         }
 
-        E entity = transferToUpdateEntity(request, updateCharacteristic);
-        getRepository().save(entity);
+        characteristicRepository.save(updateCharacteristic);
     }
 
-    @Override
-    public void delete(E entity) {
-        getRepository().delete(entity);
-    }
+    public void delete(Integer characteristicId) {
+        Characteristic characteristic = characteristicRepository.findById(characteristicId).orElseThrow();
+        for (Category category: characteristic.getCategories()) {
+            category.getCharacteristics().remove(characteristic);
 
-    public List<Characteristic> transferIdsToCharacteristicList(List<Integer> ids, Category newCategory) {
-        List<Characteristic> characteristics = new ArrayList<>();
-        for (Integer id: ids) {
-            Optional<Characteristic> characteristic = characteristicRepository.findById(id);
-            if (characteristic.isEmpty()) {
-                return null; //TODO make throw
-            }
-            characteristics.add(characteristic.get());
-            characteristic.get().getCategories().add(newCategory); //Мб сделать pred-check
+            categoryRepository.save(category);
         }
-        return characteristics;
-    }
-
-    public List<Characteristic> getCharacteristicListFromDTO(List<Integer> characteristicsId) {
-        List<Characteristic> characteristics = new ArrayList<>();
-        for (Integer characteristicId : characteristicsId) {
-            Optional<Characteristic> characteristic = characteristicRepository.findById(characteristicId);
-            if (characteristic.isEmpty()){
-//                Characteristic newCharacteristic = new Characteristic();
-//                newCharacteristic.setName(characteristicId.getName());
-//                characteristicRepository.save(newCharacteristic);
-//                characteristics.add(newCharacteristic);
-                return null; //TODO throw
-            } else {
-                characteristics.add(characteristic.get());
-            }
-        }
-        return characteristics;
+        characteristicRepository.delete(characteristic);
     }
 
     public void replaceCharacteristicsInCategory (Category updateCategory, Category updateDTO) {

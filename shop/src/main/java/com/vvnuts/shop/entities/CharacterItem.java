@@ -2,7 +2,6 @@ package com.vvnuts.shop.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
-import com.vvnuts.shop.utils.Views;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -22,16 +21,13 @@ public class CharacterItem {
     private Integer id;
 
     @Column(name = "value")
-    @JsonView(Views.Low.class)
     private String value;
 
     @Column(name = "num_value")
-    @JsonView(Views.Low.class)
     private Integer numValue;
 
     @ManyToOne()
     @JoinColumn(name = "characteristic_id")
-    @JsonView(Views.Low.class)
     private Characteristic characteristic;
 
     @ManyToOne()

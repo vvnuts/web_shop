@@ -9,9 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class ReviewRequest {
-    private Integer mark;
-    private String text;
-    private ItemLowInfoRequest item;
-    private UserRequest user;
+public class ItemLowInfoRequest {
+    private Integer itemId;
+    private String itemName;
 }

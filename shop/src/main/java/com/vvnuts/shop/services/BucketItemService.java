@@ -5,9 +5,7 @@ import com.vvnuts.shop.dtos.responses.OrderItemResponse;
 import com.vvnuts.shop.entities.Bucket;
 import com.vvnuts.shop.entities.BucketItem;
 import com.vvnuts.shop.repositories.BucketItemRepository;
-import com.vvnuts.shop.services.interfaces.ItemService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;

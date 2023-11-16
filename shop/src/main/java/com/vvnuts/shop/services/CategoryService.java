@@ -1,4 +1,4 @@
-package com.vvnuts.shop.services.implementation;
+package com.vvnuts.shop.services;
 
 import com.vvnuts.shop.dtos.requests.CategoryRequest;
 import com.vvnuts.shop.dtos.responses.CategoryResponse;

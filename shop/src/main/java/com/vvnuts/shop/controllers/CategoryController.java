@@ -3,7 +3,7 @@ package com.vvnuts.shop.controllers;
 import com.vvnuts.shop.dtos.requests.CategoryRequest;
 import com.vvnuts.shop.dtos.responses.CategoryResponse;
 import com.vvnuts.shop.entities.Category;
-import com.vvnuts.shop.services.implementation.CategoryService;
+import com.vvnuts.shop.services.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

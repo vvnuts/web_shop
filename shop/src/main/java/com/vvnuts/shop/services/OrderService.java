@@ -5,7 +5,6 @@ import com.vvnuts.shop.entities.Order;
 import com.vvnuts.shop.entities.OrderItem;
 import com.vvnuts.shop.entities.enums.Status;
 import com.vvnuts.shop.repositories.OrderRepository;
-import com.vvnuts.shop.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

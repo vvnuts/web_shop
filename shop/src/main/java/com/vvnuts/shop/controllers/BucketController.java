@@ -3,7 +3,7 @@ package com.vvnuts.shop.controllers;
 import com.vvnuts.shop.dtos.requests.BucketRequest;
 import com.vvnuts.shop.dtos.responses.BucketResponse;
 import com.vvnuts.shop.entities.Bucket;
-import com.vvnuts.shop.services.implementation.BucketService;
+import com.vvnuts.shop.services.BucketService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

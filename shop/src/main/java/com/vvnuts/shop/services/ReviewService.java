@@ -4,8 +4,6 @@ import com.vvnuts.shop.dtos.requests.ReviewRequest;
 import com.vvnuts.shop.dtos.requests.ReviewUpdateRequest;
 import com.vvnuts.shop.entities.Review;
 import com.vvnuts.shop.repositories.ReviewRepository;
-import com.vvnuts.shop.services.interfaces.ItemService;
-import com.vvnuts.shop.services.interfaces.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
