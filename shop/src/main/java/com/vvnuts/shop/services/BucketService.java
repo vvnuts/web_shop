@@ -30,7 +30,7 @@ public class BucketService {
 
     public void create(BucketRequest request) {
         Bucket bucket = Bucket.builder()
-                .user(userService.findById(request.getUser().getUserId()))
+                .user(userService.findById(request.getUser()))
                 .bucketItems(bucketItemService.transferBucketItemDtoToList(request.getOrderItem()))
                 .build();
         bucketItemService.linkBucket(bucket);
@@ -54,8 +54,6 @@ public class BucketService {
     }
 
     public BucketResponse findById(Integer id) {
-        Bucket bucket = bucketRepository.findByUser(userService.findById(id));
-
         return convertEntityToResponse(bucketRepository.findByUser(userService.findById(id)));
     }
 

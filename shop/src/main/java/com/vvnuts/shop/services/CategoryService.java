@@ -4,6 +4,7 @@ import com.vvnuts.shop.dtos.requests.CategoryRequest;
 import com.vvnuts.shop.dtos.responses.CategoryResponse;
 import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.Characteristic;
+import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.utils.CategoryUtils;
 import com.vvnuts.shop.utils.CharacteristicUtils;
@@ -18,6 +19,7 @@ import java.util.*;
 public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CharacteristicService characteristicService;
+    private final ItemService itemService;
     private final CharacteristicUtils characteristicUtils;
     private final CategoryUtils categoryUtils;
     private final ModelMapper modelMapper;
@@ -35,6 +37,10 @@ public class CategoryService {
 
     public Category findById(Integer id) {
         return categoryRepository.findById(id).orElse(null);
+    }
+
+    public List<Item> findItemInCategory(Integer id) {
+
     }
 
     public List<CategoryResponse> findAll() {

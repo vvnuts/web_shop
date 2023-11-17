@@ -4,6 +4,7 @@ import com.vvnuts.shop.dtos.requests.CategoryRequest;
 import com.vvnuts.shop.dtos.responses.CategoryResponse;
 import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.services.CategoryService;
+import com.vvnuts.shop.services.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,7 @@ import java.util.List;
 @RequestMapping("/api/v1/catalog")
 public class CategoryController{
     private final CategoryService categoryService;
+    private final ItemService itemService;
 
     @PostMapping()
     public ResponseEntity<HttpStatus> create(@RequestBody CategoryRequest categoryRequest){

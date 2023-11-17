@@ -1,8 +1,16 @@
 package com.vvnuts.shop.controllers;
 
+import com.vvnuts.shop.dtos.requests.ItemRequest;
+import com.vvnuts.shop.dtos.responses.CharacteristicResponse;
+import com.vvnuts.shop.dtos.responses.ItemResponse;
+import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.services.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -10,35 +18,28 @@ import org.springframework.web.bind.annotation.*;
 public class ItemController{
     private final ItemService itemService;
 
-//    @GetMapping("/{id}")
-//    public ResponseEntity<Item> findOne(@PathVariable Integer id) {
-//        return super.findOne(id);
-//    }
+        @PostMapping()
+    public ResponseEntity<HttpStatus> create(@RequestBody ItemRequest request) {
+        itemService.create(request);
+        return ResponseEntity.ok(HttpStatus.CREATED);
+    }
 
-    //    @PostMapping()
-//    public ResponseEntity<HttpStatus> createItem(@RequestBody ItemDTO itemDTO) {
-//        Item newItem = itemService.transferItemDtoToItem(itemDTO);
-//        itemService.create(newItem);
-//        return ResponseEntity.ok(HttpStatus.CREATED);
-//    }
-//
-//    @GetMapping("/{id}")
-//    public ResponseEntity<Item> getItemInfo(@PathVariable Integer id) {
-//        Item item = itemService.findById(id);
-//        return ResponseEntity.ok(item);
-//    }
-//
-//    @PatchMapping("/{id}")
-//    public ResponseEntity<HttpStatus> updateItem(@PathVariable Integer id, @RequestBody ItemDTO itemDTO) {
-//        Item updateItem = itemService.findById(id);
-//        Item updateDTO = itemService.transferItemDtoToItem(itemDTO);
-//        itemService.update(updateItem, updateDTO);
-//        return ResponseEntity.ok(HttpStatus.OK);
-//    }
-//
-//    @DeleteMapping("/{id}")
-//    public ResponseEntity<HttpStatus> deleteItem(@PathVariable Item id) {
-//        itemService.delete(id);
-//        return ResponseEntity.ok(HttpStatus.OK);
-//    }
+    @GetMapping("/{id}")
+    public ResponseEntity<Item> findOne(@PathVariable Integer id) {
+        Item item = itemService.findById(id);
+        return ResponseEntity.ok(item);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<HttpStatus> update(@PathVariable Integer id,
+                                                 @RequestBody ItemRequest request) {
+        itemService.update(request, id);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> delete(@PathVariable Integer id) {
+        itemService.delete(id);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
 }

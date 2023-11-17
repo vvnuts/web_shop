@@ -13,5 +13,5 @@ import java.util.List;
 @NoArgsConstructor
 public class BucketRequest {
     private List<OrderItemRequest> orderItem;
-    private UserRequest user;
+    private Integer user;
 }

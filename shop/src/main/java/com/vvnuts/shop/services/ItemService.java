@@ -4,6 +4,7 @@ import com.vvnuts.shop.dtos.requests.CharacterItemRequest;
 import com.vvnuts.shop.dtos.requests.ItemRequest;
 import com.vvnuts.shop.dtos.requests.ItemLowInfoRequest;
 import com.vvnuts.shop.dtos.responses.ItemResponse;
+import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.CharacterItem;
 import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.entities.Review;
@@ -17,7 +18,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -38,12 +41,17 @@ public class ItemService {
     }
 
     public Item findById(Integer id) { //TODO переписать с респонсом
-        return itemRepository.findById(id).orElse(null);
+        return itemRepository.findById(id).orElseThrow();
     }
 
-
-    public List<Item> findAll() {
-        return new ArrayList<>(itemRepository.findAll());
+    public Set<Item> findItemFromCategory(Category startCategory) {
+        Set<Item> allItem = new HashSet<>(startCategory.getItems());
+        List<Category> childrenCategory = startCategory.getChildren();
+        for (Category child : childrenCategory) {
+            allItem.addAll(findItemFromCategory(child));
+            allItem.addAll(child.getItems());
+        }
+        return allItem;
     }
 
     public void update(ItemRequest request, Integer id) {
@@ -53,7 +61,7 @@ public class ItemService {
             updateItem.setItemName(updateDTO.getItemName());
         }
         int minSize = updateDTO.getCharacterItems().size();
-        for (int i = 0; i < minSize; i++) { //TODO переписать
+        for (int i = 0; i < minSize; i++) {
             updateItem.getCharacterItems().get(i).setValue(updateDTO.getCharacterItems().get(i).getValue());
             updateItem.getCharacterItems().get(i).setNumValue(updateDTO.getCharacterItems().get(i).getNumValue());
         }
