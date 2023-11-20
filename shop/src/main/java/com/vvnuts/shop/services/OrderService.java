@@ -49,7 +49,7 @@ public class OrderService {
         return Order.builder()
                 .email(dto.getEmail())
                 .orderItems(orderItemService.transferOrderItemDtoToList(dto.getOrderItemRequests()))
-                .user(userService.findById(dto.getUser().getUserId()))
+                .user(userService.findById(dto.getUser()))
                 .status(Status.WAITING)
                 .build();
     }

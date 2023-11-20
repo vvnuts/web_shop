@@ -39,8 +39,8 @@ public class CategoryService {
         return categoryRepository.findById(id).orElse(null);
     }
 
-    public List<Item> findItemInCategory(Integer id) {
-
+    public Set<Item> findItemInCategory(Integer id) {
+        return itemService.findItemFromCategory(findById(id));
     }
 
     public List<CategoryResponse> findAll() {
@@ -67,7 +67,8 @@ public class CategoryService {
         categoryRepository.save(updateCategory);
     }
 
-    public void delete(Category category) {
+    public void delete(Integer categoryId) {
+        Category category = findById(categoryId);
         for (Category parent: category.getParents()) {
             parent.getChildren().remove(category);
             categoryRepository.save(parent);

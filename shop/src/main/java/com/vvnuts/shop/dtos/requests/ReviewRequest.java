@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class ReviewRequest {
     private Integer mark;
     private String text;
-    private ItemLowInfoRequest item;
+    private Integer item;
     private UserRequest user;
 }

@@ -3,6 +3,7 @@ package com.vvnuts.shop.controllers;
 import com.vvnuts.shop.dtos.requests.CategoryRequest;
 import com.vvnuts.shop.dtos.responses.CategoryResponse;
 import com.vvnuts.shop.entities.Category;
+import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.services.CategoryService;
 import com.vvnuts.shop.services.ItemService;
 import lombok.RequiredArgsConstructor;
@@ -11,13 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/catalog")
 public class CategoryController{
     private final CategoryService categoryService;
-    private final ItemService itemService;
 
     @PostMapping()
     public ResponseEntity<HttpStatus> create(@RequestBody CategoryRequest categoryRequest){
@@ -32,12 +33,8 @@ public class CategoryController{
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> findOne(@PathVariable Integer id) {
-        Category entity = categoryService.findById(id);
-        if(entity == null) {
-            return ResponseEntity.notFound().build();
-        }
-        return ResponseEntity.ok(entity);
+    public ResponseEntity<Set<Item>> findItemFromCategory(@PathVariable Integer id) {
+        return ResponseEntity.ok(categoryService.findItemInCategory(id));
     }
 
     @PutMapping("/{id}")
@@ -49,8 +46,7 @@ public class CategoryController{
 
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> delete(@PathVariable Integer id) {
-        Category entity = categoryService.findById(id);
-        categoryService.delete(entity);
+        categoryService.delete(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 }

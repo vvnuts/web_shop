@@ -13,5 +13,4 @@ public class CharacterItemRequest {
     private String value;
     private Integer numValue;
     private Integer characteristic;
-    private ItemRequest item;
 }

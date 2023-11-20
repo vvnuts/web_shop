@@ -13,8 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ItemRequest {
-    private Integer itemId;
-    private Category category;
+    private Integer categoryId;
     private String itemName;
     private String description;
     private Integer quantity;

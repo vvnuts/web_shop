@@ -14,5 +14,5 @@ import java.util.List;
 public class CreateOrderRequest {
     private String email;
     private List<OrderItemRequest> orderItemRequests;
-    private UserRequest user;
+    private Integer user;
 }

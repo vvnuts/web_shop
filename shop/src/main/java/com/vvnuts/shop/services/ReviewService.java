@@ -26,7 +26,7 @@ public class ReviewService{
     Review transferToCreateEntity(ReviewRequest dto) {
         return Review.builder()
                 .mark(dto.getMark())
-                .item(itemService.findById(dto.getItem().getItemId()))
+                .item(itemService.findById(dto.getItem()))
                 .text(dto.getText())
                 .user(userService.findById(dto.getUser().getUserId()))
                 .build();

@@ -15,4 +15,5 @@ public class ItemResponse {
     private Integer quantity;
     private Integer price;
     private Float sale;
+    private Float mark;
 }

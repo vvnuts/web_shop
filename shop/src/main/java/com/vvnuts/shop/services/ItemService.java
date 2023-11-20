@@ -1,8 +1,6 @@
 package com.vvnuts.shop.services;
 
-import com.vvnuts.shop.dtos.requests.CharacterItemRequest;
 import com.vvnuts.shop.dtos.requests.ItemRequest;
-import com.vvnuts.shop.dtos.requests.ItemLowInfoRequest;
 import com.vvnuts.shop.dtos.responses.ItemResponse;
 import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.CharacterItem;
@@ -10,14 +8,12 @@ import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.entities.Review;
 import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.repositories.CharacterItemRepository;
-import com.vvnuts.shop.repositories.CharacteristicRepository;
 import com.vvnuts.shop.repositories.ItemRepository;
 import com.vvnuts.shop.utils.CharacterItemUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +31,6 @@ public class ItemService {
         Item newItem = transferItemDtoToItem(request);
         for (CharacterItem characterItem: newItem.getCharacterItems()) {
             characterItem.setItem(newItem);
-            characterItemRepository.save(characterItem);
         }
         itemRepository.save(newItem);
     }
@@ -44,7 +39,7 @@ public class ItemService {
         return itemRepository.findById(id).orElseThrow();
     }
 
-    public Set<Item> findItemFromCategory(Category startCategory) {
+    public Set<Item> findItemFromCategory(Category startCategory) { //TODO Поменять на ItemResponse
         Set<Item> allItem = new HashSet<>(startCategory.getItems());
         List<Category> childrenCategory = startCategory.getChildren();
         for (Category child : childrenCategory) {
@@ -54,16 +49,21 @@ public class ItemService {
         return allItem;
     }
 
-    public void update(ItemRequest request, Integer id) {
+    public void update(ItemRequest request, Integer id) { //TODO сделать чтобы characterItem соответствовало категории
         Item updateItem = findById(id);
         Item updateDTO = transferItemDtoToItem(request);
         if (!updateItem.getItemName().equals(updateDTO.getItemName())) {
             updateItem.setItemName(updateDTO.getItemName());
         }
-        int minSize = updateDTO.getCharacterItems().size();
-        for (int i = 0; i < minSize; i++) {
-            updateItem.getCharacterItems().get(i).setValue(updateDTO.getCharacterItems().get(i).getValue());
-            updateItem.getCharacterItems().get(i).setNumValue(updateDTO.getCharacterItems().get(i).getNumValue());
+        List<CharacterItem> oldCharacterItem = updateItem.getCharacterItems();
+        for (CharacterItem characterItem: oldCharacterItem) {
+            characterItem.setItem(null);
+            characterItemRepository.save(characterItem);
+        }
+        updateItem.setCharacterItems(updateDTO.getCharacterItems());
+        for (CharacterItem characterItem: updateItem.getCharacterItems()) {
+            characterItem.setItem(updateItem);
+//            characterItemRepository.save(characterItem);
         }
         if (!updateItem.getCategory().equals(updateDTO.getCategory())) {
             updateItem.getCategory().getItems().remove(updateItem);
@@ -75,13 +75,13 @@ public class ItemService {
         if (!updateItem.getDescription().equals(updateDTO.getDescription())) {
             updateItem.setDescription(updateDTO.getDescription());
         }
-        if (updateItem.getPrice().equals(updateDTO.getPrice())) {
+        if (!updateItem.getPrice().equals(updateDTO.getPrice())) {
             updateItem.setPrice(updateDTO.getPrice());
         }
-        if (updateItem.getQuantity().equals(updateDTO.getQuantity())) {
+        if (!updateItem.getQuantity().equals(updateDTO.getQuantity())) {
             updateItem.setQuantity(updateDTO.getQuantity());
         }
-        if (updateItem.getSale().equals(updateDTO.getSale())) {
+        if (!updateItem.getSale().equals(updateDTO.getSale())) {
             updateItem.setSale(updateDTO.getSale());
         }
         itemRepository.save(updateItem);
@@ -94,7 +94,7 @@ public class ItemService {
 
     public Item transferItemDtoToItem(ItemRequest itemRequest) {
         Item item = Item.builder()
-                .category(categoryRepository.findByCategoryName(itemRequest.getCategory().getCategoryName()).orElseThrow())
+                .category(categoryRepository.findById(itemRequest.getCategoryId()).orElseThrow())
                 .itemName(itemRequest.getItemName())
                 .description(itemRequest.getDescription())
                 .price(itemRequest.getPrice())

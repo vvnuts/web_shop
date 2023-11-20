@@ -18,7 +18,7 @@ import java.util.List;
 public class ItemController{
     private final ItemService itemService;
 
-        @PostMapping()
+    @PostMapping()
     public ResponseEntity<HttpStatus> create(@RequestBody ItemRequest request) {
         itemService.create(request);
         return ResponseEntity.ok(HttpStatus.CREATED);

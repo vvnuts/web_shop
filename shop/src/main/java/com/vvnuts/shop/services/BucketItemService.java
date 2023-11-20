@@ -21,7 +21,7 @@ public class BucketItemService {
         List<BucketItem> bucketItems = new ArrayList<>();
         for (OrderItemRequest orderItemRequest : orderItemsDTO) {
             BucketItem bucketItem = BucketItem.builder()
-                    .item(itemService.findById(orderItemRequest.getItem().getItemId()))
+                    .item(itemService.findById(orderItemRequest.getItem()))
                     .quantity(orderItemRequest.getQuantity())
                     .build();
             if (bucketItem.getItem().getQuantity() < bucketItem.getQuantity()) {

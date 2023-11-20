@@ -19,7 +19,7 @@ public class OrderItemService {
         List<OrderItem> orderItems = new ArrayList<>();
         for (OrderItemRequest orderItemRequest : orderItemsDTO) {
             OrderItem orderItem = OrderItem.builder()
-                    .item(itemService.findById(orderItemRequest.getItem().getItemId()))
+                    .item(itemService.findById(orderItemRequest.getItem()))
                     .quantity(orderItemRequest.getQuantity())
                     .build();
             if (orderItem.getItem().getQuantity() < orderItem.getQuantity()) {
