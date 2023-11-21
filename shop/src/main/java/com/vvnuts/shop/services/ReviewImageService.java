@@ -1,5 +1,6 @@
 package com.vvnuts.shop.services;
 
+import com.vvnuts.shop.dtos.responses.ReviewImageResponse;
 import com.vvnuts.shop.entities.Review;
 import com.vvnuts.shop.entities.ReviewImage;
 import com.vvnuts.shop.entities.User;
@@ -37,11 +38,15 @@ public class ReviewImageService {
         reviewRepository.save(review);
     }
 
-//    public List<ReviewImage> downloadImages(Integer reviewId) {
-//        Review review = reviewRepository.findById(reviewId).orElseThrow();
-//        for (ReviewImage image: review.getImages()) {
-//            List<Byte> bytes = new ArrayList<>(ImageUtils.decompressImage(image.getImage()))
-//        }
-//        return ImageUtils.decompressImage(user.getImage());
-//    }
+    public List<ReviewImageResponse> downloadImages(Integer reviewId) {
+        Review review = reviewRepository.findById(reviewId).orElseThrow();
+        List<ReviewImageResponse> response = new ArrayList<>();
+        for (ReviewImage image: review.getImages()) {
+            ReviewImageResponse temp = ReviewImageResponse.builder()
+                    .image(ImageUtils.decompressImage(image.getImage()))
+                    .build();
+            response.add(temp);
+        }
+        return response;
+    }
 }

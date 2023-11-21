@@ -1,5 +1,6 @@
 package com.vvnuts.shop.controllers;
 
+import com.vvnuts.shop.dtos.responses.ReviewImageResponse;
 import com.vvnuts.shop.entities.ReviewImage;
 import com.vvnuts.shop.entities.User;
 import com.vvnuts.shop.services.CategoryService;
@@ -57,8 +58,8 @@ public class ImageController {
     }
 
     @GetMapping("review/{id}")
-    public ResponseEntity<List<ReviewImage>> downloadReviewImage(@PathVariable Integer reviewId) {
-        List<ReviewImage> images =  reviewImageService.downloadImages(reviewId);
+    public ResponseEntity<List<ReviewImageResponse>> downloadReviewImage(@PathVariable Integer reviewId) {
+        List<ReviewImageResponse> images =  reviewImageService.downloadImages(reviewId);
         return ResponseEntity.ok(images);
     }
 }
