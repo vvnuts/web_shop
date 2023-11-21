@@ -7,10 +7,8 @@ import com.vvnuts.shop.auth.dtos.RefreshResponse;
 import com.vvnuts.shop.auth.dtos.RegisterRequest;
 import com.vvnuts.shop.configs.JwtService;
 import com.vvnuts.shop.entities.Bucket;
-import com.vvnuts.shop.entities.BucketItem;
 import com.vvnuts.shop.entities.enums.Role;
 import com.vvnuts.shop.entities.User;
-import com.vvnuts.shop.repositories.BucketRepository;
 import com.vvnuts.shop.repositories.UserRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -23,8 +21,6 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +29,6 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
-    private final BucketRepository bucketRepository;
 
     public AuthenticationResponse register(RegisterRequest request) {
         Bucket bucket = Bucket.builder()

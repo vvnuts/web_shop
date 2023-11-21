@@ -8,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.UUID;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/order")
@@ -17,9 +19,6 @@ public class OrderController {
     @GetMapping("/{id}")
     public ResponseEntity<Order> findOne (@PathVariable Integer orderId){
         Order entity = orderService.findById(orderId);
-        if(entity == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(entity);
     }
 
@@ -38,6 +37,12 @@ public class OrderController {
     @PatchMapping("/{id}/canceling")
     public ResponseEntity<HttpStatus> cancelingOrder(@PathVariable Integer orderId) {
         orderService.cancelingOrder(orderId);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> delete(@PathVariable Integer orderId) {
+        orderService.delete(orderId);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 }

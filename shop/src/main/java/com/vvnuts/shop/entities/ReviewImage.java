@@ -1,6 +1,6 @@
 package com.vvnuts.shop.entities;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,21 +12,19 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "order_items")
-public class OrderItem {
+@Table(name = "review_images")
+public class ReviewImage {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne()
-    @JoinColumn(name = "item_id")
-    private Item item;
+    @Lob
+    @Column(name = "image", columnDefinition = "longblob")
+    private byte[] image;
 
-    @Column(name = "quantity")
-    private Integer quantity;
-
-    @ManyToOne()
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @ManyToOne
+    @JoinColumn(name = "review_id")
+    @JsonIgnore
+    private Review review;
 }

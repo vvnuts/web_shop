@@ -5,13 +5,17 @@ import com.vvnuts.shop.dtos.responses.CategoryResponse;
 import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.Characteristic;
 import com.vvnuts.shop.entities.Item;
+import com.vvnuts.shop.entities.User;
 import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.utils.CategoryUtils;
 import com.vvnuts.shop.utils.CharacteristicUtils;
+import com.vvnuts.shop.utils.ImageUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 
 @Service
@@ -36,7 +40,7 @@ public class CategoryService {
     }
 
     public Category findById(Integer id) {
-        return categoryRepository.findById(id).orElse(null);
+        return categoryRepository.findById(id).orElseThrow();
     }
 
     public Set<Item> findItemInCategory(Integer id) {
@@ -82,6 +86,20 @@ public class CategoryService {
             }
         }
         categoryRepository.delete(category);
+    }
+
+    public void uploadImage(MultipartFile file, Integer categoryId) throws IOException {
+        if (file.isEmpty()){
+            return; //TODO throw
+        }
+        Category category = findById(categoryId);
+        category.setImage(ImageUtils.compressImage(file.getBytes()));
+        categoryRepository.save(category);
+    }
+
+    public byte[] downloadImage(Integer categoryId) {
+        Category category = findById(categoryId);
+        return ImageUtils.decompressImage(category.getImage());
     }
 
     public Category transferCategoryDtoToCategory(CategoryRequest categoryRequest) {

@@ -41,6 +41,10 @@ public class Item {
     @Column(name = "mark")
     private Float mark;
 
+    @Lob
+    @Column(name = "image", columnDefinition = "longblob")
+    private byte[] image;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "item", cascade = CascadeType.ALL)
     private List<CharacterItem> characterItems;
 

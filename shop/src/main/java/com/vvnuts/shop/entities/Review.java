@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -25,12 +27,15 @@ public class Review {
     @Column(name = "review_text", length = 1000)
     private String text;
 
-    @ManyToOne()
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bucket", cascade = CascadeType.ALL)
+    private List<ReviewImage> images;
+
+    @ManyToOne
     @JoinColumn(name = "item_id")
     @JsonIgnore
     private Item item;
 
-    @ManyToOne()
+    @ManyToOne
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private User user;

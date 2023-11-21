@@ -28,6 +28,10 @@ public class Category implements Comparable<Category>{
     @NotNull
     private String categoryName;
 
+    @Lob
+    @Column(name = "image")
+    private byte[] image;
+
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(
             name = "parent_child",

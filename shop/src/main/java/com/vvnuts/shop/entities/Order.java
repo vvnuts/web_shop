@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -26,7 +27,7 @@ public class Order {
     private UUID id;
 
     @Column(name = "date")
-    private Date dateCreation;
+    private LocalDateTime dateCreation;
 
     @Column(name = "email")
     private String email;
@@ -35,10 +36,10 @@ public class Order {
     @Column(name = "status")
     private Status status;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderItem> orderItems;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     @JoinColumn(name = "user_id")
     private User user;
 
@@ -47,4 +48,9 @@ public class Order {
 
     @Column(name = "total_quantity")
     private Integer totalQuantity;
+
+    @PrePersist
+    private void init() {
+        dateCreation = LocalDateTime.now();
+    }
 }

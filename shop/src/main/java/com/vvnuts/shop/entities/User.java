@@ -35,6 +35,10 @@ public class User implements UserDetails {
     @Column(name = "email")
     private String email;
 
+    @Lob
+    @Column(name = "image")
+    private byte[] image;
+
     @Column(name = "user_password")
     @JsonIgnore
     private String password;
@@ -44,13 +48,17 @@ public class User implements UserDetails {
     @JsonIgnore
     private Role role;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<Review> reviews;
 
     @OneToOne(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
     @JsonIgnore
     private Bucket bucket;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Order> order;
 
     @JsonIgnore
     @Override

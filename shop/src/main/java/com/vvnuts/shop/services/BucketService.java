@@ -4,6 +4,7 @@ import com.vvnuts.shop.dtos.requests.BucketRequest;
 import com.vvnuts.shop.dtos.responses.BucketResponse;
 import com.vvnuts.shop.entities.Bucket;
 import com.vvnuts.shop.entities.BucketItem;
+import com.vvnuts.shop.entities.User;
 import com.vvnuts.shop.repositories.BucketRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -59,5 +60,15 @@ public class BucketService {
                 .totalPrice(bucket.getTotalPrice())
                 .totalQuantity(bucket.getTotalQuantity())
                 .build();
+    }
+
+    public void removeItemFromBucket(User user) {
+        Bucket bucket = bucketRepository.findByUser(user).orElseThrow();
+        if (bucket.getBucketItems() != null) {
+            for (BucketItem bucketItem: bucket.getBucketItems()) {
+                bucketItemService.removeBucket(bucketItem);
+            }
+        }
+        bucketRepository.save(bucket);
     }
 }
