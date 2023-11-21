@@ -2,15 +2,13 @@ package com.vvnuts.shop.entities;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,7 +20,7 @@ public class Bucket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @OneToOne()
     @JoinColumn(name = "user_id")
     private User user;
 

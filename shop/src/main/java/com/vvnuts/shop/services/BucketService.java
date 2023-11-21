@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,8 +21,10 @@ public class BucketService {
 
     public void update(BucketRequest request, Integer id) {
         Bucket updateBucket = findBucketByUserId(id);
-        for (BucketItem bucketItem: updateBucket.getBucketItems()) {
-            bucketItemService.removeBucket(bucketItem);
+        if (updateBucket.getBucketItems() != null) {
+            for (BucketItem bucketItem: updateBucket.getBucketItems()) {
+                bucketItemService.removeBucket(bucketItem);
+            }
         }
         updateBucket.setBucketItems(bucketItemService.transferBucketItemDtoToList(request.getOrderItem()));
         bucketItemService.linkBucket(updateBucket);
@@ -28,25 +32,16 @@ public class BucketService {
         bucketRepository.save(updateBucket);
     }
 
-    public void create(BucketRequest request) {
-        Bucket bucket = Bucket.builder()
-                .user(userService.findById(request.getUser()))
-                .bucketItems(bucketItemService.transferBucketItemDtoToList(request.getOrderItem()))
-                .build();
-        bucketItemService.linkBucket(bucket);
-        calculationQuantityAndPrice(bucket);
-        bucketRepository.save(bucket);
-    }
-
     public Bucket findBucketByUserId(Integer userId) {
-        return bucketRepository.findByUser(userService.findById(userId));
+        return bucketRepository.findByUser(userService.findById(userId)).orElseThrow();
     }
 
     private void calculationQuantityAndPrice(Bucket bucket) {
         BigDecimal totalSum = BigDecimal.ZERO;
         Integer totalQuantity = 0;
         for (BucketItem bucketItem: bucket.getBucketItems()) {
-            totalSum = totalSum.add(BigDecimal.valueOf(bucketItem.getItem().getPrice() * (1 + bucketItem.getItem().getSale())));
+            totalSum = totalSum.add(BigDecimal.valueOf(bucketItem.getQuantity() * bucketItem.getItem().getPrice()
+                    * (1 + bucketItem.getItem().getSale())));
             totalQuantity += bucketItem.getQuantity();
         }
         bucket.setTotalPrice(totalSum);
@@ -54,7 +49,7 @@ public class BucketService {
     }
 
     public BucketResponse findById(Integer id) {
-        return convertEntityToResponse(bucketRepository.findByUser(userService.findById(id)));
+        return convertEntityToResponse(bucketRepository.findByUser(userService.findById(id)).orElseThrow());
     }
 
     public BucketResponse convertEntityToResponse(Bucket bucket) {

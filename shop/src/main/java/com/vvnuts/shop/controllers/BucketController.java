@@ -15,11 +15,6 @@ import org.springframework.web.bind.annotation.*;
 public class BucketController {
     private final BucketService bucketService;
  //TODO проверить как считается totalPrice
-    @PostMapping()
-    public ResponseEntity<HttpStatus> create(@RequestBody BucketRequest bucketRequest){
-        bucketService.create(bucketRequest);
-        return ResponseEntity.ok(HttpStatus.CREATED);
-    }
 
     @GetMapping("/{id}")
     public ResponseEntity<BucketResponse> findOne(@PathVariable Integer id) {
