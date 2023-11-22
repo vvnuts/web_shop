@@ -42,7 +42,7 @@ public class Item {
     private Float mark;
 
     @Lob
-    @Column(name = "image", columnDefinition = "longblob")
+    @Column(name = "image")
     private byte[] image;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "item", cascade = CascadeType.ALL)

@@ -4,13 +4,21 @@ import com.vvnuts.shop.dtos.requests.ReviewRequest;
 import com.vvnuts.shop.dtos.requests.ReviewUpdateRequest;
 import com.vvnuts.shop.entities.Review;
 import com.vvnuts.shop.services.ReviewService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,8 +27,8 @@ public class ReviewController{
     private final ReviewService reviewService;
 
     @PostMapping()
-    public ResponseEntity<HttpStatus> create(@RequestBody ReviewRequest dtoEntity){
-        reviewService.create(dtoEntity);
+    public ResponseEntity<HttpStatus> create(@RequestBody @Valid ReviewRequest request){
+        reviewService.create(request);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
@@ -31,25 +39,21 @@ public class ReviewController{
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Review> findOne(@PathVariable Integer id) {
+    public ResponseEntity<Review> findOne(@PathVariable @Min(0) Integer id) {
         Review entity = reviewService.findById(id);
-        if(entity == null) {
-            return ResponseEntity.notFound().build();
-        }
         return ResponseEntity.ok(entity);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<HttpStatus> update(@PathVariable Integer id,
-                                             @RequestBody ReviewUpdateRequest dtoEntity) {
-        reviewService.update(dtoEntity, id);
+    public ResponseEntity<HttpStatus> update(@PathVariable @Min(0) Integer id,
+                                             @RequestBody @Valid ReviewUpdateRequest request) {
+        reviewService.update(request, id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable Integer id) {
-        Review entity = reviewService.findById(id);
-        reviewService.delete(entity);
+    public ResponseEntity<HttpStatus> delete(@PathVariable @Min(0) Integer id) {
+        reviewService.delete(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 }

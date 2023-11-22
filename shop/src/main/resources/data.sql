@@ -87,10 +87,10 @@ VALUES
     ('Emily', 'Williams', 'emilywilliams@example.com', '$2a$10$TU3i7bfUQ6tEXSpcgwQojuuvwGMZVN2lFNhsM0Oj9QLZbw9XinOz2', 'ROLE_USER');
 
 
-INSERT INTO reviews (mark, review_text, item_id, user_id)
-VALUES (5, 'Great product!', 1, 4),
-       (4, 'Good value for money.', 1, 2),
-       (3, 'Average quality.', 1, 3),
-       (2, 'Not as expected.', 4, 4),
-       (1, 'Poor quality.', 4, 2);
+--INSERT INTO reviews (mark, review_text, item_id, user_id)
+--VALUES (5, 'Great product!', 1, 4),
+--       (4, 'Good value for money.', 1, 2),
+--       (3, 'Average quality.', 1, 3),
+--       (2, 'Not as expected.', 4, 4),
+--       (1, 'Poor quality.', 4, 2);
 

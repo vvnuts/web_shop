@@ -1,6 +1,6 @@
 package com.vvnuts.shop.services;
 
-import com.vvnuts.shop.dtos.requests.CreateOrderRequest;
+import com.vvnuts.shop.dtos.requests.OrderRequest;
 import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.entities.Order;
 import com.vvnuts.shop.entities.OrderItem;
@@ -11,9 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.time.Clock;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,7 +21,7 @@ public class OrderService {
     private final UserService userService;
     private final BucketService bucketService;
 
-    public void create(CreateOrderRequest dtoEntity) {
+    public void create(OrderRequest dtoEntity) {
         Order newOrder = transferToCreateEntity(dtoEntity);
         calculationQuantityAndPrice(newOrder);
         orderRepository.save(newOrder);
@@ -65,7 +62,7 @@ public class OrderService {
     }
 
 
-    Order transferToCreateEntity(CreateOrderRequest dto) {
+    Order transferToCreateEntity(OrderRequest dto) {
         return Order.builder()
                 .email(dto.getEmail())
                 .orderItems(orderItemService.transferOrderItemDtoToList(dto.getOrderItemRequests()))

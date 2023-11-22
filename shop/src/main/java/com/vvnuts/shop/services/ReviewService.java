@@ -28,7 +28,7 @@ public class ReviewService{
                 .mark(dto.getMark())
                 .item(itemService.findById(dto.getItem()))
                 .text(dto.getText())
-                .user(userService.findById(dto.getUser().getUserId()))
+                .user(userService.findById(dto.getUser()))
                 .build();
     }
 
@@ -39,7 +39,7 @@ public class ReviewService{
     }
 
     public Review findById(Integer id) {
-        return reviewRepository.findById(id).orElse(null);
+        return reviewRepository.findById(id).orElseThrow();
     }
 
     public List<Review> findAll() {
@@ -52,7 +52,8 @@ public class ReviewService{
         itemService.calculateRatingItem(review.getItem());
     }
 
-    public void delete(Review entity) {
-        reviewRepository.delete(entity);
+    public void delete(Integer id) {
+        Review review = findById(id);
+        reviewRepository.delete(review);
     }
 }

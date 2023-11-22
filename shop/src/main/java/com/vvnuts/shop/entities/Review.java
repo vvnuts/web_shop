@@ -27,7 +27,7 @@ public class Review {
     @Column(name = "review_text", length = 1000)
     private String text;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "bucket", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL)
     private List<ReviewImage> images;
 
     @ManyToOne

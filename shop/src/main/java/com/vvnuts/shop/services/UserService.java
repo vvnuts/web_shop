@@ -1,14 +1,11 @@
 package com.vvnuts.shop.services;
 
-import com.vvnuts.shop.dtos.requests.CreateUserRequest;
 import com.vvnuts.shop.dtos.responses.UserResponse;
-import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.User;
 import com.vvnuts.shop.repositories.UserRepository;
 import com.vvnuts.shop.utils.ImageUtils;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 

@@ -6,12 +6,18 @@ import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.services.CategoryService;
 import com.vvnuts.shop.services.ItemService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @RestController
@@ -21,7 +27,7 @@ public class CategoryController{
     private final CategoryService categoryService;
 
     @PostMapping()
-    public ResponseEntity<HttpStatus> create(@RequestBody CategoryRequest categoryRequest){
+    public ResponseEntity<HttpStatus> create(@RequestBody @Valid CategoryRequest categoryRequest){
         categoryService.create(categoryRequest);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
@@ -33,19 +39,19 @@ public class CategoryController{
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Set<Item>> findItemFromCategory(@PathVariable Integer id) {
+    public ResponseEntity<Set<Item>> findItemFromCategory(@PathVariable @Valid Integer id) {
         return ResponseEntity.ok(categoryService.findItemInCategory(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<HttpStatus> update(@PathVariable Integer id,
-                                             @RequestBody CategoryRequest request) {
+    public ResponseEntity<HttpStatus> update(@PathVariable @Min(0) Integer id,
+                                             @RequestBody @Valid CategoryRequest request) {
         categoryService.update(request, id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable Integer id) {
+    public ResponseEntity<HttpStatus> delete(@PathVariable @Min(0) Integer id) {
         categoryService.delete(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
