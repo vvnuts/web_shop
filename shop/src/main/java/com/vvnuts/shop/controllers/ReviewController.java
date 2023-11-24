@@ -2,6 +2,7 @@ package com.vvnuts.shop.controllers;
 
 import com.vvnuts.shop.dtos.requests.ReviewRequest;
 import com.vvnuts.shop.dtos.requests.ReviewUpdateRequest;
+import com.vvnuts.shop.dtos.responses.ReviewResponse;
 import com.vvnuts.shop.entities.Review;
 import com.vvnuts.shop.services.ReviewService;
 import jakarta.validation.Valid;
@@ -33,15 +34,15 @@ public class ReviewController{
     }
 
     @GetMapping()
-    public ResponseEntity<List<Review>> findAll(){
-        List<Review> entities = reviewService.findAll();
-        return ResponseEntity.ok(entities);
+    public ResponseEntity<List<ReviewResponse>> findAll(){
+        List<ReviewResponse> responses = reviewService.findAll();
+        return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Review> findOne(@PathVariable @Min(0) Integer id) {
-        Review entity = reviewService.findById(id);
-        return ResponseEntity.ok(entity);
+    public ResponseEntity<ReviewResponse> findOne(@PathVariable @Min(0) Integer id) {
+        ReviewResponse response = reviewService.findById(id);
+        return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}")

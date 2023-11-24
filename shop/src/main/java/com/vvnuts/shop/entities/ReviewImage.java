@@ -20,7 +20,7 @@ public class ReviewImage {
     private Integer id;
 
     @Lob
-    @Column(name = "image", columnDefinition = "longblob")
+    @Column(name = "image")
     private byte[] image;
 
     @ManyToOne

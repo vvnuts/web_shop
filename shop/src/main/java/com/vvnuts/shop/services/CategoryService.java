@@ -10,6 +10,7 @@ import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.utils.CategoryUtils;
 import com.vvnuts.shop.utils.CharacteristicUtils;
 import com.vvnuts.shop.utils.ImageUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -97,6 +98,7 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
+    @Transactional
     public byte[] downloadImage(Integer categoryId) {
         Category category = findById(categoryId);
         return ImageUtils.decompressImage(category.getImage());

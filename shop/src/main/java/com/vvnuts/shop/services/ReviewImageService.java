@@ -7,6 +7,7 @@ import com.vvnuts.shop.entities.User;
 import com.vvnuts.shop.repositories.ReviewImageRepository;
 import com.vvnuts.shop.repositories.ReviewRepository;
 import com.vvnuts.shop.utils.ImageUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,6 +39,7 @@ public class ReviewImageService {
         reviewRepository.save(review);
     }
 
+    @Transactional
     public List<ReviewImageResponse> downloadImages(Integer reviewId) {
         Review review = reviewRepository.findById(reviewId).orElseThrow();
         List<ReviewImageResponse> response = new ArrayList<>();

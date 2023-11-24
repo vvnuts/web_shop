@@ -10,10 +10,14 @@ import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.repositories.CharacterItemRepository;
 import com.vvnuts.shop.repositories.ItemRepository;
 import com.vvnuts.shop.utils.CharacterItemUtils;
+import com.vvnuts.shop.utils.ImageUtils;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -85,6 +89,21 @@ public class ItemService {
             updateItem.setSale(updateDTO.getSale());
         }
         itemRepository.save(updateItem);
+    }
+
+    public void uploadImage(MultipartFile file, Integer itemId) throws IOException {
+        if (file.isEmpty()){
+            return; //TODO throw
+        }
+        Item item = findById(itemId);
+        item.setImage(ImageUtils.compressImage(file.getBytes()));
+        itemRepository.save(item);
+    }
+
+    @Transactional
+    public byte[] downloadImage(Integer itemId) {
+        Item item = findById(itemId);
+        return ImageUtils.decompressImage(item.getImage());
     }
 
     public void delete(Integer itemId) {
