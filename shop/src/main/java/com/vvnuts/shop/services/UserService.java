@@ -1,6 +1,7 @@
 package com.vvnuts.shop.services;
 
 import com.vvnuts.shop.dtos.responses.UserResponse;
+import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.User;
 import com.vvnuts.shop.repositories.UserRepository;
 import com.vvnuts.shop.utils.ImageUtils;
@@ -33,6 +34,11 @@ public class UserService {
     public byte[] downloadImage(Integer userId) {
         User user = findById(userId);
         return ImageUtils.decompressImage(user.getImage());
+    }
+
+    public void deleteImage(Integer imageId) {
+        User user = findById(imageId);
+        userRepository.delete(user);
     }
 
     public UserResponse convertEntityToResponse(User user) {

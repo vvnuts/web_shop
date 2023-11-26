@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +23,7 @@ import java.util.Set;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 @RequestMapping("/api/v1/catalog")
 public class CategoryController{
     private final CategoryService categoryService;
@@ -39,7 +41,7 @@ public class CategoryController{
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Set<Item>> findItemFromCategory(@PathVariable @Valid Integer id) {
+    public ResponseEntity<Set<Item>> findItemFromCategory(@PathVariable @Min(0) Integer id) {
         return ResponseEntity.ok(categoryService.findItemInCategory(id));
     }
 

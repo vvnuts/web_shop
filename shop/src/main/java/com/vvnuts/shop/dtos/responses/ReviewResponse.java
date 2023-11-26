@@ -1,12 +1,11 @@
 package com.vvnuts.shop.dtos.responses;
 
-import com.vvnuts.shop.entities.Item;
-import com.vvnuts.shop.entities.ReviewImage;
-import com.vvnuts.shop.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -16,6 +15,7 @@ public class ReviewResponse {
     private Integer id;
     private Integer mark;
     private String text;
+    private List<Integer> reviewImage;
     private ItemResponse item;
     private UserResponse user;
 }

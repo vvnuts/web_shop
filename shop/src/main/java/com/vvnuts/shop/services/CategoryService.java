@@ -2,10 +2,7 @@ package com.vvnuts.shop.services;
 
 import com.vvnuts.shop.dtos.requests.CategoryRequest;
 import com.vvnuts.shop.dtos.responses.CategoryResponse;
-import com.vvnuts.shop.entities.Category;
-import com.vvnuts.shop.entities.Characteristic;
-import com.vvnuts.shop.entities.Item;
-import com.vvnuts.shop.entities.User;
+import com.vvnuts.shop.entities.*;
 import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.utils.CategoryUtils;
 import com.vvnuts.shop.utils.CharacteristicUtils;
@@ -102,6 +99,11 @@ public class CategoryService {
     public byte[] downloadImage(Integer categoryId) {
         Category category = findById(categoryId);
         return ImageUtils.decompressImage(category.getImage());
+    }
+
+    public void deleteImage(Integer imageId) {
+        Category category = findById(imageId);
+        categoryRepository.delete(category);
     }
 
     public Category transferCategoryDtoToCategory(CategoryRequest categoryRequest) {

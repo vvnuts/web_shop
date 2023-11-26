@@ -17,6 +17,7 @@ public class ReviewService{
     private final ReviewRepository reviewRepository;
     private final ItemService itemService;
     private final UserService userService;
+    private final ReviewImageService reviewImageService;
 
     public void create(ReviewRequest request) {
         Review review = Review.builder()
@@ -59,6 +60,7 @@ public class ReviewService{
         return ReviewResponse.builder()
                 .mark(review.getMark())
                 .text(review.getText())
+                .reviewImage(reviewImageService.convertEntityToListInteger(review.getImages()))
                 .user(userService.convertEntityToResponse(review.getUser()))
                 .item(itemService.convertEntityToResponse(review.getItem()))
                 .build();

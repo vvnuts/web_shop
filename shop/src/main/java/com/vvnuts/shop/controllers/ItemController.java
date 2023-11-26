@@ -1,8 +1,6 @@
 package com.vvnuts.shop.controllers;
 
 import com.vvnuts.shop.dtos.requests.ItemRequest;
-import com.vvnuts.shop.dtos.responses.CharacteristicResponse;
-import com.vvnuts.shop.dtos.responses.ItemResponse;
 import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.services.ItemService;
 import jakarta.validation.Valid;
@@ -10,8 +8,7 @@ import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
@@ -20,6 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 @RequestMapping("/api/v1/item")
 public class ItemController{
     private final ItemService itemService;

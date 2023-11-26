@@ -1,14 +1,13 @@
 package com.vvnuts.shop.services;
 
-import com.vvnuts.shop.dtos.responses.ReviewImageResponse;
 import com.vvnuts.shop.entities.Review;
 import com.vvnuts.shop.entities.ReviewImage;
-import com.vvnuts.shop.entities.User;
 import com.vvnuts.shop.repositories.ReviewImageRepository;
 import com.vvnuts.shop.repositories.ReviewRepository;
 import com.vvnuts.shop.utils.ImageUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,15 +39,21 @@ public class ReviewImageService {
     }
 
     @Transactional
-    public List<ReviewImageResponse> downloadImages(Integer reviewId) {
-        Review review = reviewRepository.findById(reviewId).orElseThrow();
-        List<ReviewImageResponse> response = new ArrayList<>();
-        for (ReviewImage image: review.getImages()) {
-            ReviewImageResponse temp = ReviewImageResponse.builder()
-                    .image(ImageUtils.decompressImage(image.getImage()))
-                    .build();
-            response.add(temp);
+    public byte[] downloadImages(Integer imageId) {
+        ReviewImage reviewImage = reviewImageRepository.findById(imageId).orElseThrow();
+        return ImageUtils.decompressImage(reviewImage.getImage());
+    }
+
+    public void deleteImage(Integer imageId) {
+        ReviewImage reviewImage = reviewImageRepository.findById(imageId).orElseThrow();
+        reviewImageRepository.delete(reviewImage);
+    }
+
+    public List<Integer> convertEntityToListInteger(List<ReviewImage> reviewImages) {
+        List<Integer> imagesId = new ArrayList<>();
+        for (ReviewImage reviewImage: reviewImages) {
+            imagesId.add(reviewImage.getId());
         }
-        return response;
+        return imagesId;
     }
 }

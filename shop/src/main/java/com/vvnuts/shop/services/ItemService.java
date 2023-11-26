@@ -106,6 +106,11 @@ public class ItemService {
         return ImageUtils.decompressImage(item.getImage());
     }
 
+    public void deleteImage(Integer imageId) {
+        Item item = findById(imageId);
+        itemRepository.delete(item);
+    }
+
     public void delete(Integer itemId) {
         Item item = itemRepository.findById(itemId).orElseThrow();
         itemRepository.delete(item);
