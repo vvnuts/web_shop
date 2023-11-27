@@ -33,7 +33,7 @@ public class Characteristic {
     @JsonIgnore
     private List<Category> categories;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "characteristic")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "characteristic", cascade = CascadeType.REMOVE)
     @JsonIgnore
     private List<CharacterItem> characterItems;
 }

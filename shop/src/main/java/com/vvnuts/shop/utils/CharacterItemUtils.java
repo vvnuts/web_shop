@@ -19,14 +19,25 @@ public class CharacterItemUtils {
     public List<CharacterItem> createListCharacterItems(ItemRequest itemRequest) {
         List<CharacterItem> characterItems = new ArrayList<>();
         for (CharacterItemRequest characterItemRequest : itemRequest.getCharacterItems()) {
-            CharacterItem newCharacterItem = CharacterItem.builder()
-                    .characteristic(characteristicRepository.findById(characterItemRequest.getCharacteristic())
-                            .orElseThrow())
-                    .numValue(characterItemRequest.getNumValue())
-                    .value(characterItemRequest.getValue())
-                    .build();
+            CharacterItem newCharacterItem = transferRequestToEntity(characterItemRequest);
             characterItems.add(newCharacterItem);
         }
         return characterItems;
+    }
+
+    public CharacterItem transferRequestToEntity(CharacterItemRequest request) {
+        validate(request);
+        return CharacterItem.builder()
+                .characteristic(characteristicRepository.findById(request.getCharacteristic())
+                        .orElseThrow())
+                .numValue(request.getNumValue())
+                .value(request.getValue())
+                .build();
+    }
+
+    public void validate(CharacterItemRequest request) {
+        if (request.getNumValue() != null && request.getValue() != null) {
+            return; //TODO throw
+        }
     }
 }

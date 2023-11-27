@@ -2,23 +2,17 @@ package com.vvnuts.shop.controllers;
 
 import com.vvnuts.shop.dtos.requests.CategoryRequest;
 import com.vvnuts.shop.dtos.responses.CategoryResponse;
-import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.services.CategoryService;
-import com.vvnuts.shop.services.ItemService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 @RestController
