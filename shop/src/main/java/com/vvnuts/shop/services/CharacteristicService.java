@@ -83,7 +83,6 @@ public class CharacteristicService {
         Characteristic characteristic = characteristicRepository.findById(characteristicId).orElseThrow();
         for (Category category: characteristic.getCategories()) {
             category.getCharacteristics().remove(characteristic);
-
             categoryRepository.save(category);
         }
         characteristicRepository.delete(characteristic);
@@ -95,7 +94,7 @@ public class CharacteristicService {
             if (!oldCharacteristic.contains(newCharacteristic)) {
                 updateCategory.getCharacteristics().add(newCharacteristic);
                 newCharacteristic.getCategories().add(updateCategory);
-                characterItemService.addCategoryItemsCharacteristic(updateCategory, newCharacteristic); // TODO Проверить работает ли. Есть сомнение по отсутсвию id в newCharacteristic
+                characterItemService.addCategoryItemsCharacteristic(updateCategory, newCharacteristic);
                 characteristicRepository.save(newCharacteristic);
             } else {
                 oldCharacteristic.remove(newCharacteristic);
@@ -105,7 +104,7 @@ public class CharacteristicService {
             for (Characteristic removeCharacteristic : oldCharacteristic) {
                 updateCategory.getCharacteristics().remove(removeCharacteristic);
                 removeCharacteristic.getCategories().remove(updateCategory);
-                characterItemService.removeCategoryItemsCharacteristic(updateCategory, removeCharacteristic);  //TODO смущает Category
+                characterItemService.removeCategoryItemsCharacteristic(updateCategory, removeCharacteristic);
                 characteristicRepository.save(removeCharacteristic);
             }
         }

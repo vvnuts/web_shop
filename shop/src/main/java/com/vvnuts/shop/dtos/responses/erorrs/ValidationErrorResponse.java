@@ -1,4 +1,4 @@
-package com.vvnuts.shop.dtos.responses;
+package com.vvnuts.shop.dtos.responses.erorrs;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

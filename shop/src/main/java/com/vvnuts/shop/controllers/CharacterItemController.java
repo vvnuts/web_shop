@@ -31,4 +31,10 @@ public class CharacterItemController {
         return ResponseEntity.status(HttpStatus.OK)
                 .body(characterItems);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<HttpStatus> delete (@PathVariable @Min(0) Integer id) {
+        characterItemService.deleteCharacterItem(id);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
 }

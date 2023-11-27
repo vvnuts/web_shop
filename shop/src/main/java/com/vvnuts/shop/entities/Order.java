@@ -22,7 +22,7 @@ import java.util.UUID;
 @Table(name = "orders")
 public class Order {
     @Id
-    @Column(name = "id")
+    @Column(name = "id", columnDefinition = "uuid")
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 

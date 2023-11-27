@@ -71,19 +71,25 @@ public class CategoryService {
 
     public void delete(Integer categoryId) {
         Category category = findById(categoryId);
-        for (Category parent: category.getParents()) {
+        for (Category parent : category.getParents()) {
             parent.getChildren().remove(category);
             categoryRepository.save(parent);
         }
-        List<Category> children = category.getChildren();
-        for (Category child: children) {
+        deleteChildren(category.getChildren(), category);
+        categoryRepository.delete(category);
+    }
+
+    public void deleteChildren(List<Category> categories, Category removeCategory) {
+        for (Category child: categories) {
+            if (child.getChildren() != null) {
+                deleteChildren(child.getChildren(), removeCategory);
+            }
             if (child.getParents().size() > 1) {
-                child.getParents().remove(category);
-                category.getChildren().remove(child);
+                child.getParents().remove(removeCategory);
+                removeCategory.getChildren().remove(child);
                 categoryRepository.save(child);
             }
         }
-        categoryRepository.delete(category);
     }
 
     public void uploadImage(MultipartFile file, Integer categoryId) throws IOException {

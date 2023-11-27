@@ -23,9 +23,9 @@ public class OrderItemService {
                     .quantity(orderItemRequest.getQuantity())
                     .build();
             if (orderItem.getItem().getQuantity() < orderItem.getQuantity()) {
-                return null; //TODO exception
+                throw new RuntimeException("Больше заявленного кол-ва"); //TODO exception
             }
-            orderItemRepository.save(orderItem); //TODO убрать
+            orderItemRepository.save(orderItem);
             orderItems.add(orderItem);
         }
         return orderItems;

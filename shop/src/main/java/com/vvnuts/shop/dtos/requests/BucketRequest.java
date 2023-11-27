@@ -15,5 +15,4 @@ import java.util.List;
 public class BucketRequest {
     @Valid
     private List<OrderItemRequest> orderItem;
-    private Integer user;
 }

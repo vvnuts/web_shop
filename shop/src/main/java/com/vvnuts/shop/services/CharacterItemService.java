@@ -39,6 +39,11 @@ public class CharacterItemService {
         return item.getCharacterItems();
     }
 
+    public void deleteCharacterItem(Integer characterItemId) {
+        CharacterItem characterItem = characterItemRepository.findById(characterItemId).orElseThrow();
+        characterItemRepository.delete(characterItem);
+    }
+
     public void addCategoryItemsCharacteristic(Category category, Characteristic characteristic) {
         for (Item item: category.getItems()) {
              CharacterItem characterItem = CharacterItem.builder()

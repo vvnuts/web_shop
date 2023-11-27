@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,13 +22,13 @@ public class OrderService {
     private final UserService userService;
     private final BucketService bucketService;
 
-    public void create(OrderRequest dtoEntity) {
+    public Order create(OrderRequest dtoEntity) {
         Order newOrder = transferToCreateEntity(dtoEntity);
         calculationQuantityAndPrice(newOrder);
-        orderRepository.save(newOrder);
+        return orderRepository.save(newOrder);
     }
 
-    public void approveOrder(Integer orderId) {
+    public void approveOrder(UUID orderId) {
         Order order = findById(orderId);
         for (OrderItem orderItem: order.getOrderItems()) {
             if (orderItem.getQuantity() > orderItem.getItem().getQuantity()) {
@@ -46,18 +47,18 @@ public class OrderService {
         orderRepository.save(order);
     }
 
-    public void cancelingOrder(Integer orderId) {
+    public void cancelingOrder(UUID orderId) {
         Order order = findById(orderId);
         order.setStatus(Status.CANCEL);
         orderRepository.save(order);
     }
 
-    public void delete(Integer id) {
+    public void delete(UUID id) {
         Order order = findById(id);
         orderRepository.delete(order);
     }
 
-    public Order findById(Integer id) {
+    public Order findById(UUID id) {
         return orderRepository.findById(id).orElseThrow();
     }
 

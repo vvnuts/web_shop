@@ -2,8 +2,10 @@ package com.vvnuts.shop.controllers;
 
 import com.vvnuts.shop.dtos.requests.CategoryRequest;
 import com.vvnuts.shop.dtos.responses.CategoryResponse;
+import com.vvnuts.shop.dtos.responses.erorrs.CycleHasFormedException;
 import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.services.CategoryService;
+import com.vvnuts.shop.utils.CategoryUtils;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ import java.util.Set;
 @RequestMapping("/api/v1/catalog")
 public class CategoryController{
     private final CategoryService categoryService;
+    private final CategoryUtils  categoryUtils;
 
     @PostMapping()
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid CategoryRequest categoryRequest){
@@ -41,7 +44,8 @@ public class CategoryController{
 
     @PutMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable @Min(0) Integer id,
-                                             @RequestBody @Valid CategoryRequest request) {
+                                             @RequestBody @Valid CategoryRequest request) throws CycleHasFormedException {
+        categoryUtils.validate(request, id);
         categoryService.update(request, id);
         return ResponseEntity.ok(HttpStatus.OK);
     }

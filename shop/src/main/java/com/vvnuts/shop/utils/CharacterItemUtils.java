@@ -37,7 +37,7 @@ public class CharacterItemUtils {
 
     public void validate(CharacterItemRequest request) {
         if (request.getNumValue() != null && request.getValue() != null) {
-            return; //TODO throw
+            throw new RuntimeException("Одновременно численное и буквенное значение"); //TODO throw
         }
     }
 }

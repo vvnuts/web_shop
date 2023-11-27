@@ -69,6 +69,8 @@ public class BucketService {
                 bucketItemService.removeBucket(bucketItem);
             }
         }
+        bucket.setTotalQuantity(0);
+        bucket.setTotalPrice(BigDecimal.ZERO);
         bucketRepository.save(bucket);
     }
 }

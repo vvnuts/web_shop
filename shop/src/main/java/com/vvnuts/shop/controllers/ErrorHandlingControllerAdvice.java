@@ -1,7 +1,7 @@
 package com.vvnuts.shop.controllers;
 
-import com.vvnuts.shop.dtos.responses.ValidationErrorResponse;
-import com.vvnuts.shop.dtos.responses.Violation;
+import com.vvnuts.shop.dtos.responses.erorrs.ValidationErrorResponse;
+import com.vvnuts.shop.dtos.responses.erorrs.Violation;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;

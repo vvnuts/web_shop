@@ -3,47 +3,51 @@ package com.vvnuts.shop.controllers;
 import com.vvnuts.shop.dtos.requests.OrderRequest;
 import com.vvnuts.shop.entities.Order;
 import com.vvnuts.shop.services.OrderService;
+import com.vvnuts.shop.utils.OrderUtils;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequiredArgsConstructor
-@Validated
 @RequestMapping("/api/v1/order")
 public class OrderController {
     private final OrderService orderService;
+    private final OrderUtils orderUtils;
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Order> findOne (@PathVariable @Min(0) Integer orderId){
+    @GetMapping()
+    public ResponseEntity<Order> findOne (@RequestParam("id") UUID orderId){
         Order entity = orderService.findById(orderId);
         return ResponseEntity.ok(entity);
     }
 
     @PostMapping()
-    public ResponseEntity<HttpStatus> create(@RequestBody @Valid OrderRequest dtoEntity){
-        orderService.create(dtoEntity);
-        return ResponseEntity.ok(HttpStatus.CREATED);
+    public ResponseEntity<Order> create(@RequestBody @Valid OrderRequest dtoEntity){
+        Order order = orderService.create(dtoEntity);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(order);
     }
 
-    @PatchMapping("/{id}/approve")
-    public ResponseEntity<HttpStatus> approveOrder(@PathVariable @Min(0) Integer orderId) {
+    @PatchMapping("/approve")
+    public ResponseEntity<HttpStatus> approveOrder(@RequestParam("id") UUID orderId) {
+        orderUtils.validateStatus(orderId);
         orderService.approveOrder(orderId);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @PatchMapping("/{id}/canceling")
-    public ResponseEntity<HttpStatus> cancelingOrder(@PathVariable @Min(0) Integer orderId) {
+    @PatchMapping("/canceling")
+    public ResponseEntity<HttpStatus> cancelingOrder(@RequestParam("id") UUID orderId) {
+        orderUtils.validateStatus(orderId);
         orderService.cancelingOrder(orderId);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<HttpStatus> delete(@PathVariable @Min(0) Integer orderId) {
+    @DeleteMapping()
+    public ResponseEntity<HttpStatus> delete(@RequestParam("id") UUID orderId) {
         orderService.delete(orderId);
         return ResponseEntity.ok(HttpStatus.OK);
     }
