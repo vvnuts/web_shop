@@ -2,7 +2,9 @@ package com.vvnuts.shop.controllers;
 
 import com.vvnuts.shop.dtos.requests.CategoryRequest;
 import com.vvnuts.shop.dtos.responses.CategoryResponse;
+import com.vvnuts.shop.dtos.responses.erorrs.CategoryParentContainsItselfException;
 import com.vvnuts.shop.dtos.responses.erorrs.CycleHasFormedException;
+import com.vvnuts.shop.dtos.responses.erorrs.Violation;
 import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.services.CategoryService;
 import com.vvnuts.shop.utils.CategoryUtils;
@@ -44,7 +46,7 @@ public class CategoryController{
 
     @PutMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable @Min(0) Integer id,
-                                             @RequestBody @Valid CategoryRequest request) throws CycleHasFormedException {
+                                             @RequestBody @Valid CategoryRequest request) {
         categoryUtils.validate(request, id);
         categoryService.update(request, id);
         return ResponseEntity.ok(HttpStatus.OK);
@@ -54,5 +56,11 @@ public class CategoryController{
     public ResponseEntity<HttpStatus> delete(@PathVariable @Min(0) Integer id) {
         categoryService.delete(id);
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @ExceptionHandler({CategoryParentContainsItselfException.class, CycleHasFormedException.class})
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String onCategoryParentContainsItselfException(RuntimeException e) {
+        return e.getMessage();
     }
 }

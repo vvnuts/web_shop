@@ -1,7 +1,6 @@
 package com.vvnuts.shop.controllers;
 
-import com.vvnuts.shop.dtos.responses.erorrs.ValidationErrorResponse;
-import com.vvnuts.shop.dtos.responses.erorrs.Violation;
+import com.vvnuts.shop.dtos.responses.erorrs.*;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -11,6 +10,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import java.util.NoSuchElementException;
 
 @ControllerAdvice
 public class ErrorHandlingControllerAdvice {
@@ -39,5 +40,28 @@ public class ErrorHandlingControllerAdvice {
                     new Violation(fieldError.getField(), fieldError.getDefaultMessage()));
         }
         return error;
+    }
+
+    @ExceptionHandler(NoSuchElementException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ResponseBody
+    NotFoundResponse onNoSuchElementException(NoSuchElementException e) {
+        return NotFoundResponse.builder()
+                .message(e.getMessage())
+                .build();
+    }
+
+    @ExceptionHandler(NotFoundRelatedObjectException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    ValidationErrorResponse onNotFoundRelatedObjectException(NotFoundRelatedObjectException e) {
+        return e.getValidationErrorResponses();
+    }
+
+    @ExceptionHandler(StringAndNumValueTogetherException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    ValidationErrorResponse onStringAndNumValueTogetherException(StringAndNumValueTogetherException e) {
+        return e.getValidationErrorResponses();
     }
 }

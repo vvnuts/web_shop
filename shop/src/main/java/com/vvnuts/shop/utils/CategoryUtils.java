@@ -1,7 +1,7 @@
 package com.vvnuts.shop.utils;
 
 import com.vvnuts.shop.dtos.requests.CategoryRequest;
-import com.vvnuts.shop.dtos.responses.erorrs.CycleHasFormedException;
+import com.vvnuts.shop.dtos.responses.erorrs.*;
 import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.repositories.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,25 +14,34 @@ import java.util.*;
 public class CategoryUtils {
     private final CategoryRepository categoryRepository;
 
-    public List<Category> getCategoryListFromIds(List<Integer> categoriesId) { //TODO проверка на уникальность категорий. В идеале - Set
+    public List<Category> getCategoryListFromIds(List<Integer> categoriesId) {
         List<Category> categories = new ArrayList<>();
+        ValidationErrorResponse response = new ValidationErrorResponse();
         for (Integer categoryId : categoriesId) {
-            Category category = categoryRepository.findById(categoryId).orElseThrow();
-            categories.add(category);
+            Optional<Category> optional = categoryRepository.findById(categoryId);
+            if (optional.isPresent()) {
+                categories.add(optional.get());
+            } else {
+                response.getViolations()
+                        .add(new Violation("parents", "id = " + categoryId + " not found"));
+            }
+        }
+        if (response.getViolations().size() > 0) {
+            throw new NotFoundRelatedObjectException(response);
         }
         Collections.sort(categories);
         return categories;
     }
 
-    public void validate(CategoryRequest request, Integer id) throws CycleHasFormedException {
+    public void validate(CategoryRequest request, Integer id) {
         if (request.getParents().contains(id)) {
-            throw new RuntimeException("Pupus"); 
+            throw new CategoryParentContainsItselfException("В списке родителей категории присутствует сама категория");
         }
         Category category = categoryRepository.findById(id).orElseThrow();
         List<Category> categories = getCategoryListFromIds(request.getParents());
         categories.add(category);
         if (hasCycle(category, categories)) {
-            throw new CycleHasFormedException();
+            throw new CycleHasFormedException("При текущих родителях образуется цикл");
         };
     }
 

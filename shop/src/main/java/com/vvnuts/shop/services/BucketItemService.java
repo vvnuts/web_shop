@@ -2,6 +2,7 @@ package com.vvnuts.shop.services;
 
 import com.vvnuts.shop.dtos.requests.OrderItemRequest;
 import com.vvnuts.shop.dtos.responses.OrderItemResponse;
+import com.vvnuts.shop.dtos.responses.erorrs.NoQuantityEnoughException;
 import com.vvnuts.shop.entities.Bucket;
 import com.vvnuts.shop.entities.BucketItem;
 import com.vvnuts.shop.repositories.BucketItemRepository;
@@ -25,7 +26,7 @@ public class BucketItemService {
                     .quantity(orderItemRequest.getQuantity())
                     .build();
             if (bucketItem.getItem().getQuantity() < bucketItem.getQuantity()) {
-                return null; //TODO exception
+                throw new NoQuantityEnoughException("'Продукции '" + bucketItem.getItem().getItemName() + "' недостаточно на складе");
             }
             bucketItems.add(bucketItem);
         }
