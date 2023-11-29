@@ -36,6 +36,7 @@ public class AuthenticationService {
                 .totalQuantity(0)
                 .bucketItems(null)
                 .build();
+
         User user = User.builder()
                 .firstname(request.getFirstname())
                 .lastname(request.getLastname())
@@ -44,6 +45,7 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.getPassword()))
                 .bucket(bucket)
                 .build();
+
         bucket.setUser(user);
         repository.save(user);
         String jwtToken = jwtService.generateToken(user);

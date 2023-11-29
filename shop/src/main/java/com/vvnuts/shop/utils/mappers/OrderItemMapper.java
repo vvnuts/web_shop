@@ -1,8 +1,9 @@
-package com.vvnuts.shop.services;
+package com.vvnuts.shop.utils.mappers;
 
 import com.vvnuts.shop.dtos.requests.OrderItemRequest;
 import com.vvnuts.shop.entities.OrderItem;
 import com.vvnuts.shop.repositories.OrderItemRepository;
+import com.vvnuts.shop.services.ItemService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class OrderItemService {
+public class OrderItemMapper {
     private final OrderItemRepository orderItemRepository;
     private final ItemService itemService;
 

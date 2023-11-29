@@ -17,12 +17,16 @@ public class RegisterRequest {
     @NotBlank
     @Size(min = 3, max = 32)
     private String firstname;
+
     @NotBlank
     @Size(min = 3, max = 32)
     private String lastname;
+
     @NotBlank
     @Email
     private String email;
+
     @NotBlank
+    @Size(min = 8, max = 64)
     private String password;
 }

@@ -2,6 +2,7 @@ package com.vvnuts.shop.services;
 
 import com.vvnuts.shop.entities.Review;
 import com.vvnuts.shop.entities.ReviewImage;
+import com.vvnuts.shop.exceptions.FileIsEmptyException;
 import com.vvnuts.shop.repositories.ReviewImageRepository;
 import com.vvnuts.shop.repositories.ReviewRepository;
 import com.vvnuts.shop.utils.ImageUtils;
@@ -23,7 +24,7 @@ public class ReviewImageService {
 
     public void uploadImage(MultipartFile file, Integer reviewId) throws IOException {
         if (file.isEmpty()){
-            return; //TODO throw
+            throw new FileIsEmptyException("Файл пуст.");
         }
         Review review = reviewRepository.findById(reviewId).orElseThrow();
         if (review.getImages() == null) {

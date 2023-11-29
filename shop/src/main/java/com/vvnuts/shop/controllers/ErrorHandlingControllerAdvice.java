@@ -1,6 +1,7 @@
 package com.vvnuts.shop.controllers;
 
 import com.vvnuts.shop.exceptions.NotFoundRelatedObjectException;
+import com.vvnuts.shop.exceptions.OrderItemValidException;
 import com.vvnuts.shop.exceptions.StringAndNumValueTogetherException;
 import com.vvnuts.shop.dtos.responses.NotFoundResponse;
 import com.vvnuts.shop.dtos.responses.ValidationErrorResponse;
@@ -66,6 +67,13 @@ public class ErrorHandlingControllerAdvice {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
     ValidationErrorResponse onStringAndNumValueTogetherException(StringAndNumValueTogetherException e) {
+        return e.getValidationErrorResponses();
+    }
+
+    @ExceptionHandler(OrderItemValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    ValidationErrorResponse onOrderItemValidException(OrderItemValidException e) {
         return e.getValidationErrorResponses();
     }
 }

@@ -1,6 +1,9 @@
 package com.vvnuts.shop.controllers;
 
+import com.vvnuts.shop.exceptions.FileIsEmptyException;
+import com.vvnuts.shop.exceptions.OrderStatusException;
 import com.vvnuts.shop.services.*;
+import com.vvnuts.shop.utils.validators.ImageValidator;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,10 +24,12 @@ public class ImageController {
     private final CategoryService categoryService;
     private final ItemService itemService;
     private final ReviewImageService reviewImageService;
+    private final ImageValidator validator;
 
     @PostMapping("/user/{userId}")
     public ResponseEntity<HttpStatus> uploadUserImage(@PathVariable @Min(0) Integer userId,
                                                       @RequestParam("image")MultipartFile file) throws IOException {
+        validator.validate(file);
         userService.uploadImage(file, userId);
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -46,6 +51,7 @@ public class ImageController {
     @PostMapping("/item/{itemId}")
     public ResponseEntity<HttpStatus> uploadItemImage(@PathVariable @Min(0) Integer itemId,
                                                       @RequestParam("image")MultipartFile file) throws IOException {
+        validator.validate(file);
         itemService.uploadImage(file, itemId);
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -67,6 +73,7 @@ public class ImageController {
     @PostMapping("/category/{categoryId}")
     public ResponseEntity<HttpStatus> uploadCategoryImage(@PathVariable @Min(0) Integer categoryId,
                                                           @RequestParam("image")MultipartFile file) throws IOException {
+        validator.validate(file);
         categoryService.uploadImage(file, categoryId);
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -88,6 +95,7 @@ public class ImageController {
     @PostMapping("/review/{reviewId}")
     public ResponseEntity<HttpStatus> uploadReviewImage(@PathVariable @Min(0) Integer reviewId,
                                                         @RequestParam("image")MultipartFile file) throws IOException {
+        validator.validate(file);
         reviewImageService.uploadImage(file, reviewId);
         return ResponseEntity.ok(HttpStatus.OK);
     }
@@ -104,5 +112,11 @@ public class ImageController {
     public ResponseEntity<?> deleteReviewImage(@PathVariable @Min(0) Integer reviewImageId) {
         reviewImageService.deleteImage(reviewImageId);
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @ExceptionHandler(FileIsEmptyException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public String onFileIsEmptyException(RuntimeException e) {
+        return e.getMessage();
     }
 }

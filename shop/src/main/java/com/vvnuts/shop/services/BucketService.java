@@ -6,19 +6,31 @@ import com.vvnuts.shop.entities.Bucket;
 import com.vvnuts.shop.entities.BucketItem;
 import com.vvnuts.shop.entities.User;
 import com.vvnuts.shop.repositories.BucketRepository;
+import com.vvnuts.shop.utils.mappers.BucketItemMapper;
+import com.vvnuts.shop.utils.mappers.BucketMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class BucketService {
-    private final BucketRepository bucketRepository;
+    private final BucketRepository repository;
+    private final BucketMapper mapper;
+    private final BucketItemMapper bucketItemMapper;
     private final BucketItemService bucketItemService;
     private final UserService userService;
+
+    public void create(BucketRequest request) {
+        Bucket bucket = Bucket.builder()
+                .user(userService.findById(request.getUser()))
+                .build();
+        bucket.setBucketItems(bucketItemMapper.transferBucketItemDtoToList(request.getOrderItem()));
+        calculationQuantityAndPrice(bucket);
+        repository.save(bucket);
+        bucketItemService.linkBucket(bucket);
+    }
 
     public void update(BucketRequest request, Integer id) {
         Bucket updateBucket = findBucketByUserId(id);
@@ -27,14 +39,19 @@ public class BucketService {
                 bucketItemService.removeBucket(bucketItem);
             }
         }
-        updateBucket.setBucketItems(bucketItemService.transferBucketItemDtoToList(request.getOrderItem()));
+        updateBucket.setBucketItems(bucketItemMapper.transferBucketItemDtoToList(request.getOrderItem()));
         bucketItemService.linkBucket(updateBucket);
         calculationQuantityAndPrice(updateBucket);
-        bucketRepository.save(updateBucket);
+        repository.save(updateBucket);
+    }
+
+    public BucketResponse findOne(Integer userId) {
+        Bucket bucket = findBucketByUserId(userId);
+        return mapper.convertEntityToResponse(bucket);
     }
 
     public Bucket findBucketByUserId(Integer userId) {
-        return bucketRepository.findByUser(userService.findById(userId)).orElseThrow();
+        return repository.findByUser(userService.findById(userId)).orElseThrow();
     }
 
     private void calculationQuantityAndPrice(Bucket bucket) {
@@ -50,20 +67,11 @@ public class BucketService {
     }
 
     public BucketResponse findById(Integer id) {
-        return convertEntityToResponse(bucketRepository.findByUser(userService.findById(id)).orElseThrow());
-    }
-
-    public BucketResponse convertEntityToResponse(Bucket bucket) {
-        return BucketResponse.builder()
-                .orderItem(bucketItemService.convertEntityToListResponse(bucket.getBucketItems()))
-                .user(userService.convertEntityToResponse(bucket.getUser()))
-                .totalPrice(bucket.getTotalPrice())
-                .totalQuantity(bucket.getTotalQuantity())
-                .build();
+        return mapper.convertEntityToResponse(repository.findByUser(userService.findById(id)).orElseThrow());
     }
 
     public void removeItemFromBucket(User user) {
-        Bucket bucket = bucketRepository.findByUser(user).orElseThrow();
+        Bucket bucket = repository.findByUser(user).orElseThrow();
         if (bucket.getBucketItems() != null) {
             for (BucketItem bucketItem: bucket.getBucketItems()) {
                 bucketItemService.removeBucket(bucketItem);
@@ -71,6 +79,6 @@ public class BucketService {
         }
         bucket.setTotalQuantity(0);
         bucket.setTotalPrice(BigDecimal.ZERO);
-        bucketRepository.save(bucket);
+        repository.save(bucket);
     }
 }

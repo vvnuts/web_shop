@@ -1,7 +1,6 @@
 package com.vvnuts.shop.services;
 
 import com.vvnuts.shop.dtos.requests.ItemRequest;
-import com.vvnuts.shop.dtos.responses.ItemResponse;
 import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.CharacterItem;
 import com.vvnuts.shop.entities.Item;
@@ -10,11 +9,10 @@ import com.vvnuts.shop.exceptions.FileIsEmptyException;
 import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.repositories.CharacterItemRepository;
 import com.vvnuts.shop.repositories.ItemRepository;
-import com.vvnuts.shop.utils.mappers.CharacterItemMapper;
 import com.vvnuts.shop.utils.ImageUtils;
+import com.vvnuts.shop.utils.mappers.ItemMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -26,22 +24,21 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class ItemService {
-    private final ItemRepository itemRepository;
-    private final ModelMapper modelMapper;
+    private final ItemRepository repository;
+    private final ItemMapper mapper;
     private final CategoryRepository categoryRepository;
-    private final CharacterItemMapper characterItemMapper;
     private final CharacterItemRepository characterItemRepository;
 
     public void create(ItemRequest request) {
-        Item newItem = transferItemDtoToItem(request);
+        Item newItem = mapper.transferItemDtoToItem(request);
         for (CharacterItem characterItem: newItem.getCharacterItems()) {
             characterItem.setItem(newItem);
         }
-        itemRepository.save(newItem);
+        repository.save(newItem);
     }
 
     public Item findById(Integer id) { //TODO переписать с респонсом
-        return itemRepository.findById(id).orElseThrow();
+        return repository.findById(id).orElseThrow();
     }
 
     public Set<Item> findItemFromCategory(Category startCategory) { //TODO Поменять на ItemResponse
@@ -54,9 +51,8 @@ public class ItemService {
         return allItem;
     }
 
-    public void update(ItemRequest request, Integer id) {
-        Item updateItem = findById(id);
-        Item updateDTO = transferItemDtoToItem(request);
+    public void update(ItemRequest request, Item updateItem) {
+        Item updateDTO = mapper.transferItemDtoToItem(request);
         if (!updateItem.getItemName().equals(updateDTO.getItemName())) {
             updateItem.setItemName(updateDTO.getItemName());
         }
@@ -88,7 +84,7 @@ public class ItemService {
         if (!updateItem.getSale().equals(updateDTO.getSale())) {
             updateItem.setSale(updateDTO.getSale());
         }
-        itemRepository.save(updateItem);
+        repository.save(updateItem);
     }
 
     public void uploadImage(MultipartFile file, Integer itemId) throws IOException {
@@ -97,7 +93,7 @@ public class ItemService {
         }
         Item item = findById(itemId);
         item.setImage(ImageUtils.compressImage(file.getBytes()));
-        itemRepository.save(item);
+        repository.save(item);
     }
 
     @Transactional
@@ -108,25 +104,12 @@ public class ItemService {
 
     public void deleteImage(Integer imageId) {
         Item item = findById(imageId);
-        itemRepository.delete(item);
+        repository.delete(item);
     }
 
     public void delete(Integer itemId) {
-        Item item = itemRepository.findById(itemId).orElseThrow();
-        itemRepository.delete(item);
-    }
-
-    public Item transferItemDtoToItem(ItemRequest itemRequest) {
-        Item item = Item.builder()
-                .category(categoryRepository.findById(itemRequest.getCategoryId()).orElseThrow())
-                .itemName(itemRequest.getItemName())
-                .description(itemRequest.getDescription())
-                .price(itemRequest.getPrice())
-                .quantity(itemRequest.getQuantity())
-                .sale(itemRequest.getSale())
-                .build();
-        item.setCharacterItems(characterItemMapper.createListCharacterItems(itemRequest));
-        return item;
+        Item item = repository.findById(itemId).orElseThrow();
+        repository.delete(item);
     }
 
     public void calculateRatingItem (Item item) {
@@ -137,10 +120,6 @@ public class ItemService {
             countMark += 1;
         }
         item.setMark(sumMark/countMark);
-        itemRepository.save(item);
-    }
-
-    public ItemResponse convertEntityToResponse(Item item) {
-        return  modelMapper.map(item, ItemResponse.class);
+        repository.save(item);
     }
 }

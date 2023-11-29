@@ -3,6 +3,9 @@ package com.vvnuts.shop.controllers;
 import com.vvnuts.shop.dtos.requests.ReviewRequest;
 import com.vvnuts.shop.dtos.requests.ReviewUpdateRequest;
 import com.vvnuts.shop.dtos.responses.ReviewResponse;
+import com.vvnuts.shop.dtos.responses.ValidationErrorResponse;
+import com.vvnuts.shop.exceptions.OrderItemValidException;
+import com.vvnuts.shop.exceptions.ReviewValidException;
 import com.vvnuts.shop.services.ReviewService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
@@ -36,7 +39,7 @@ public class ReviewController{
 
     @GetMapping("/{id}")
     public ResponseEntity<ReviewResponse> findOne(@PathVariable @Min(0) Integer id) {
-        ReviewResponse response = reviewService.findById(id);
+        ReviewResponse response = reviewService.findOne(id);
         return ResponseEntity.ok(response);
     }
 
@@ -51,5 +54,12 @@ public class ReviewController{
     public ResponseEntity<HttpStatus> delete(@PathVariable @Min(0) Integer id) {
         reviewService.delete(id);
         return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @ExceptionHandler(ReviewValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
+    ValidationErrorResponse onReviewValidException(ReviewValidException e) {
+        return e.getValidationErrorResponses();
     }
 }
