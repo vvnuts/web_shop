@@ -3,13 +3,12 @@ package com.vvnuts.shop.services;
 import com.vvnuts.shop.dtos.requests.CategoryRequest;
 import com.vvnuts.shop.dtos.responses.CategoryResponse;
 import com.vvnuts.shop.entities.*;
+import com.vvnuts.shop.exceptions.FileIsEmptyException;
 import com.vvnuts.shop.repositories.CategoryRepository;
-import com.vvnuts.shop.utils.CategoryUtils;
-import com.vvnuts.shop.utils.CharacteristicUtils;
+import com.vvnuts.shop.utils.mappers.CategoryMapper;
 import com.vvnuts.shop.utils.ImageUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -22,12 +21,10 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
     private final CharacteristicService characteristicService;
     private final ItemService itemService;
-    private final CharacteristicUtils characteristicUtils;
-    private final CategoryUtils categoryUtils;
-    private final ModelMapper modelMapper;
+    private final CategoryMapper categoryMapper;
 
     public void create(CategoryRequest categoryRequest) {
-        Category newCategory = transferCategoryDtoToCategory(categoryRequest);
+        Category newCategory = categoryMapper.transferCategoryDtoToCategory(categoryRequest);
         for (Category parent: newCategory.getParents()) {
             parent.getChildren().add(newCategory);
         }
@@ -46,12 +43,11 @@ public class CategoryService {
     }
 
     public List<CategoryResponse> findAll() {
-        return convertEntityToListResponse(categoryRepository.findAll());
+        return categoryMapper.convertEntityToListResponse(categoryRepository.findAll());
     }
 
-    public void update(CategoryRequest request, Integer id) {
-        Category updateCategory = findById(id);
-        Category updateDTO = transferCategoryDtoToCategory(request);
+    public void update(CategoryRequest request, Category updateCategory) {
+        Category updateDTO = categoryMapper.transferCategoryDtoToCategory(request);
         if (!updateCategory.getCategoryName().equals(updateDTO.getCategoryName())) {
             updateCategory.setCategoryName(updateDTO.getCategoryName());
         }
@@ -94,7 +90,7 @@ public class CategoryService {
 
     public void uploadImage(MultipartFile file, Integer categoryId) throws IOException {
         if (file.isEmpty()){
-            return; //TODO throw
+            throw new FileIsEmptyException("Файл пуст.");
         }
         Category category = findById(categoryId);
         category.setImage(ImageUtils.compressImage(file.getBytes()));
@@ -110,25 +106,5 @@ public class CategoryService {
     public void deleteImage(Integer imageId) {
         Category category = findById(imageId);
         categoryRepository.delete(category);
-    }
-
-    public Category transferCategoryDtoToCategory(CategoryRequest categoryRequest) {
-        return Category.builder()
-                .categoryName(categoryRequest.getCategoryName())
-                .parents(categoryUtils.getCategoryListFromIds(categoryRequest.getParents()))
-                .characteristics(characteristicUtils.getCharacteristicListFromDTO(categoryRequest.getCharacteristics()))
-                .build();
-    }
-
-    public List<CategoryResponse> convertEntityToListResponse(List<Category> categories) {
-        List<CategoryResponse> categoryResponses = new ArrayList<>();
-        for (Category category: categories) {
-            categoryResponses.add(convertEntityToResponse(category));
-        }
-        return categoryResponses;
-    }
-
-    public CategoryResponse convertEntityToResponse(Category category) {
-        return modelMapper.map(category, CategoryResponse.class);
     }
 }

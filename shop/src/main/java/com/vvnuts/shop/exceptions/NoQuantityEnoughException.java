@@ -1,4 +1,4 @@
-package com.vvnuts.shop.dtos.responses.erorrs;
+package com.vvnuts.shop.exceptions;
 
 public class NoQuantityEnoughException extends RuntimeException{
     public NoQuantityEnoughException(String message) {

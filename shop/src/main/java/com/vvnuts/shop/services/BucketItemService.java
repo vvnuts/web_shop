@@ -2,7 +2,7 @@ package com.vvnuts.shop.services;
 
 import com.vvnuts.shop.dtos.requests.OrderItemRequest;
 import com.vvnuts.shop.dtos.responses.OrderItemResponse;
-import com.vvnuts.shop.dtos.responses.erorrs.NoQuantityEnoughException;
+import com.vvnuts.shop.exceptions.NoQuantityEnoughException;
 import com.vvnuts.shop.entities.Bucket;
 import com.vvnuts.shop.entities.BucketItem;
 import com.vvnuts.shop.repositories.BucketItemRepository;

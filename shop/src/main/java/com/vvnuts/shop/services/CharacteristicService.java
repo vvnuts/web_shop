@@ -6,9 +6,9 @@ import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.Characteristic;
 import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.repositories.CharacteristicRepository;
-import com.vvnuts.shop.utils.CategoryUtils;
+import com.vvnuts.shop.utils.mappers.CharacteristicMapper;
+import com.vvnuts.shop.utils.mappers.CategoryMapper;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -18,14 +18,14 @@ import java.util.*;
 public class CharacteristicService {
     private final CharacteristicRepository characteristicRepository;
     private final CategoryRepository categoryRepository;
-    private final CategoryUtils categoryUtils;
+    private final CategoryMapper categoryMapper;
     private final CharacterItemService characterItemService;
-    private final ModelMapper modelMapper;
+    private final CharacteristicMapper mapper;
 
     public void create(CharacteristicRequest request) {
         Characteristic characteristic = Characteristic.builder()
                 .name(request.getName())
-                .categories(categoryUtils.getCategoryListFromIds(request.getCategories()))
+                .categories(categoryMapper.getCategoryListFromIds(request.getCategories()))
                 .build();
         characteristicRepository.save(characteristic);
         for (Category category: characteristic.getCategories()) {
@@ -35,24 +35,27 @@ public class CharacteristicService {
         }
     }
 
-    public CharacteristicResponse findById(Integer id) {
+    public Characteristic findById(Integer id) {
+        return characteristicRepository.findById(id).orElseThrow();
+    }
+
+    public CharacteristicResponse findOne(Integer id) {
         Characteristic characteristic = characteristicRepository.findById(id).orElseThrow();
-        return convertEntityToResponse(characteristic);
+        return mapper.convertEntityToResponse(characteristic);
     }
 
     public List<CharacteristicResponse> findAll() {
         List<CharacteristicResponse> characteristicResponses = new ArrayList<>();
         for (Characteristic characteristic: characteristicRepository.findAll()) {
-            characteristicResponses.add(convertEntityToResponse(characteristic));
+            characteristicResponses.add(mapper.convertEntityToResponse(characteristic));
         }
         return characteristicResponses;
     }
 
-    public void update(CharacteristicRequest request, Integer id) {
-        Characteristic updateCharacteristic = characteristicRepository.findById(id).orElseThrow();
+    public void update(CharacteristicRequest request, Characteristic updateCharacteristic) {
         Characteristic updateDto = Characteristic.builder()
                 .name(request.getName())
-                .categories(categoryUtils.getCategoryListFromIds(request.getCategories()))
+                .categories(categoryMapper.getCategoryListFromIds(request.getCategories()))
                 .build();
         updateCharacteristic.setName(request.getName());
 
@@ -71,7 +74,7 @@ public class CharacteristicService {
             for (Category removeCategory : oldCategories) {
                 updateCharacteristic.getCategories().remove(removeCategory);
                 removeCategory.getCharacteristics().remove(updateCharacteristic);
-                characterItemService.removeCategoryItemsCharacteristic(removeCategory, updateCharacteristic);  //TODO смущает Category
+                characterItemService.removeCategoryItemsCharacteristic(removeCategory, updateCharacteristic);
                 categoryRepository.save(removeCategory);
             }
         }
@@ -108,9 +111,5 @@ public class CharacteristicService {
                 characteristicRepository.save(removeCharacteristic);
             }
         }
-    }
-
-    CharacteristicResponse convertEntityToResponse(Characteristic characteristic) {
-        return modelMapper.map(characteristic, CharacteristicResponse.class);
     }
 }

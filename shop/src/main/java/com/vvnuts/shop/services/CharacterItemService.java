@@ -8,7 +8,7 @@ import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.repositories.CharacterItemRepository;
 import com.vvnuts.shop.repositories.CharacteristicRepository;
 import com.vvnuts.shop.repositories.ItemRepository;
-import com.vvnuts.shop.utils.CharacterItemUtils;
+import com.vvnuts.shop.utils.mappers.CharacterItemMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -17,21 +17,27 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class CharacterItemService {
-    private final CharacterItemRepository characterItemRepository;
-    private final CharacterItemUtils characterItemUtils;
+    private final CharacterItemRepository repository;
+    private final CharacterItemMapper characterItemMapper;
     private final ItemRepository itemRepository;
     private final CharacteristicRepository characteristicRepository;
 
     public void create(Integer itemId, CharacterItemRequest request) {
-        CharacterItem characterItem = characterItemUtils.transferRequestToEntity(request);
+        CharacterItem characterItem = characterItemMapper.transferRequestToEntity(request);
+
         Item item = itemRepository.findById(itemId).orElseThrow();
         characterItem.setItem(item);
-        characterItemRepository.save(characterItem);
+        repository.save(characterItem);
         item.getCharacterItems().add(characterItem);
         itemRepository.save(item);
+
         Characteristic characteristic = characterItem.getCharacteristic();
         characteristic.getCharacterItems().add(characterItem);
         characteristicRepository.save(characteristic);
+    }
+
+    public CharacterItem findById(Integer id) {
+        return repository.findById(id).orElseThrow();
     }
 
     public List<CharacterItem> findAllCharacterItemFromItem(Integer itemId) {
@@ -39,9 +45,18 @@ public class CharacterItemService {
         return item.getCharacterItems();
     }
 
-    public void deleteCharacterItem(Integer characterItemId) {
-        CharacterItem characterItem = characterItemRepository.findById(characterItemId).orElseThrow();
-        characterItemRepository.delete(characterItem);
+    public void update(CharacterItem updateCharacterItem, CharacterItemRequest request) {
+        CharacterItem updateDTO = characterItemMapper.transferRequestToEntity(request);
+
+        updateCharacterItem.setValue(updateDTO.getValue());
+        updateCharacterItem.setNumValue(updateDTO.getNumValue());
+        updateCharacterItem.setCharacteristic(updateDTO.getCharacteristic());
+        repository.save(updateCharacterItem);
+    }
+
+    public void deleteCharacterItem(Integer id) {
+        CharacterItem characterItem = findById(id);
+        repository.delete(characterItem);
     }
 
     public void addCategoryItemsCharacteristic(Category category, Characteristic characteristic) {
@@ -50,15 +65,15 @@ public class CharacterItemService {
                      .item(item)
                      .characteristic(characteristic)
                      .build();
-             characterItemRepository.save(characterItem);
+             repository.save(characterItem);
         }
     }
 
     public void removeCategoryItemsCharacteristic(Category category, Characteristic characteristic) {
         for (Item item: category.getItems()) {
-            CharacterItem removeCharacterItem = characterItemRepository.findByCharacteristicAndItem(characteristic, item)
+            CharacterItem removeCharacterItem = repository.findByCharacteristicAndItem(characteristic, item)
                     .orElseThrow();
-            characterItemRepository.delete(removeCharacterItem);
+            repository.delete(removeCharacterItem);
         }
     }
 }

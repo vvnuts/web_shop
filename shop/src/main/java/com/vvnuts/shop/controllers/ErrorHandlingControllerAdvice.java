@@ -1,6 +1,10 @@
 package com.vvnuts.shop.controllers;
 
-import com.vvnuts.shop.dtos.responses.erorrs.*;
+import com.vvnuts.shop.exceptions.NotFoundRelatedObjectException;
+import com.vvnuts.shop.exceptions.StringAndNumValueTogetherException;
+import com.vvnuts.shop.dtos.responses.NotFoundResponse;
+import com.vvnuts.shop.dtos.responses.ValidationErrorResponse;
+import com.vvnuts.shop.dtos.responses.Violation;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;

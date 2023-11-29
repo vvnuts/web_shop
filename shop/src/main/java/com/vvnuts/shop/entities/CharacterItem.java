@@ -34,5 +34,4 @@ public class CharacterItem {
     @JoinColumn(name = "item_id")
     @JsonIgnore
     private Item item;
-
 }

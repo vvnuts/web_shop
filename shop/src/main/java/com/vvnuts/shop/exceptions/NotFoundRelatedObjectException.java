@@ -1,5 +1,6 @@
-package com.vvnuts.shop.dtos.responses.erorrs;
+package com.vvnuts.shop.exceptions;
 
+import com.vvnuts.shop.dtos.responses.ValidationErrorResponse;
 import lombok.*;
 
 @Getter

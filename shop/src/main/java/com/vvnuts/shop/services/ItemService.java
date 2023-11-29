@@ -6,10 +6,11 @@ import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.CharacterItem;
 import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.entities.Review;
+import com.vvnuts.shop.exceptions.FileIsEmptyException;
 import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.repositories.CharacterItemRepository;
 import com.vvnuts.shop.repositories.ItemRepository;
-import com.vvnuts.shop.utils.CharacterItemUtils;
+import com.vvnuts.shop.utils.mappers.CharacterItemMapper;
 import com.vvnuts.shop.utils.ImageUtils;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +29,7 @@ public class ItemService {
     private final ItemRepository itemRepository;
     private final ModelMapper modelMapper;
     private final CategoryRepository categoryRepository;
-    private final CharacterItemUtils characterItemUtils;
+    private final CharacterItemMapper characterItemMapper;
     private final CharacterItemRepository characterItemRepository;
 
     public void create(ItemRequest request) {
@@ -53,7 +54,7 @@ public class ItemService {
         return allItem;
     }
 
-    public void update(ItemRequest request, Integer id) { //TODO сделать чтобы characterItem соответствовало категории
+    public void update(ItemRequest request, Integer id) {
         Item updateItem = findById(id);
         Item updateDTO = transferItemDtoToItem(request);
         if (!updateItem.getItemName().equals(updateDTO.getItemName())) {
@@ -67,7 +68,6 @@ public class ItemService {
         updateItem.setCharacterItems(updateDTO.getCharacterItems());
         for (CharacterItem characterItem: updateItem.getCharacterItems()) {
             characterItem.setItem(updateItem);
-//            characterItemRepository.save(characterItem);
         }
         if (!updateItem.getCategory().equals(updateDTO.getCategory())) {
             updateItem.getCategory().getItems().remove(updateItem);
@@ -93,7 +93,7 @@ public class ItemService {
 
     public void uploadImage(MultipartFile file, Integer itemId) throws IOException {
         if (file.isEmpty()){
-            return; //TODO throw
+            throw new FileIsEmptyException("Файл пуст.");
         }
         Item item = findById(itemId);
         item.setImage(ImageUtils.compressImage(file.getBytes()));
@@ -125,7 +125,7 @@ public class ItemService {
                 .quantity(itemRequest.getQuantity())
                 .sale(itemRequest.getSale())
                 .build();
-        item.setCharacterItems(characterItemUtils.createListCharacterItems(itemRequest));
+        item.setCharacterItems(characterItemMapper.createListCharacterItems(itemRequest));
         return item;
     }
 

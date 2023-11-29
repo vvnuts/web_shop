@@ -1,4 +1,4 @@
-package com.vvnuts.shop.dtos.responses.erorrs;
+package com.vvnuts.shop.exceptions;
 
 public class CategoryParentContainsItselfException extends RuntimeException{
     public CategoryParentContainsItselfException(String message) {

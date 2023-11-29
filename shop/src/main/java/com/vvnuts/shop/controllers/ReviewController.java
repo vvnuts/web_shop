@@ -12,12 +12,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
 import java.util.List;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/review")
-@Validated
 public class ReviewController{
     private final ReviewService reviewService;
 
@@ -28,7 +29,7 @@ public class ReviewController{
     }
 
     @GetMapping()
-    public ResponseEntity<List<ReviewResponse>> findAll(){
+    public ResponseEntity<Collection<ReviewResponse>> findAll(){
         List<ReviewResponse> responses = reviewService.findAll();
         return ResponseEntity.ok(responses);
     }

@@ -1,7 +1,7 @@
 package com.vvnuts.shop.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonView;
+import com.vvnuts.shop.entities.enums.Type;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -28,6 +28,10 @@ public class Characteristic {
     @Size(max = 40)
     @NotNull
     private String name;
+
+    @Enumerated(EnumType.STRING)  //TODO сделать типы характеристик
+    @Column(name = "type")
+    private Type type;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "characteristics")
     @JsonIgnore

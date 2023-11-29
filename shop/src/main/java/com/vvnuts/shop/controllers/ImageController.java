@@ -12,9 +12,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+@Validated
 @RestController
 @RequiredArgsConstructor
-@Validated
 @RequestMapping("/api/v1/image")
 public class ImageController {
     private final UserService userService;
