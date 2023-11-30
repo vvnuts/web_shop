@@ -58,10 +58,4 @@ public class CategoryController{
         service.delete(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
-
-    @ExceptionHandler({CategoryParentContainsItselfException.class, CycleHasFormedException.class})
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String onCategoryParentContainsItselfException(RuntimeException e) {
-        return e.getMessage();
-    }
 }

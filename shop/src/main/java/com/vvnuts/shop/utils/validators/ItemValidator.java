@@ -5,7 +5,7 @@ import com.vvnuts.shop.dtos.responses.ValidationErrorResponse;
 import com.vvnuts.shop.dtos.responses.Violation;
 import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.Item;
-import com.vvnuts.shop.exceptions.StringAndNumValueTogetherException;
+import com.vvnuts.shop.exceptions.CharacterItemValidException;
 import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.repositories.ItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +30,7 @@ public class ItemValidator {
         }
         response.getViolations().addAll(characterItemValidator.isListCharacterItemValid(request.getCharacterItems()));
         if (response.getViolations().size() > 0) {
-            throw new StringAndNumValueTogetherException(response);
+            throw new CharacterItemValidException(response);
         }
     }
 

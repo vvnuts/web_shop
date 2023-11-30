@@ -20,11 +20,11 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/image")
 public class ImageController {
+    private final ImageValidator validator;
     private final UserService userService;
     private final CategoryService categoryService;
     private final ItemService itemService;
     private final ReviewImageService reviewImageService;
-    private final ImageValidator validator;
 
     @PostMapping("/user/{userId}")
     public ResponseEntity<HttpStatus> uploadUserImage(@PathVariable @Min(0) Integer userId,
@@ -112,11 +112,5 @@ public class ImageController {
     public ResponseEntity<?> deleteReviewImage(@PathVariable @Min(0) Integer reviewImageId) {
         reviewImageService.deleteImage(reviewImageId);
         return ResponseEntity.ok(HttpStatus.OK);
-    }
-
-    @ExceptionHandler(FileIsEmptyException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public String onFileIsEmptyException(RuntimeException e) {
-        return e.getMessage();
     }
 }

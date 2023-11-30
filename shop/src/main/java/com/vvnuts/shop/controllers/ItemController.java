@@ -17,19 +17,19 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/item")
 public class ItemController{
-    private final ItemService itemService;
+    private final ItemService service;
     private final ItemValidator validator;
 
     @PostMapping()
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid ItemRequest request) {
 
-        itemService.create(request);
+        service.create(request);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Item> findOne(@PathVariable @Min(0) Integer id) {
-        Item item = itemService.findById(id);
+        Item item = service.findById(id);
         return ResponseEntity.ok(item);
     }
 
@@ -37,13 +37,13 @@ public class ItemController{
     public ResponseEntity<HttpStatus> update(@PathVariable @Min(0) Integer id,
                                                  @RequestBody @Valid ItemRequest request) {
         Item item = validator.validate(request, id);
-        itemService.update(request, item);
+        service.update(request, item);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> delete(@PathVariable @Min(0) Integer id) {
-        itemService.delete(id);
+        service.delete(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 }

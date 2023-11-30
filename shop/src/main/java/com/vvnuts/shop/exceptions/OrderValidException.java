@@ -6,10 +6,10 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class StringAndNumValueTogetherException extends RuntimeException{
+public class OrderValidException extends RuntimeException{
     private final ValidationErrorResponse validationErrorResponses;
 
-    public StringAndNumValueTogetherException(ValidationErrorResponse validationErrorResponses) {
+    public OrderValidException(ValidationErrorResponse validationErrorResponses) {
         this.validationErrorResponses = validationErrorResponses;
     }
 }

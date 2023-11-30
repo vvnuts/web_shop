@@ -4,10 +4,8 @@ import com.vvnuts.shop.dtos.responses.ValidationErrorResponse;
 import lombok.Builder;
 import lombok.Getter;
 
-@Getter
-@Builder
-public class OrderItemValidException extends ValidException{
-    public OrderItemValidException(ValidationErrorResponse validationErrorResponses) {
+public class CharacterItemValidException extends ValidException{
+    public CharacterItemValidException(ValidationErrorResponse validationErrorResponses) {
         this.validationErrorResponses = validationErrorResponses;
     }
 }
