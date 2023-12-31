@@ -113,7 +113,7 @@ public class ItemService {
     }
 
     public void calculateRatingItem (Item item) {
-        float sumMark = 0;
+        double sumMark = 0;
         int countMark = 0;
         for (Review review: item.getReviews()) {
             sumMark += review.getMark();

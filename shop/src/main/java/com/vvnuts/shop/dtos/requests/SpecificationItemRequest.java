@@ -18,12 +18,12 @@ public class SpecificationItemRequest {
     @NotNull
     private Category category;
 
-    @Pattern(regexp = "\\d+ - \\d+")
+    @Pattern(regexp = "\\d+-\\d+") //TODO check
     private String rangeOfPrice;
 
     private Map<String, String> characteristicValue;
 
-    @Pattern(regexp = "\\d - \\d") //TODO check
+    @Pattern(regexp = "\\d-\\d") //TODO check
     private String rangeOfMark;
 
     private PageRequestDto pageRequest;

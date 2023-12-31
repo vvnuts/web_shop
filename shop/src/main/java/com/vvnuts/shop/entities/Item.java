@@ -36,10 +36,10 @@ public class Item {
     private Integer price;
 
     @Column(name = "sale")
-    private Float sale;
+    private Double sale;
 
     @Column(name = "mark")
-    private Float mark;
+    private Double mark;
 
     @Lob
     @Column(name = "image")

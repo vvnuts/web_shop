@@ -1,6 +1,5 @@
 package com.vvnuts.shop.dtos.requests;
 
-import com.vvnuts.shop.entities.Category;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -37,7 +36,7 @@ public class ItemRequest {
     @NotNull
     @Min(0)
     @Max(1)
-    private Float sale;
+    private Double sale;
 
     @Valid
     private List<CharacterItemRequest> characterItems;
