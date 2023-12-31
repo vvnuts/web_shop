@@ -6,8 +6,9 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class OrderItemValidException extends RuntimeException{
-    private final ValidationErrorResponse validationErrorResponses;
+public class OrderItemValidException extends ValidException{
+    public OrderItemValidException() {
+    }
 
     public OrderItemValidException(ValidationErrorResponse validationErrorResponses) {
         this.validationErrorResponses = validationErrorResponses;

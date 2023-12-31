@@ -6,11 +6,11 @@ import lombok.Getter;
 
 @Getter
 @Builder
-public class ReviewValidException extends ValidException{
-    public ReviewValidException() {
+public class BucketValidException extends ValidException{
+    public BucketValidException() {
     }
 
-    public ReviewValidException(ValidationErrorResponse validationErrorResponses) {
+    public BucketValidException(ValidationErrorResponse validationErrorResponses) {
         this.validationErrorResponses = validationErrorResponses;
     }
 }

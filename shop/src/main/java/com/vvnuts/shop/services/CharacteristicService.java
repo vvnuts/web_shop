@@ -26,6 +26,7 @@ public class CharacteristicService {
         Characteristic characteristic = Characteristic.builder()
                 .name(request.getName())
                 .categories(categoryMapper.getCategoryListFromIds(request.getCategories()))
+                .type(request.getType())
                 .build();
         characteristicRepository.save(characteristic);
         for (Category category: characteristic.getCategories()) {
@@ -56,6 +57,7 @@ public class CharacteristicService {
         Characteristic updateDto = Characteristic.builder()
                 .name(request.getName())
                 .categories(categoryMapper.getCategoryListFromIds(request.getCategories()))
+                .type(request.getType())
                 .build();
         updateCharacteristic.setName(request.getName());
 

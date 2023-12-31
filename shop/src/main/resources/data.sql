@@ -20,12 +20,12 @@ VALUES (1, 2),
 (8, 9),
 (8, 6);
 
-INSERT INTO characteristics (name)
-VALUES ('Цвет'),
-('Размер аккумулятора'),
-('Материал'),
-('Размер'),
-('Тип наушников');
+INSERT INTO characteristics (name, type)
+VALUES ('Цвет', 'STRING'),
+('Размер аккумулятора', 'INTEGER'),
+('Материал', 'STRING'),
+('Размер', 'INTEGER'),
+('Тип наушников', 'STRING');
 
 INSERT INTO category_characteristic (category_id, characteristic_id)
 VALUES (3, 1),
@@ -50,34 +50,34 @@ VALUES
    (7, '3-чехол', 'Описание 3-чехола', 10, 5000, 0, 0),
    (7, '3-чехол', 'Описание 3-чехола', 10, 5000, 0, 0);
 
-INSERT INTO character_item(num_value, characteristic_id, item_id)
-VALUES (1, 1, 1),
-(1, 1, 2),
-(1, 1, 3),
-(2, 2, 1),
-(2, 2, 2),
-(2, 2, 3),
-(3, 3, 1),
-(3, 3, 2),
-(3, 3, 3),
-(1, 1, 4),
-(1, 1, 5),
-(1, 1, 6),
-(1, 1, 7),
-(2, 4, 4),
-(2, 4, 5),
-(2, 4, 6),
-(2, 4, 7),
-(3, 5, 4),
-(3, 5, 5),
-(3, 5, 6),
-(3, 5, 7),
-(3, 3, 8),
-(3, 3, 9),
-(3, 3, 10),
-(4, 4, 8),
-(4, 4, 9),
-(4, 4, 10);
+INSERT INTO character_item(num_value, value, characteristic_id, item_id)
+VALUES (null, 'BLUE', 1, 1),
+(null, 'YELLOW', 1, 2),
+(null, 'PURPLE', 1, 3),
+(1000, null, 2, 1),
+(2000, null, 2, 2),
+(3000, null, 2, 3),
+(null, 'METAL', 3, 1),
+(null, 'METAL', 3, 2),
+(null, 'PLASTIC', 3, 3),
+(null, 'BLUE', 1, 4),
+(null, 'YELLOW', 1, 5),
+(null, 'BLACK', 1, 6),
+(null, 'BLUE', 1, 7),
+(2, null, 4, 4),
+(2, null, 4, 5),
+(2, null, 4, 6),
+(2, null, 4, 7),
+(null, 'WIRELESS', 5, 4),
+(null, 'WIRELESS', 5, 5),
+(null, 'WIRELESS', 5, 6),
+(null, 'WIRELESS', 5, 7),
+(null, 'METAL', 3, 8),
+(null, 'METAL', 3, 9),
+(null, 'METAL', 3, 10),
+(100, null, 4, 8),
+(200, null, 4, 9),
+(300, null, 4, 10);
 
 INSERT INTO users (firstname, lastname, email, user_password, role)
 VALUES
@@ -86,6 +86,12 @@ VALUES
     ('Michael', 'Johnson', 'michaeljohnson@example.com', '$2a$10$wyGIHpBcunI7CvMGIeiKMOwOg8ZM6QTvaFPzUvZcIm39VrLECvhYu', 'ROLE_USER'),
     ('Emily', 'Williams', 'emilywilliams@example.com', '$2a$10$TU3i7bfUQ6tEXSpcgwQojuuvwGMZVN2lFNhsM0Oj9QLZbw9XinOz2', 'ROLE_USER');
 
+INSERT INTO buckets (user_id)
+VALUES
+(1),
+(2),
+(3),
+(4);
 
 INSERT INTO reviews (mark, review_text, item_id, user_id)
 VALUES (5, 'Great product!', 1, 4),

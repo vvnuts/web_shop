@@ -32,19 +32,6 @@ public class BucketService {
         bucketItemService.linkBucket(bucket);
     }
 
-    public void update(BucketRequest request, Integer id) {
-        Bucket updateBucket = findBucketByUserId(id);
-        if (updateBucket.getBucketItems() != null) {
-            for (BucketItem bucketItem: updateBucket.getBucketItems()) {
-                bucketItemService.removeBucket(bucketItem);
-            }
-        }
-        updateBucket.setBucketItems(bucketItemMapper.transferBucketItemDtoToList(request.getOrderItem()));
-        bucketItemService.linkBucket(updateBucket);
-        calculationQuantityAndPrice(updateBucket);
-        repository.save(updateBucket);
-    }
-
     public BucketResponse findOne(Integer userId) {
         Bucket bucket = findBucketByUserId(userId);
         return mapper.convertEntityToResponse(bucket);
@@ -52,6 +39,18 @@ public class BucketService {
 
     public Bucket findBucketByUserId(Integer userId) {
         return repository.findByUser(userService.findById(userId)).orElseThrow();
+    }
+
+    public void update(BucketRequest request, Bucket updateBucket) {
+        if (updateBucket.getBucketItems() != null) {
+            for (BucketItem bucketItem : updateBucket.getBucketItems()) {
+                bucketItemService.removeBucket(bucketItem);
+            }
+        }
+        updateBucket.setBucketItems(bucketItemMapper.transferBucketItemDtoToList(request.getOrderItem()));
+        bucketItemService.linkBucket(updateBucket);
+        calculationQuantityAndPrice(updateBucket);
+        repository.save(updateBucket);
     }
 
     private void calculationQuantityAndPrice(Bucket bucket) {
@@ -64,10 +63,6 @@ public class BucketService {
         }
         bucket.setTotalPrice(totalSum);
         bucket.setTotalQuantity(totalQuantity);
-    }
-
-    public BucketResponse findById(Integer id) {
-        return mapper.convertEntityToResponse(repository.findByUser(userService.findById(id)).orElseThrow());
     }
 
     public void removeItemFromBucket(User user) {

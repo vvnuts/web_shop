@@ -6,7 +6,6 @@ import com.vvnuts.shop.dtos.responses.Violation;
 import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.entities.User;
 import com.vvnuts.shop.exceptions.ReviewValidException;
-import com.vvnuts.shop.exceptions.StringAndNumValueTogetherException;
 import com.vvnuts.shop.repositories.ItemRepository;
 import com.vvnuts.shop.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +33,7 @@ public class ReviewValidator {
                     .add(new Violation("User", "Пользователь с id "
                             + request.getUser() + " not found"));
         }
-        if (response.getViolations().size() > 0) {
+        if (!response.getViolations().isEmpty()) {
             throw new ReviewValidException(response);
         }
     }

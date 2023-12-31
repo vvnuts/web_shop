@@ -4,9 +4,9 @@ import com.vvnuts.shop.dtos.requests.ReviewRequest;
 import com.vvnuts.shop.dtos.requests.ReviewUpdateRequest;
 import com.vvnuts.shop.dtos.responses.ReviewResponse;
 import com.vvnuts.shop.dtos.responses.ValidationErrorResponse;
-import com.vvnuts.shop.exceptions.OrderItemValidException;
 import com.vvnuts.shop.exceptions.ReviewValidException;
 import com.vvnuts.shop.services.ReviewService;
+import com.vvnuts.shop.utils.validators.ReviewValidator;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -23,36 +23,38 @@ import java.util.List;
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/review")
 public class ReviewController{
-    private final ReviewService reviewService;
+    private final ReviewService service;
+    private final ReviewValidator validator;
 
     @PostMapping()
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid ReviewRequest request){
-        reviewService.create(request);
+        validator.validate(request);
+        service.create(request);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
     @GetMapping()
     public ResponseEntity<Collection<ReviewResponse>> findAll(){
-        List<ReviewResponse> responses = reviewService.findAll();
+        List<ReviewResponse> responses = service.findAll();
         return ResponseEntity.ok(responses);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<ReviewResponse> findOne(@PathVariable @Min(0) Integer id) {
-        ReviewResponse response = reviewService.findOne(id);
+        ReviewResponse response = service.findOne(id);
         return ResponseEntity.ok(response);
     }
 
     @PatchMapping("/{id}")
     public ResponseEntity<HttpStatus> update(@PathVariable @Min(0) Integer id,
                                              @RequestBody @Valid ReviewUpdateRequest request) {
-        reviewService.update(request, id);
+        service.update(request, id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> delete(@PathVariable @Min(0) Integer id) {
-        reviewService.delete(id);
+        service.delete(id);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 

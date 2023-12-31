@@ -2,7 +2,7 @@ package com.vvnuts.shop.utils.mappers;
 
 import com.vvnuts.shop.dtos.requests.CharacterItemRequest;
 import com.vvnuts.shop.dtos.requests.ItemRequest;
-import com.vvnuts.shop.exceptions.StringAndNumValueTogetherException;
+import com.vvnuts.shop.exceptions.CharacterItemValidException;
 import com.vvnuts.shop.dtos.responses.ValidationErrorResponse;
 import com.vvnuts.shop.entities.CharacterItem;
 import com.vvnuts.shop.repositories.CharacteristicRepository;
@@ -36,7 +36,7 @@ public class CharacterItemMapper {
             characterItems.add(newCharacterItem);
         }
         if (response.getViolations().size() > 0) {
-            throw new StringAndNumValueTogetherException(response);
+            throw new CharacterItemValidException(response);
         }
         return characterItems;
     }

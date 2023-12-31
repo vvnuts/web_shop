@@ -1,8 +1,6 @@
 package com.vvnuts.shop.controllers;
 
-import com.vvnuts.shop.exceptions.NotFoundRelatedObjectException;
-import com.vvnuts.shop.exceptions.OrderItemValidException;
-import com.vvnuts.shop.exceptions.StringAndNumValueTogetherException;
+import com.vvnuts.shop.exceptions.*;
 import com.vvnuts.shop.dtos.responses.NotFoundResponse;
 import com.vvnuts.shop.dtos.responses.ValidationErrorResponse;
 import com.vvnuts.shop.dtos.responses.Violation;
@@ -56,24 +54,28 @@ public class ErrorHandlingControllerAdvice {
                 .build();
     }
 
-    @ExceptionHandler(NotFoundRelatedObjectException.class)
+    @ExceptionHandler({
+            BucketValidException.class,
+            NotFoundRelatedObjectException.class,
+            CharacterItemValidException.class,
+            OrderItemValidException.class,
+            OrderValidException.class,
+            ReviewValidException.class
+    })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ResponseBody
-    ValidationErrorResponse onNotFoundRelatedObjectException(NotFoundRelatedObjectException e) {
+    ValidationErrorResponse onValidException(ValidException e) {
         return e.getValidationErrorResponses();
     }
 
-    @ExceptionHandler(StringAndNumValueTogetherException.class)
+    @ExceptionHandler({
+            CategoryParentContainsItselfException.class,
+            CycleHasFormedException.class,
+            FileIsEmptyException.class,
+            OrderStatusException.class
+    })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    ValidationErrorResponse onStringAndNumValueTogetherException(StringAndNumValueTogetherException e) {
-        return e.getValidationErrorResponses();
-    }
-
-    @ExceptionHandler(OrderItemValidException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ResponseBody
-    ValidationErrorResponse onOrderItemValidException(OrderItemValidException e) {
-        return e.getValidationErrorResponses();
+    public String onRuntimeException(RuntimeException e) {
+        return e.getMessage();
     }
 }

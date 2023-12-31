@@ -18,24 +18,24 @@ import java.util.*;
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
-    private final CategoryRepository categoryRepository;
+    private final CategoryRepository repository;
+    private final CategoryMapper mapper;
     private final CharacteristicService characteristicService;
     private final ItemService itemService;
-    private final CategoryMapper categoryMapper;
 
     public void create(CategoryRequest categoryRequest) {
-        Category newCategory = categoryMapper.transferCategoryDtoToCategory(categoryRequest);
+        Category newCategory = mapper.transferCategoryDtoToCategory(categoryRequest);
         for (Category parent: newCategory.getParents()) {
             parent.getChildren().add(newCategory);
         }
         for (Characteristic characteristic: newCategory.getCharacteristics()) {
             characteristic.getCategories().add(newCategory);
         }
-        categoryRepository.save(newCategory);
+        repository.save(newCategory);
     }
 
     public Category findById(Integer id) {
-        return categoryRepository.findById(id).orElseThrow();
+        return repository.findById(id).orElseThrow();
     }
 
     public Set<Item> findItemInCategory(Integer id) {
@@ -43,36 +43,36 @@ public class CategoryService {
     }
 
     public List<CategoryResponse> findAll() {
-        return categoryMapper.convertEntityToListResponse(categoryRepository.findAll());
+        return mapper.convertEntityToListResponse(repository.findAll());
     }
 
     public void update(CategoryRequest request, Category updateCategory) {
-        Category updateDTO = categoryMapper.transferCategoryDtoToCategory(request);
+        Category updateDTO = mapper.transferCategoryDtoToCategory(request);
         if (!updateCategory.getCategoryName().equals(updateDTO.getCategoryName())) {
             updateCategory.setCategoryName(updateDTO.getCategoryName());
         }
 
         for (Category oldParent : updateCategory.getParents()) {
             oldParent.getChildren().remove(updateCategory);
-            categoryRepository.save(oldParent);
+            repository.save(oldParent);
         }
         for (Category updateParent : updateDTO.getParents()) {
             updateParent.getChildren().add(updateCategory);
-            categoryRepository.save(updateParent);
+            repository.save(updateParent);
         }
 
         characteristicService.replaceCharacteristicsInCategory(updateCategory, updateDTO);
-        categoryRepository.save(updateCategory);
+        repository.save(updateCategory);
     }
 
     public void delete(Integer categoryId) {
         Category category = findById(categoryId);
         for (Category parent : category.getParents()) {
             parent.getChildren().remove(category);
-            categoryRepository.save(parent);
+            repository.save(parent);
         }
         deleteChildren(category.getChildren(), category);
-        categoryRepository.delete(category);
+        repository.delete(category);
     }
 
     public void deleteChildren(List<Category> categories, Category removeCategory) {
@@ -83,7 +83,7 @@ public class CategoryService {
             if (child.getParents().size() > 1) {
                 child.getParents().remove(removeCategory);
                 removeCategory.getChildren().remove(child);
-                categoryRepository.save(child);
+                repository.save(child);
             }
         }
     }
@@ -94,7 +94,7 @@ public class CategoryService {
         }
         Category category = findById(categoryId);
         category.setImage(ImageUtils.compressImage(file.getBytes()));
-        categoryRepository.save(category);
+        repository.save(category);
     }
 
     @Transactional
@@ -105,6 +105,6 @@ public class CategoryService {
 
     public void deleteImage(Integer imageId) {
         Category category = findById(imageId);
-        categoryRepository.delete(category);
+        repository.delete(category);
     }
 }
