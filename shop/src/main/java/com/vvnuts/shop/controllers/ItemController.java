@@ -35,7 +35,7 @@ public class ItemController{
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
 
-    @PostMapping()
+    @PostMapping("/filter")
     public ResponseEntity<Page<Item>> findWithFilter(@RequestBody @Valid SpecificationItemRequest request) {
         Pageable pageable = new PageRequestDto().getPageable(request.getPageRequest());
         return ResponseEntity.ok(repository.findAll(specification.createSpecification(request), pageable));

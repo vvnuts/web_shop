@@ -1,5 +1,6 @@
 package com.vvnuts.shop.dtos.requests;
 
+import com.vvnuts.shop.entities.Category;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -15,7 +16,7 @@ import java.util.Map;
 @NoArgsConstructor
 public class SpecificationItemRequest {
     @NotNull
-    private Integer categoryId;
+    private Category category;
 
     @Pattern(regexp = "\\d+ - \\d+")
     private String rangeOfPrice;

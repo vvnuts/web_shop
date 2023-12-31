@@ -1,7 +1,6 @@
 package com.vvnuts.shop.dtos.requests;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.domain.PageRequest;
@@ -18,7 +17,7 @@ public class PageRequestDto {
     private Integer pageSize = 10;
     private Sort.Direction sort = Sort.Direction.ASC;
 
-    private String sortByColumn = "name_item";
+    private String sortByColumn = "itemName";
 
     public Pageable getPageable(PageRequestDto dto){
         Integer page = Objects.nonNull(dto.getPageNo()) ? dto.getPageNo() : this.pageNo;
