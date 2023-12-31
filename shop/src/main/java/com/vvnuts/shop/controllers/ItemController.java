@@ -1,12 +1,18 @@
 package com.vvnuts.shop.controllers;
 
 import com.vvnuts.shop.dtos.requests.ItemRequest;
+import com.vvnuts.shop.dtos.requests.PageRequestDto;
+import com.vvnuts.shop.dtos.requests.SpecificationItemRequest;
 import com.vvnuts.shop.entities.Item;
+import com.vvnuts.shop.repositories.ItemRepository;
 import com.vvnuts.shop.services.ItemService;
+import com.vvnuts.shop.services.specifications.ItemSpecification;
 import com.vvnuts.shop.utils.validators.ItemValidator;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +24,8 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/item")
 public class ItemController{
     private final ItemService service;
+    private final ItemSpecification specification;
+    private final ItemRepository repository;
     private final ItemValidator validator;
 
     @PostMapping()
@@ -25,6 +33,12 @@ public class ItemController{
 
         service.create(request);
         return ResponseEntity.ok(HttpStatus.CREATED);
+    }
+
+    @PostMapping()
+    public ResponseEntity<Page<Item>> findWithFilter(@RequestBody @Valid SpecificationItemRequest request) {
+        Pageable pageable = new PageRequestDto().getPageable(request.getPageRequest());
+        return ResponseEntity.ok(repository.findAll(specification.createSpecification(request), pageable));
     }
 
     @GetMapping("/{id}")

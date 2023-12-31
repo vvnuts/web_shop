@@ -33,7 +33,7 @@ public class ReviewValidator {
                     .add(new Violation("User", "Пользователь с id "
                             + request.getUser() + " not found"));
         }
-        if (response.getViolations().size() > 0) {
+        if (!response.getViolations().isEmpty()) {
             throw new ReviewValidException(response);
         }
     }

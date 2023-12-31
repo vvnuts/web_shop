@@ -7,6 +7,9 @@ import lombok.Getter;
 @Getter
 @Builder
 public class BucketValidException extends ValidException{
+    public BucketValidException() {
+    }
+
     public BucketValidException(ValidationErrorResponse validationErrorResponses) {
         this.validationErrorResponses = validationErrorResponses;
     }
