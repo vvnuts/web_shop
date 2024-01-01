@@ -11,7 +11,6 @@ import com.vvnuts.shop.repositories.CharacteristicRepository;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
 import lombok.RequiredArgsConstructor;
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +25,7 @@ public class ItemSpecification {
     private final CharacteristicRepository characteristicRepository;
 
     public Specification<Item> createSpecification(SpecificationItemRequest request) {
-        Specification<Item> itemSpecification = getItemInStock();
+        Specification<Item> itemSpecification = getItemInStock().and(getItemFromCategory(request.getCategory()));
 
         if (request.getRangeOfPrice() != null) {
             itemSpecification = itemSpecification.and(getItemWithRangeOfPrice(request.getRangeOfPrice()));
@@ -77,13 +76,13 @@ public class ItemSpecification {
             predicates.add(criteriaBuilder.equal(itemWithCharacterItem.get("characteristic"), characteristic));
             Join<CharacterItem, Characteristic> allInfo = itemWithCharacterItem.join("characteristic");
 
-            if (value.matches("\\d\\.\\d-\\d\\.\\d") && value.split("-").length == 2) {
+            if ((value.matches("\\d+\\.\\d+-\\d+\\.\\d+") || value.matches("\\d+-\\d+")) && value.split("-").length == 2) {
                 List<Double> limits = prepareStringLimits(value);
-                predicates.add(criteriaBuilder.equal(allInfo.get("type"), Type.INTEGER.toString()));
-                predicates.add(criteriaBuilder.between(allInfo.get("numValue"), limits.get(0), limits.get(1)));
+                predicates.add(criteriaBuilder.equal(allInfo.get("type"), Type.INTEGER));
+                predicates.add(criteriaBuilder.between(itemWithCharacterItem.get("numValue"), limits.get(0), limits.get(1)));
             } else {
-                predicates.add(criteriaBuilder.equal(allInfo.get("type"), Type.STRING.toString()));
-                predicates.add(criteriaBuilder.equal(allInfo.get("value"), value));
+                predicates.add(criteriaBuilder.equal(allInfo.get("type"), Type.STRING));
+                predicates.add(criteriaBuilder.equal(itemWithCharacterItem.get("value"), value));
             }
 
             return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
