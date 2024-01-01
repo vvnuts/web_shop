@@ -1,6 +1,7 @@
 package com.vvnuts.shop.controllers;
 
 import com.vvnuts.shop.entities.User;
+import com.vvnuts.shop.entities.enums.Role;
 import com.vvnuts.shop.services.UserService;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,13 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<HttpStatus> delete(@PathVariable @Min(0) Integer id) {
         service.delete(id);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<HttpStatus> setRole(@PathVariable @Min(0) Integer id,
+                                              @RequestParam("role")Role role) {
+        service.setRole(id, role);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 }

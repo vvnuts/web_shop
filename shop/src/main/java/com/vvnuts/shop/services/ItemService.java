@@ -91,7 +91,8 @@ public class ItemService {
 
     public void deleteImage(Integer imageId) {
         Item item = findById(imageId);
-        repository.delete(item);
+        item.setImage(null);
+        repository.save(item);
     }
 
     public void delete(Integer itemId) {

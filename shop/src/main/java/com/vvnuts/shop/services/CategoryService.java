@@ -98,8 +98,9 @@ public class CategoryService {
         return ImageUtils.decompressImage(category.getImage());
     }
 
-    public void deleteImage(Integer imageId) {
-        Category category = findById(imageId);
-        repository.delete(category);
+    public void deleteImage(Integer userId) {
+        Category category = findById(userId);
+        category.setImage(null);
+        repository.save(category);
     }
 }

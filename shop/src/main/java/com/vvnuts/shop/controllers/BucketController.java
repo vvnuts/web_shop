@@ -29,16 +29,16 @@ public class BucketController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BucketResponse> findOne(@PathVariable @Min(0) Integer userId) {
-        BucketResponse response = service.findOne(userId);
+    public ResponseEntity<BucketResponse> findOne(@PathVariable @Min(0) Integer id) {
+        BucketResponse response = service.findOne(id);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<HttpStatus> update(@PathVariable @Min(0) Integer userId,
+    public ResponseEntity<HttpStatus> update(@PathVariable @Min(0) Integer id,
                                              @RequestBody @Valid BucketRequest request) {
-        Bucket bucket = validator.validate(request, userId);
+        Bucket bucket = validator.validate(request, id);
         service.update(request, bucket);
         return ResponseEntity.ok(HttpStatus.OK);
     }

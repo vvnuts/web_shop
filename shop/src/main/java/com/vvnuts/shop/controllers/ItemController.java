@@ -30,7 +30,6 @@ public class ItemController{
 
     @PostMapping()
     public ResponseEntity<HttpStatus> create(@RequestBody @Valid ItemRequest request) {
-
         service.create(request);
         return ResponseEntity.ok(HttpStatus.CREATED);
     }
