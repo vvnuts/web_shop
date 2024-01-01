@@ -1,6 +1,7 @@
 package com.vvnuts.shop.dtos.requests;
 
 import com.vvnuts.shop.entities.Category;
+import com.vvnuts.shop.entities.Characteristic;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
@@ -18,12 +19,12 @@ public class SpecificationItemRequest {
     @NotNull
     private Category category;
 
-    @Pattern(regexp = "\\d+-\\d+") //TODO check
+    @Pattern(regexp = "\\d+-\\d+")
     private String rangeOfPrice;
 
-    private Map<String, String> characteristicValue;
+    private Map<Integer, String> characteristicValue;
 
-    @Pattern(regexp = "\\d-\\d") //TODO check
+    @Pattern(regexp = "\\d\\.\\d-\\d\\.\\d") //TODO check
     private String rangeOfMark;
 
     private PageRequestDto pageRequest;
