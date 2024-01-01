@@ -1,7 +1,6 @@
 package com.vvnuts.shop.services;
 
 import com.vvnuts.shop.dtos.requests.ItemRequest;
-import com.vvnuts.shop.entities.Category;
 import com.vvnuts.shop.entities.CharacterItem;
 import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.entities.Review;
@@ -17,9 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -39,16 +36,6 @@ public class ItemService {
 
     public Item findById(Integer id) { //TODO переписать с респонсом
         return repository.findById(id).orElseThrow();
-    }
-
-    public Set<Item> findItemFromCategory(Category startCategory) { //TODO Поменять на ItemResponse
-        Set<Item> allItem = new HashSet<>(startCategory.getItems());
-        List<Category> childrenCategory = startCategory.getChildren();
-        for (Category child : childrenCategory) {
-            allItem.addAll(findItemFromCategory(child));
-            allItem.addAll(child.getItems());
-        }
-        return allItem;
     }
 
     public void update(ItemRequest request, Item updateItem) {

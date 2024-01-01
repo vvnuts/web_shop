@@ -29,7 +29,7 @@ public class Characteristic {
     @NotNull
     private String name;
 
-    @Enumerated(EnumType.STRING)  //TODO сделать типы характеристик
+    @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private Type type;
 

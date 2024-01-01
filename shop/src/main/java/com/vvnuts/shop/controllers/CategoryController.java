@@ -3,9 +3,6 @@ package com.vvnuts.shop.controllers;
 import com.vvnuts.shop.dtos.requests.CategoryRequest;
 import com.vvnuts.shop.dtos.responses.CategoryResponse;
 import com.vvnuts.shop.entities.Category;
-import com.vvnuts.shop.exceptions.CategoryParentContainsItselfException;
-import com.vvnuts.shop.exceptions.CycleHasFormedException;
-import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.services.CategoryService;
 import com.vvnuts.shop.utils.validators.CategoryValidator;
 import jakarta.validation.Valid;
@@ -38,11 +35,6 @@ public class CategoryController{
     public ResponseEntity<Collection<CategoryResponse>> findAll(){
         List<CategoryResponse> entities = service.findAll();
         return ResponseEntity.ok(entities);
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<Collection<Item>> findItemFromCategory(@PathVariable @Min(0) Integer id) {
-        return ResponseEntity.ok(service.findItemInCategory(id));
     }
 
     @PutMapping("/{id}")

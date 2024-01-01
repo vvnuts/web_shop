@@ -21,7 +21,6 @@ public class CategoryService {
     private final CategoryRepository repository;
     private final CategoryMapper mapper;
     private final CharacteristicService characteristicService;
-    private final ItemService itemService;
 
     public void create(CategoryRequest categoryRequest) {
         Category newCategory = mapper.transferCategoryDtoToCategory(categoryRequest);
@@ -36,10 +35,6 @@ public class CategoryService {
 
     public Category findById(Integer id) {
         return repository.findById(id).orElseThrow();
-    }
-
-    public Set<Item> findItemInCategory(Integer id) {
-        return itemService.findItemFromCategory(findById(id));
     }
 
     public List<CategoryResponse> findAll() {

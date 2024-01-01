@@ -24,7 +24,7 @@ public class OrderItemMapper {
                     .quantity(orderItemRequest.getQuantity())
                     .build();
             if (orderItem.getItem().getQuantity() < orderItem.getQuantity()) {
-                throw new RuntimeException("Больше заявленного кол-ва"); //TODO exception
+                throw new RuntimeException("Больше заявленного кол-ва");
             }
             orderItemRepository.save(orderItem);
             orderItems.add(orderItem);
