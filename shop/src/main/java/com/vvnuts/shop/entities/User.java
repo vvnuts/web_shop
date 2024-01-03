@@ -60,6 +60,10 @@ public class User implements UserDetails {
     @JsonIgnore
     private List<Order> order;
 
+    public User(Integer userId) {
+        this.userId = userId;
+    }
+
     @JsonIgnore
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

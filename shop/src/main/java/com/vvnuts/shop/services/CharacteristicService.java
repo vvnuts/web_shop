@@ -10,6 +10,7 @@ import com.vvnuts.shop.utils.mappers.CharacteristicMapper;
 import com.vvnuts.shop.utils.mappers.CategoryMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
@@ -22,18 +23,18 @@ public class CharacteristicService {
     private final CharacterItemService characterItemService;
     private final CharacteristicMapper mapper;
 
-    public void create(CharacteristicRequest request) {
+    public Characteristic create(CharacteristicRequest request) {
         Characteristic characteristic = Characteristic.builder()
                 .name(request.getName())
                 .categories(categoryMapper.getCategoryListFromIds(request.getCategories()))
                 .type(request.getType())
                 .build();
-        characteristicRepository.save(characteristic);
+        Characteristic savedValue = characteristicRepository.save(characteristic);
         for (Category category: characteristic.getCategories()) {
             category.getCharacteristics().add(characteristic);
             characterItemService.addCategoryItemsCharacteristic(category, characteristic);
-            categoryRepository.save(category);
         }
+        return savedValue;
     }
 
     public Characteristic findById(Integer id) {
@@ -72,7 +73,7 @@ public class CharacteristicService {
                 oldCategories.remove(newCategory);
             }
         }
-        if (oldCategories.size() > 0) {
+        if (!oldCategories.isEmpty()) {
             for (Category removeCategory : oldCategories) {
                 updateCharacteristic.getCategories().remove(removeCategory);
                 removeCategory.getCharacteristics().remove(updateCharacteristic);
@@ -105,7 +106,7 @@ public class CharacteristicService {
                 oldCharacteristic.remove(newCharacteristic);
             }
         }
-        if (oldCharacteristic.size() > 0) {
+        if (!oldCharacteristic.isEmpty()) {
             for (Characteristic removeCharacteristic : oldCharacteristic) {
                 updateCategory.getCharacteristics().remove(removeCharacteristic);
                 removeCharacteristic.getCategories().remove(updateCategory);

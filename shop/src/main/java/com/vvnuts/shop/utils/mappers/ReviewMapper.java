@@ -4,10 +4,12 @@ import com.vvnuts.shop.dtos.requests.ReviewRequest;
 import com.vvnuts.shop.dtos.responses.ReviewResponse;
 import com.vvnuts.shop.entities.Review;
 import com.vvnuts.shop.services.ItemService;
-import com.vvnuts.shop.services.ReviewImageService;
 import com.vvnuts.shop.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -34,5 +36,13 @@ public class ReviewMapper {
                 .user(userMapper.convertEntityToResponse(review.getUser()))
                 .item(itemMapper.convertEntityToResponse(review.getItem()))
                 .build();
+    }
+
+    public List<ReviewResponse> convertListEntityToResponse(List<Review> reviews) {
+        List<ReviewResponse> reviewResponses = new ArrayList<>();
+        for (Review review : reviews) {
+            reviewResponses.add(convertEntityToResponse(review));
+        }
+        return reviewResponses;
     }
 }

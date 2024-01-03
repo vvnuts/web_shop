@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "buckets")
+@Table(name = "Buckets")
 public class Bucket {
     @Id
     @Column(name = "id")

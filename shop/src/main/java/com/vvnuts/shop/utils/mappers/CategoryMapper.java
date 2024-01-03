@@ -20,7 +20,6 @@ public class CategoryMapper {
 
     public List<Category> getCategoryListFromIds(Collection<Integer> categoriesId) {
         List<Category> categories = new ArrayList<>();
-        ValidationErrorResponse response = new ValidationErrorResponse();
         for (Integer categoryId : categoriesId) {
             Category category = categoryRepository.findById(categoryId).orElseThrow();
             categories.add(category);

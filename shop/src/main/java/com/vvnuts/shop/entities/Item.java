@@ -54,4 +54,8 @@ public class Item {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "item", cascade = CascadeType.ALL)
     @JsonIgnore
     private List<BucketItem> bucketItems;
+
+    public Item(Integer itemId) {
+        this.itemId = itemId;
+    }
 }
