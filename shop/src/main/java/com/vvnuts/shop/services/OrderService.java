@@ -28,7 +28,7 @@ public class OrderService {
         return repository.save(newOrder);
     }
 
-    public void approveOrder(UUID orderId) {
+    public Order approveOrder(UUID orderId) {
         Order order = findById(orderId);
         for (OrderItem orderItem: order.getOrderItems()) {
             Item temp = orderItem.getItem();
@@ -37,13 +37,13 @@ public class OrderService {
         }
         bucketService.removeItemFromBucket(order.getUser());
         order.setStatus(Status.SUCCESS);
-        repository.save(order);
+        return repository.save(order);
     }
 
-    public void cancelingOrder(UUID orderId) {
+    public Order cancelingOrder(UUID orderId) {
         Order order = findById(orderId);
         order.setStatus(Status.CANCEL);
-        repository.save(order);
+        return repository.save(order);
     }
 
     public void delete(UUID id) {
@@ -60,7 +60,7 @@ public class OrderService {
         Integer totalQuantity = 0;
         for (OrderItem orderItem: order.getOrderItems()) {
             totalSum = totalSum.add(BigDecimal.valueOf(orderItem.getQuantity() * orderItem.getItem().getPrice() *
-                    (1 + orderItem.getItem().getSale())));
+                    (1 - orderItem.getItem().getSale())));
             totalQuantity += orderItem.getQuantity();
         }
         order.setTotalPrice(totalSum);

@@ -55,7 +55,9 @@ public class Item {
     @JsonIgnore
     private List<BucketItem> bucketItems;
 
-    public Item(Integer itemId) {
-        this.itemId = itemId;
+    public Item(Integer quantity, Integer price, Double sale) {
+        this.quantity = quantity;
+        this.price = price;
+        this.sale = sale;
     }
 }
