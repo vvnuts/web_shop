@@ -1,7 +1,5 @@
 package com.vvnuts.shop.controllers;
 
-import com.vvnuts.shop.exceptions.FileIsEmptyException;
-import com.vvnuts.shop.exceptions.OrderStatusException;
 import com.vvnuts.shop.services.*;
 import com.vvnuts.shop.utils.validators.ImageValidator;
 import jakarta.validation.constraints.Min;
@@ -102,7 +100,7 @@ public class ImageController {
 
     @GetMapping("review/{reviewImageId}")
     public ResponseEntity<?> downloadReviewImage(@PathVariable @Min(0) Integer reviewImageId) {
-        byte[] image =  reviewImageService.downloadImages(reviewImageId);
+        byte[] image =  reviewImageService.downloadImage(reviewImageId);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.valueOf("image/png"))
                 .body(image);

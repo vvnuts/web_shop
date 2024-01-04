@@ -72,7 +72,8 @@ public class ErrorHandlingControllerAdvice {
             CategoryParentContainsItselfException.class,
             CycleHasFormedException.class,
             FileIsEmptyException.class,
-            OrderStatusException.class
+            OrderStatusException.class,
+            ImageIsAlreadyNull.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public String onRuntimeException(RuntimeException e) {

@@ -2,6 +2,8 @@ package com.vvnuts.shop.services;
 
 import com.vvnuts.shop.entities.User;
 import com.vvnuts.shop.entities.enums.Role;
+import com.vvnuts.shop.exceptions.FileIsEmptyException;
+import com.vvnuts.shop.exceptions.ImageIsAlreadyNull;
 import com.vvnuts.shop.repositories.UserRepository;
 import com.vvnuts.shop.utils.ImageUtils;
 import lombok.RequiredArgsConstructor;
@@ -24,26 +26,35 @@ public class UserService {
         repository.delete(user);
     }
 
-    public void setRole(Integer id, Role role) {
+    public User setRole(Integer id, Role role) {
         User user = findById(id);
         user.setRole(role);
-        repository.save(user);
+        return repository.save(user);
     }
 
-    public void uploadImage(MultipartFile file, Integer userId) throws IOException {
+    public User uploadImage(MultipartFile file, Integer userId) throws IOException {
+        if (file.isEmpty()){
+            throw new FileIsEmptyException("Файл пуст.");
+        }
         User user = findById(userId);
         user.setImage(ImageUtils.compressImage(file.getBytes()));
-        repository.save(user);
+        return repository.save(user);
     }
 
     public byte[] downloadImage(Integer userId) {
         User user = findById(userId);
+        if (user.getImage() == null) {
+            return null;
+        }
         return ImageUtils.decompressImage(user.getImage());
     }
 
-    public void deleteImage(Integer userId) {
+    public User deleteImage(Integer userId) {
         User user = findById(userId);
+        if (user.getImage() == null) {
+            throw new ImageIsAlreadyNull("Изображение и так уже пустое!");
+        }
         user.setImage(null);
-        repository.save(user);
+        return repository.save(user);
     }
 }
