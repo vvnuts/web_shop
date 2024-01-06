@@ -29,29 +29,29 @@ class UserServiceTest {
     @InjectMocks
     private UserService underTest;
 
-    private static final int userId = 1;
+    private static final int USER_ID = 1;
 
     @Test
     void userService_findById_returnUser() {
         //given
-        when(repository.findById(userId)).thenReturn(Optional.of(getUser()));
+        when(repository.findById(USER_ID)).thenReturn(Optional.of(getUser()));
 
         //when
-        User result = underTest.findById(userId);
+        User result = underTest.findById(USER_ID);
 
         //then
-        Mockito.verify(repository, times(1)).findById(userId);
+        Mockito.verify(repository, times(1)).findById(USER_ID);
         Assertions.assertThat(result).isNotNull();
     }
 
     @Test
     void userService_findById_throwException() {
         //given
-        when(repository.findById(userId)).thenReturn(Optional.empty());
+        when(repository.findById(USER_ID)).thenReturn(Optional.empty());
 
         //when
         //then
-        Assertions.assertThatThrownBy(() -> underTest.findById(userId))
+        Assertions.assertThatThrownBy(() -> underTest.findById(USER_ID))
                 .isInstanceOf(NoSuchElementException.class);
     }
 
@@ -59,24 +59,24 @@ class UserServiceTest {
     void userService_delete_canDelete() {
         //given
         User deletedUser = getUser();
-        when(repository.findById(userId)).thenReturn(Optional.of(deletedUser));
+        when(repository.findById(USER_ID)).thenReturn(Optional.of(deletedUser));
 
         //when
-        underTest.delete(userId);
+        underTest.delete(USER_ID);
 
         //then
-        Mockito.verify(repository, times(1)).findById(userId);
+        Mockito.verify(repository, times(1)).findById(USER_ID);
         Mockito.verify(repository, times(1)).delete(deletedUser);
     }
 
     @Test
     void userService_delete_throwException() {
         //given
-        when(repository.findById(userId)).thenReturn(Optional.empty());
+        when(repository.findById(USER_ID)).thenReturn(Optional.empty());
 
         //when
         //then
-        Assertions.assertThatThrownBy(() -> underTest.delete(userId))
+        Assertions.assertThatThrownBy(() -> underTest.delete(USER_ID))
                         .isInstanceOf(NoSuchElementException.class);
         Mockito.verify(repository, never()).delete(any());
     }
@@ -85,11 +85,11 @@ class UserServiceTest {
     void userService_setRole_returnUserWithOtherRole() {
         //given
         User old = getUser();
-        when(repository.findById(userId)).thenReturn(Optional.of(getUser()));
+        when(repository.findById(USER_ID)).thenReturn(Optional.of(getUser()));
         when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         //when
-        User upd = underTest.setRole(userId, Role.ROLE_ADMIN);
+        User upd = underTest.setRole(USER_ID, Role.ROLE_ADMIN);
 
         //then
         Assertions.assertThat(upd.getRole()).isNotEqualTo(old.getRole());
@@ -100,11 +100,11 @@ class UserServiceTest {
     void userService_setRole_returnUserWithSameRole() {
         //given
         User old = getUser();
-        when(repository.findById(userId)).thenReturn(Optional.of(getUser()));
+        when(repository.findById(USER_ID)).thenReturn(Optional.of(getUser()));
         when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         //when
-        User upd = underTest.setRole(userId, Role.ROLE_USER);
+        User upd = underTest.setRole(USER_ID, Role.ROLE_USER);
 
         //then
         Assertions.assertThat(upd.getRole()).isEqualTo(old.getRole());
@@ -114,12 +114,12 @@ class UserServiceTest {
     void userService_uploadImage_returnUserWithImage() throws IOException {
         //given
         MultipartFile file = getFile();
-        when(repository.findById(userId)).thenReturn(Optional.of(getUser()));
+        when(repository.findById(USER_ID)).thenReturn(Optional.of(getUser()));
         when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         //when
 
-        User upd = underTest.uploadImage(file, userId);
+        User upd = underTest.uploadImage(file, USER_ID);
 
         //then
         Assertions.assertThat(upd.getImage()).isNotEmpty();
@@ -133,7 +133,7 @@ class UserServiceTest {
 
         //when
         //then
-        Assertions.assertThatThrownBy(() -> underTest.uploadImage(file, userId))
+        Assertions.assertThatThrownBy(() -> underTest.uploadImage(file, USER_ID))
                 .isInstanceOf(FileIsEmptyException.class);
         Mockito.verify(repository, never()).save(any());
     }
@@ -144,10 +144,10 @@ class UserServiceTest {
         MultipartFile file = getFile();
         User user = getUser();
         user.setImage(ImageUtils.compressImage(file.getBytes()));
-        when(repository.findById(userId)).thenReturn(Optional.of(user));
+        when(repository.findById(USER_ID)).thenReturn(Optional.of(user));
 
         //when
-        byte[] data = underTest.downloadImage(userId);
+        byte[] data = underTest.downloadImage(USER_ID);
 
         //then
         Assertions.assertThat(data).isNotEmpty();
@@ -158,10 +158,10 @@ class UserServiceTest {
     void userService_downloadImage_returnNull() {
         //given
         User user = getUser();
-        when(repository.findById(userId)).thenReturn(Optional.of(user));
+        when(repository.findById(USER_ID)).thenReturn(Optional.of(user));
 
         //when
-        byte[] data = underTest.downloadImage(userId);
+        byte[] data = underTest.downloadImage(USER_ID);
 
         //then
         Assertions.assertThat(data).isNull();
@@ -173,11 +173,11 @@ class UserServiceTest {
         MultipartFile file = getFile();
         User user = getUser();
         user.setImage(ImageUtils.compressImage(file.getBytes()));
-        when(repository.findById(userId)).thenReturn(Optional.of(user));
+        when(repository.findById(USER_ID)).thenReturn(Optional.of(user));
         when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         //when
-        User userWithoutImage = underTest.deleteImage(userId);
+        User userWithoutImage = underTest.deleteImage(USER_ID);
 
         //then
         Mockito.verify(repository, times(1)).save(user);
@@ -188,11 +188,11 @@ class UserServiceTest {
     void userService_deleteImage_throwImageIsAlreadyEmpty() {
         //given
         User user = getUser();
-        when(repository.findById(userId)).thenReturn(Optional.of(user));
+        when(repository.findById(USER_ID)).thenReturn(Optional.of(user));
 
         //when
         //then
-        Assertions.assertThatThrownBy(() -> underTest.deleteImage(userId))
+        Assertions.assertThatThrownBy(() -> underTest.deleteImage(USER_ID))
                         .isInstanceOf(ImageIsAlreadyNull.class);
         Mockito.verify(repository, never()).save(user);
     }
@@ -200,7 +200,7 @@ class UserServiceTest {
     private User getUser() {
         return User.builder()
                 .role(Role.ROLE_USER)
-                .userId(userId)
+                .userId(USER_ID)
                 .email("tim@mail.ru")
                 .firstname("Tim")
                 .lastname("Cook")

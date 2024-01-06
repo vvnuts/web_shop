@@ -32,7 +32,7 @@ class ReviewServiceTest {
     @InjectMocks
     private ReviewService underTest;
 
-    private static final Integer reviewId = 1;
+    private static final Integer REVIEW_ID = 1;
 
     @Test
     void reviewService_create_returnSavedReview() {
@@ -83,23 +83,23 @@ class ReviewServiceTest {
     void reviewService_findOne_returnResponse() {
         //given
         Review review = Review.builder()
-                .id(reviewId)
+                .id(REVIEW_ID)
                 .mark(4)
                 .text("text")
                 .build();
         ReviewResponse response = ReviewResponse.builder()
-                .id(reviewId)
+                .id(REVIEW_ID)
                 .mark(4)
                 .text("text")
                 .build();
-        when(repository.findById(reviewId)).thenReturn(Optional.of(review));
+        when(repository.findById(REVIEW_ID)).thenReturn(Optional.of(review));
         when(mapper.convertEntityToResponse(review)).thenReturn(response);
 
         //when
-        ReviewResponse result = underTest.findOne(reviewId);
+        ReviewResponse result = underTest.findOne(REVIEW_ID);
 
         //then
-        Mockito.verify(repository, Mockito.times(1)).findById(reviewId);
+        Mockito.verify(repository, Mockito.times(1)).findById(REVIEW_ID);
         Mockito.verify(mapper, Mockito.times(1)).convertEntityToResponse(review);
         Assertions.assertThat(result).isNotNull();
     }
@@ -107,11 +107,11 @@ class ReviewServiceTest {
     @Test
     void reviewService_findOne_throwException() {
         //given
-        when(repository.findById(reviewId)).thenReturn(Optional.empty());
+        when(repository.findById(REVIEW_ID)).thenReturn(Optional.empty());
 
         //when
         //then
-        Assertions.assertThatThrownBy(() -> underTest.findOne(reviewId))
+        Assertions.assertThatThrownBy(() -> underTest.findOne(REVIEW_ID))
                 .isInstanceOf(NoSuchElementException.class);
         Mockito.verify(mapper, Mockito.never()).convertEntityToResponse(any());
     }
@@ -120,28 +120,28 @@ class ReviewServiceTest {
     void reviewService_findById_returnReview() {
         //given
         Review review = Review.builder()
-                .id(reviewId)
+                .id(REVIEW_ID)
                 .mark(4)
                 .text("text")
                 .build();
-        when(repository.findById(reviewId)).thenReturn(Optional.of(review));
+        when(repository.findById(REVIEW_ID)).thenReturn(Optional.of(review));
 
         //when
-        Review result = underTest.findById(reviewId);
+        Review result = underTest.findById(REVIEW_ID);
 
         //then
-        Mockito.verify(repository, Mockito.times(1)).findById(reviewId);
-        Assertions.assertThat(result.getId()).isEqualTo(reviewId);
+        Mockito.verify(repository, Mockito.times(1)).findById(REVIEW_ID);
+        Assertions.assertThat(result.getId()).isEqualTo(REVIEW_ID);
     }
 
     @Test
     void reviewService_findById_throwException() {
         //given
-        when(repository.findById(reviewId)).thenReturn(Optional.empty());
+        when(repository.findById(REVIEW_ID)).thenReturn(Optional.empty());
 
         //when
         //then
-        Assertions.assertThatThrownBy(() -> underTest.findById(reviewId))
+        Assertions.assertThatThrownBy(() -> underTest.findById(REVIEW_ID))
                 .isInstanceOf(NoSuchElementException.class);
     }
 
@@ -166,7 +166,7 @@ class ReviewServiceTest {
     void reviewService_update_returnUpdateReviewWithNewMarkAndText() {
         //given
         Review oldRequest = Review.builder()
-                .id(reviewId)
+                .id(REVIEW_ID)
                 .mark(2)
                 .text("old")
                 .build();
@@ -174,11 +174,11 @@ class ReviewServiceTest {
                 .mark(3)
                 .text("update")
                 .build();
-        when(repository.findById(reviewId)).thenReturn(Optional.of(oldRequest));
+        when(repository.findById(REVIEW_ID)).thenReturn(Optional.of(oldRequest));
         when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         //when
-        Review result = underTest.update(request, reviewId);
+        Review result = underTest.update(request, REVIEW_ID);
 
         //then
         Mockito.verify(repository, Mockito.times(1)).findById(any());
@@ -191,7 +191,7 @@ class ReviewServiceTest {
     void reviewService_update_returnUpdateReviewWithNewText() {
         //given
         Review oldRequest = Review.builder()
-                .id(reviewId)
+                .id(REVIEW_ID)
                 .mark(3)
                 .text("old")
                 .build();
@@ -199,11 +199,11 @@ class ReviewServiceTest {
                 .mark(3)
                 .text("update")
                 .build();
-        when(repository.findById(reviewId)).thenReturn(Optional.of(oldRequest));
+        when(repository.findById(REVIEW_ID)).thenReturn(Optional.of(oldRequest));
         when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         //when
-        Review result = underTest.update(request, reviewId);
+        Review result = underTest.update(request, REVIEW_ID);
 
         //then
         Mockito.verify(repository, Mockito.times(1)).findById(any());
@@ -216,7 +216,7 @@ class ReviewServiceTest {
     void reviewService_update_returnUpdateReviewWithNewMark() {
         //given
         Review oldRequest = Review.builder()
-                .id(reviewId)
+                .id(REVIEW_ID)
                 .mark(3)
                 .text("old")
                 .build();
@@ -224,11 +224,11 @@ class ReviewServiceTest {
                 .mark(4)
                 .text("old")
                 .build();
-        when(repository.findById(reviewId)).thenReturn(Optional.of(oldRequest));
+        when(repository.findById(REVIEW_ID)).thenReturn(Optional.of(oldRequest));
         when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         //when
-        Review result = underTest.update(request, reviewId);
+        Review result = underTest.update(request, REVIEW_ID);
 
         //then
         Mockito.verify(repository, Mockito.times(1)).findById(any());
@@ -241,7 +241,7 @@ class ReviewServiceTest {
     void reviewService_update_returnOldReview() {
         //given
         Review oldRequest = Review.builder()
-                .id(reviewId)
+                .id(REVIEW_ID)
                 .mark(3)
                 .text("old")
                 .build();
@@ -249,11 +249,11 @@ class ReviewServiceTest {
                 .mark(3)
                 .text("old")
                 .build();
-        when(repository.findById(reviewId)).thenReturn(Optional.of(oldRequest));
+        when(repository.findById(REVIEW_ID)).thenReturn(Optional.of(oldRequest));
         when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         //when
-        Review result = underTest.update(request, reviewId);
+        Review result = underTest.update(request, REVIEW_ID);
 
         //then
         Mockito.verify(repository, Mockito.times(1)).findById(any());
@@ -266,27 +266,27 @@ class ReviewServiceTest {
     void reviewService_delete_canDelete() {
         //given
         Review deleteReview = Review.builder()
-                .id(reviewId)
+                .id(REVIEW_ID)
                 .build();
-        when(repository.findById(reviewId)).thenReturn(Optional.of(deleteReview));
+        when(repository.findById(REVIEW_ID)).thenReturn(Optional.of(deleteReview));
 
         //when
-        underTest.delete(reviewId);
+        underTest.delete(REVIEW_ID);
 
         //then
-        Mockito.verify(repository, times(1)).findById(reviewId);
+        Mockito.verify(repository, times(1)).findById(REVIEW_ID);
         Mockito.verify(repository, times(1)).delete(deleteReview);
     }
 
     @Test
     void reviewService_delete_throwException() {
         //given
-        when(repository.findById(reviewId)).thenReturn(Optional.empty());
+        when(repository.findById(REVIEW_ID)).thenReturn(Optional.empty());
 
         //when
         //then
         Mockito.verify(repository, never()).delete(any());
-        Assertions.assertThatThrownBy(() -> underTest.delete(reviewId))
+        Assertions.assertThatThrownBy(() -> underTest.delete(REVIEW_ID))
                 .isInstanceOf(NoSuchElementException.class);
     }
 }

@@ -35,7 +35,7 @@ class OrderServiceTest {
     @InjectMocks
     private OrderService underTest;
 
-    private static final UUID orderId = UUID.randomUUID();
+    private static final UUID ORDER_ID = UUID.randomUUID();
 
     @Test
     void orderService_create_returnOrder() {
@@ -58,11 +58,11 @@ class OrderServiceTest {
     void orderService_approveOrder_returnOrderWithStatusSuccess() {
         //given
         Order order = createOrder();
-        when(repository.findById(orderId)).thenReturn(Optional.of(order));
+        when(repository.findById(ORDER_ID)).thenReturn(Optional.of(order));
         when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         //when
-        Order result = underTest.approveOrder(orderId);
+        Order result = underTest.approveOrder(ORDER_ID);
 
         //then
         Mockito.verify(itemRepository, times(order.getOrderItems().size())).save(any());
@@ -76,11 +76,11 @@ class OrderServiceTest {
     @Test
     void orderService_approveOrder_throwException() {
         //given
-        when(repository.findById(orderId)).thenReturn(Optional.empty());
+        when(repository.findById(ORDER_ID)).thenReturn(Optional.empty());
 
         //when
         //then
-        Assertions.assertThatThrownBy(() -> underTest.approveOrder(orderId))
+        Assertions.assertThatThrownBy(() -> underTest.approveOrder(ORDER_ID))
                 .isInstanceOf(NoSuchElementException.class);
         Mockito.verify(itemRepository, never()).save(any());
         Mockito.verify(bucketService, never()).removeItemFromBucket(any());
@@ -91,14 +91,14 @@ class OrderServiceTest {
     void orderService_cancelingOrder_returnOrderWithStatusCancel() {
         //given
         Order order = createOrder();
-        when(repository.findById(orderId)).thenReturn(Optional.of(order));
+        when(repository.findById(ORDER_ID)).thenReturn(Optional.of(order));
         when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         //when
-        Order result = underTest.cancelingOrder(orderId);
+        Order result = underTest.cancelingOrder(ORDER_ID);
 
         //then
-        Mockito.verify(repository, times(1)).findById(orderId);
+        Mockito.verify(repository, times(1)).findById(ORDER_ID);
         Mockito.verify(repository, times(1)).save(any());
         Assertions.assertThat(result.getStatus()).isEqualTo(Status.CANCEL);
     }
@@ -107,10 +107,10 @@ class OrderServiceTest {
     void orderService_delete_canDelete() {
         //given
         Order order = createOrder();
-        when(repository.findById(orderId)).thenReturn(Optional.of(order));
+        when(repository.findById(ORDER_ID)).thenReturn(Optional.of(order));
 
         //when
-        underTest.delete(orderId);
+        underTest.delete(ORDER_ID);
 
         //then
         Mockito.verify(repository, times(1)).delete(any());
@@ -120,24 +120,24 @@ class OrderServiceTest {
     void orderService_findById_returnOrder() {
         //given
         Order order = createOrder();
-        when(repository.findById(orderId)).thenReturn(Optional.of(order));
+        when(repository.findById(ORDER_ID)).thenReturn(Optional.of(order));
 
         //when
-        Order result = underTest.findById(orderId);
+        Order result = underTest.findById(ORDER_ID);
 
         //then
-        Mockito.verify(repository, times(1)).findById(orderId);
+        Mockito.verify(repository, times(1)).findById(ORDER_ID);
         Assertions.assertThat(result.getId()).isNotNull();
     }
 
     @Test
     void orderService_findById_throwException() {
         //given
-        when(repository.findById(orderId)).thenReturn(Optional.empty());
+        when(repository.findById(ORDER_ID)).thenReturn(Optional.empty());
 
         //when
         //then
-        Assertions.assertThatThrownBy(() -> underTest.approveOrder(orderId))
+        Assertions.assertThatThrownBy(() -> underTest.approveOrder(ORDER_ID))
                 .isInstanceOf(NoSuchElementException.class);
     }
 
@@ -150,7 +150,7 @@ class OrderServiceTest {
 
     private Order createOrder() {
         return Order.builder()
-                .id(orderId)
+                .id(ORDER_ID)
                 .email("m@mail.ru")
                 .orderItems(createListWithTwoItem())
                 .build();

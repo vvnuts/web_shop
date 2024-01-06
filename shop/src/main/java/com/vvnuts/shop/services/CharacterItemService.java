@@ -13,27 +13,29 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class CharacterItemService {
     private final CharacterItemRepository repository;
-    private final CharacterItemMapper characterItemMapper;
+    private final CharacterItemMapper mapper;
     private final ItemRepository itemRepository;
     private final CharacteristicRepository characteristicRepository;
 
-    public void create(Integer itemId, CharacterItemRequest request) {
-        CharacterItem characterItem = characterItemMapper.transferRequestToEntity(request);
+    public CharacterItem create(Integer itemId, CharacterItemRequest request) {
+        CharacterItem characterItem = mapper.transferRequestToEntity(request);
 
         Item item = itemRepository.findById(itemId).orElseThrow();
         characterItem.setItem(item);
-        repository.save(characterItem);
+        characterItem = repository.save(characterItem);
         item.getCharacterItems().add(characterItem);
         itemRepository.save(item);
 
         Characteristic characteristic = characterItem.getCharacteristic();
         characteristic.getCharacterItems().add(characterItem);
         characteristicRepository.save(characteristic);
+        return characterItem;
     }
 
     public CharacterItem findById(Integer id) {
@@ -45,13 +47,14 @@ public class CharacterItemService {
         return item.getCharacterItems();
     }
 
-    public void update(CharacterItem updateCharacterItem, CharacterItemRequest request) {
-        CharacterItem updateDTO = characterItemMapper.transferRequestToEntity(request);
+    public CharacterItem update(CharacterItem updateCharacterItem, CharacterItemRequest request) {
+        CharacterItem updateDTO = mapper.transferRequestToEntity(request);
 
         updateCharacterItem.setValue(updateDTO.getValue());
         updateCharacterItem.setNumValue(updateDTO.getNumValue());
         updateCharacterItem.setCharacteristic(updateDTO.getCharacteristic());
-        repository.save(updateCharacterItem);
+
+        return repository.save(updateCharacterItem);
     }
 
     public void deleteCharacterItem(Integer id) {
@@ -71,8 +74,11 @@ public class CharacterItemService {
 
     public void removeCategoryItemsCharacteristic(Category category, Characteristic characteristic) {
         for (Item item: category.getItems()) {
-            CharacterItem removeCharacterItem = repository.findByCharacteristicAndItem(characteristic, item)
-                    .orElseThrow();
+            Optional<CharacterItem> optional = repository.findByCharacteristicAndItem(characteristic, item);
+            if (optional.isEmpty()) {
+                continue;
+            }
+            CharacterItem removeCharacterItem = optional.get();
             repository.delete(removeCharacterItem);
         }
     }

@@ -33,19 +33,19 @@ class ReviewImageServiceTest {
     @InjectMocks
     private ReviewImageService underTest;
 
-    private static final int reviewId = 1;
-    private static final int imageId = 1;
+    private static final int REVIEW_ID = 1;
+    private static final int IMAGE_ID = 1;
 
     @Test
     void reviewImageService_uploadImage_returnReviewWithImage() throws IOException {
         //given
         MultipartFile file = getFile();
-        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(getReview()));
+        when(reviewRepository.findById(REVIEW_ID)).thenReturn(Optional.of(getReview()));
         when(reviewRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         //when
 
-        Review upd = underTest.uploadImage(file, reviewId);
+        Review upd = underTest.uploadImage(file, REVIEW_ID);
 
         //then
         Assertions.assertThat(upd.getImages()).isNotEmpty();
@@ -57,11 +57,11 @@ class ReviewImageServiceTest {
     void reviewImageService_uploadImage_returnReviewWithTwoImage() throws IOException {
         //given
         MultipartFile file = getFile();
-        when(reviewRepository.findById(reviewId)).thenReturn(Optional.of(getReviewWithImage()));
+        when(reviewRepository.findById(REVIEW_ID)).thenReturn(Optional.of(getReviewWithImage()));
         when(reviewRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         //when
-        Review upd = underTest.uploadImage(file, reviewId);
+        Review upd = underTest.uploadImage(file, REVIEW_ID);
 
         //then
         Assertions.assertThat(upd.getImages()).isNotEmpty();
@@ -75,7 +75,7 @@ class ReviewImageServiceTest {
 
         //when
         //then
-        Assertions.assertThatThrownBy(() -> underTest.uploadImage(file, reviewId))
+        Assertions.assertThatThrownBy(() -> underTest.uploadImage(file, REVIEW_ID))
                 .isInstanceOf(FileIsEmptyException.class);
         Mockito.verify(repository, never()).save(any());
     }
@@ -84,10 +84,10 @@ class ReviewImageServiceTest {
     void reviewImageService_downloadImage_returnImage() {
         //given
         ReviewImage reviewImage = getReviewImage();
-        when(repository.findById(imageId)).thenReturn(Optional.of(reviewImage));
+        when(repository.findById(IMAGE_ID)).thenReturn(Optional.of(reviewImage));
 
         //when
-        byte[] data = underTest.downloadImage(imageId);
+        byte[] data = underTest.downloadImage(IMAGE_ID);
 
         //then
         Assertions.assertThat(data).isNotEmpty();
@@ -99,10 +99,10 @@ class ReviewImageServiceTest {
         //given
         ReviewImage reviewImage = getReviewImage();
         reviewImage.setImage(null);
-        when(repository.findById(imageId)).thenReturn(Optional.of(reviewImage));
+        when(repository.findById(IMAGE_ID)).thenReturn(Optional.of(reviewImage));
 
         //when
-        byte[] data = underTest.downloadImage(imageId);
+        byte[] data = underTest.downloadImage(IMAGE_ID);
 
         //then
         Assertions.assertThat(data).isNull();
@@ -112,31 +112,31 @@ class ReviewImageServiceTest {
     void reviewImageService_delete_canDelete() {
         //given
         ReviewImage deleteReviewImage = getReviewImage();
-        when(repository.findById(imageId)).thenReturn(Optional.of(deleteReviewImage));
+        when(repository.findById(IMAGE_ID)).thenReturn(Optional.of(deleteReviewImage));
 
         //when
-        underTest.deleteImage(imageId);
+        underTest.deleteImage(IMAGE_ID);
 
         //then
-        Mockito.verify(repository, times(1)).findById(imageId);
+        Mockito.verify(repository, times(1)).findById(IMAGE_ID);
         Mockito.verify(repository, times(1)).delete(deleteReviewImage);
     }
 
     @Test
     void reviewImageService_delete_throwException() {
         //given
-        when(repository.findById(imageId)).thenReturn(Optional.empty());
+        when(repository.findById(IMAGE_ID)).thenReturn(Optional.empty());
 
         //when
         //then
         Mockito.verify(repository, never()).delete(any());
-        Assertions.assertThatThrownBy(() -> underTest.deleteImage(imageId))
+        Assertions.assertThatThrownBy(() -> underTest.deleteImage(IMAGE_ID))
                 .isInstanceOf(NoSuchElementException.class);
     }
 
     private Review getReview() {
         return Review.builder()
-                .id(reviewId)
+                .id(REVIEW_ID)
                 .text("text")
                 .mark(4)
                 .build();
@@ -144,7 +144,7 @@ class ReviewImageServiceTest {
 
     private Review getReviewWithImage() {
         Review review = Review.builder()
-                .id(reviewId)
+                .id(REVIEW_ID)
                 .text("text")
                 .mark(4)
                 .images(new ArrayList<>())

@@ -5,6 +5,7 @@ import com.vvnuts.shop.entities.CharacterItem;
 import com.vvnuts.shop.entities.Item;
 import com.vvnuts.shop.entities.Review;
 import com.vvnuts.shop.exceptions.FileIsEmptyException;
+import com.vvnuts.shop.exceptions.ImageIsAlreadyNull;
 import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.repositories.CharacterItemRepository;
 import com.vvnuts.shop.repositories.ItemRepository;
@@ -26,25 +27,25 @@ public class ItemService {
     private final CategoryRepository categoryRepository;
     private final CharacterItemRepository characterItemRepository;
 
-    public void create(ItemRequest request) {
+    public Item create(ItemRequest request) {
         Item newItem = mapper.transferItemDtoToItem(request);
         for (CharacterItem characterItem: newItem.getCharacterItems()) {
             characterItem.setItem(newItem);
         }
-        repository.save(newItem);
+        return repository.save(newItem);
     }
 
     public Item findById(Integer id) { //TODO переписать с респонсом
         return repository.findById(id).orElseThrow();
     }
 
-    public void update(ItemRequest request, Item updateItem) {
+    public Item update(ItemRequest request, Item updateItem) {
         Item updateDTO = mapper.transferItemDtoToItem(request);
         if (!updateItem.getItemName().equals(updateDTO.getItemName())) {
             updateItem.setItemName(updateDTO.getItemName());
         }
-        List<CharacterItem> oldCharacterItem = updateItem.getCharacterItems();
-        for (CharacterItem characterItem: oldCharacterItem) {
+
+        for (CharacterItem characterItem: updateItem.getCharacterItems()) {
             characterItem.setItem(null);
             characterItemRepository.save(characterItem);
         }
@@ -52,6 +53,7 @@ public class ItemService {
         for (CharacterItem characterItem: updateItem.getCharacterItems()) {
             characterItem.setItem(updateItem);
         }
+
         if (!updateItem.getCategory().equals(updateDTO.getCategory())) {
             updateItem.getCategory().getItems().remove(updateItem);
             categoryRepository.save(updateItem.getCategory());
@@ -71,28 +73,34 @@ public class ItemService {
         if (!updateItem.getSale().equals(updateDTO.getSale())) {
             updateItem.setSale(updateDTO.getSale());
         }
-        repository.save(updateItem);
+        return repository.save(updateItem);
     }
 
-    public void uploadImage(MultipartFile file, Integer itemId) throws IOException {
+    public Item uploadImage(MultipartFile file, Integer itemId) throws IOException {
         if (file.isEmpty()){
             throw new FileIsEmptyException("Файл пуст.");
         }
         Item item = findById(itemId);
         item.setImage(ImageUtils.compressImage(file.getBytes()));
-        repository.save(item);
+        return repository.save(item);
     }
 
     @Transactional
     public byte[] downloadImage(Integer itemId) {
         Item item = findById(itemId);
+        if (item.getImage() == null) {
+            return null;
+        }
         return ImageUtils.decompressImage(item.getImage());
     }
 
-    public void deleteImage(Integer imageId) {
+    public Item deleteImage(Integer imageId) {
         Item item = findById(imageId);
+        if (item.getImage() == null) {
+            throw new ImageIsAlreadyNull("Изображение и так уже пустое!");
+        }
         item.setImage(null);
-        repository.save(item);
+        return repository.save(item);
     }
 
     public void delete(Integer itemId) {
@@ -100,14 +108,14 @@ public class ItemService {
         repository.delete(item);
     }
 
-    public void calculateRatingItem (Item item) {
-        double sumMark = 0;
+    public Item calculateRatingItem (Item item) {
+        double sumMark = 0.;
         int countMark = 0;
         for (Review review: item.getReviews()) {
             sumMark += review.getMark();
             countMark += 1;
         }
-        item.setMark(sumMark/countMark);
-        repository.save(item);
+        item.setMark(Math.round(sumMark/countMark * 100)/100.);
+        return repository.save(item);
     }
 }
