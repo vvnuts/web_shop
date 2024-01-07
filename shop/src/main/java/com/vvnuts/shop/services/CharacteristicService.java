@@ -10,14 +10,13 @@ import com.vvnuts.shop.utils.mappers.CharacteristicMapper;
 import com.vvnuts.shop.utils.mappers.CategoryMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class CharacteristicService {
-    private final CharacteristicRepository characteristicRepository;
+    private final CharacteristicRepository repository;
     private final CategoryRepository categoryRepository;
     private final CategoryMapper categoryMapper;
     private final CharacterItemService characterItemService;
@@ -29,38 +28,39 @@ public class CharacteristicService {
                 .categories(categoryMapper.getCategoryListFromIds(request.getCategories()))
                 .type(request.getType())
                 .build();
-        Characteristic savedValue = characteristicRepository.save(characteristic);
+        characteristic = repository.save(characteristic);
         for (Category category: characteristic.getCategories()) {
             category.getCharacteristics().add(characteristic);
             characterItemService.addCategoryItemsCharacteristic(category, characteristic);
         }
-        return savedValue;
+        return characteristic;
     }
 
     public Characteristic findById(Integer id) {
-        return characteristicRepository.findById(id).orElseThrow();
+        return repository.findById(id).orElseThrow();
     }
 
     public CharacteristicResponse findOne(Integer id) {
-        Characteristic characteristic = characteristicRepository.findById(id).orElseThrow();
+        Characteristic characteristic = repository.findById(id).orElseThrow();
         return mapper.convertEntityToResponse(characteristic);
     }
 
     public List<CharacteristicResponse> findAll() {
         List<CharacteristicResponse> characteristicResponses = new ArrayList<>();
-        for (Characteristic characteristic: characteristicRepository.findAll()) {
+        for (Characteristic characteristic: repository.findAll()) {
             characteristicResponses.add(mapper.convertEntityToResponse(characteristic));
         }
         return characteristicResponses;
     }
 
-    public void update(CharacteristicRequest request, Characteristic updateCharacteristic) {
+    public Characteristic update(CharacteristicRequest request, Characteristic updateCharacteristic) {
         Characteristic updateDto = Characteristic.builder()
                 .name(request.getName())
                 .categories(categoryMapper.getCategoryListFromIds(request.getCategories()))
                 .type(request.getType())
                 .build();
         updateCharacteristic.setName(request.getName());
+        updateCharacteristic.setType(request.getType());
 
         Set<Category> oldCategories = new HashSet<>(updateCharacteristic.getCategories());
         for (Category newCategory : updateDto.getCategories()) {
@@ -82,26 +82,26 @@ public class CharacteristicService {
             }
         }
 
-        characteristicRepository.save(updateCharacteristic);
+        return repository.save(updateCharacteristic);
     }
 
     public void delete(Integer characteristicId) {
-        Characteristic characteristic = characteristicRepository.findById(characteristicId).orElseThrow();
+        Characteristic characteristic = repository.findById(characteristicId).orElseThrow();
         for (Category category: characteristic.getCategories()) {
             category.getCharacteristics().remove(characteristic);
             categoryRepository.save(category);
         }
-        characteristicRepository.delete(characteristic);
+        repository.delete(characteristic);
     }
 
-    public void replaceCharacteristicsInCategory (Category updateCategory, Category updateDTO) {
+    public Category replaceCharacteristicsInCategory (Category updateCategory, Category updateDTO) {
         Set<Characteristic> oldCharacteristic = new HashSet<>(updateCategory.getCharacteristics());
         for (Characteristic newCharacteristic : updateDTO.getCharacteristics()) {
             if (!oldCharacteristic.contains(newCharacteristic)) {
                 updateCategory.getCharacteristics().add(newCharacteristic);
                 newCharacteristic.getCategories().add(updateCategory);
                 characterItemService.addCategoryItemsCharacteristic(updateCategory, newCharacteristic);
-                characteristicRepository.save(newCharacteristic);
+                repository.save(newCharacteristic);
             } else {
                 oldCharacteristic.remove(newCharacteristic);
             }
@@ -111,8 +111,9 @@ public class CharacteristicService {
                 updateCategory.getCharacteristics().remove(removeCharacteristic);
                 removeCharacteristic.getCategories().remove(updateCategory);
                 characterItemService.removeCategoryItemsCharacteristic(updateCategory, removeCharacteristic);
-                characteristicRepository.save(removeCharacteristic);
+                repository.save(removeCharacteristic);
             }
         }
+        return updateCategory;
     }
 }

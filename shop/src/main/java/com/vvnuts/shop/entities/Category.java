@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Size;
 import lombok.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -61,5 +62,18 @@ public class Category implements Comparable<Category>{
     @Override
     public int compareTo(Category o) {
         return this.getCategoryId() - o.getCategoryId();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Category category = (Category) o;
+        return getCategoryId() == category.getCategoryId();
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getCategoryId());
     }
 }

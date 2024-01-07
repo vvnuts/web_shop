@@ -70,7 +70,7 @@ public class CategoryService {
         repository.delete(category);
     }
 
-    public void deleteChildren(List<Category> categories, Category removeCategory) {
+    private void deleteChildren(List<Category> categories, Category removeCategory) {
         for (Category child: categories) {
             if (child.getChildren() != null) {
                 deleteChildren(child.getChildren(), removeCategory);
