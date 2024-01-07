@@ -144,7 +144,7 @@ class ItemServiceTest {
 
         //given
         Mockito.verify(characterItemRepository, times(oldItem.getCharacterItems().size())).save(any());
-        Mockito.verify(categoryRepository, times(2)).save(any());
+        Mockito.verify(categoryRepository, never()).save(any());
         Assertions.assertThat(result.getCategory().getCategoryId()).isEqualTo(oldCategory.getCategoryId());
         Assertions.assertThat(result.getItemName()).isEqualTo(check.getItemName());
         Assertions.assertThat(result.getDescription()).isNotEqualTo(check.getDescription());
