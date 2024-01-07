@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.UUID;
 
 @Service
@@ -59,11 +60,13 @@ public class OrderService {
         BigDecimal totalSum = BigDecimal.ZERO;
         Integer totalQuantity = 0;
         for (OrderItem orderItem: order.getOrderItems()) {
-            totalSum = totalSum.add(BigDecimal.valueOf(orderItem.getQuantity() * orderItem.getItem().getPrice() *
-                    (1 - orderItem.getItem().getSale())));
+            BigDecimal priceWithoutSale = BigDecimal.valueOf(orderItem.getQuantity()).multiply(BigDecimal.valueOf(orderItem.getItem().getPrice()));
+            BigDecimal sale = BigDecimal.ONE.subtract(BigDecimal.valueOf(orderItem.getItem().getSale()));
+            BigDecimal price = priceWithoutSale.multiply(sale);
+            totalSum = totalSum.add(price);
             totalQuantity += orderItem.getQuantity();
         }
-        order.setTotalPrice(totalSum);
+        order.setTotalPrice(totalSum.setScale(1, RoundingMode.HALF_UP));
         order.setTotalQuantity(totalQuantity);
     }
 }

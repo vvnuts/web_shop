@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Service
 @RequiredArgsConstructor
@@ -22,14 +23,15 @@ public class BucketService {
     private final BucketItemService bucketItemService;
     private final UserService userService;
 
-    public void create(BucketRequest request) {
+    public Bucket create(BucketRequest request) {
         Bucket bucket = Bucket.builder()
                 .user(userService.findById(request.getUser()))
                 .build();
         bucket.setBucketItems(bucketItemMapper.transferBucketItemDtoToList(request.getOrderItem()));
         calculationQuantityAndPrice(bucket);
-        repository.save(bucket);
+        bucket = repository.save(bucket);
         bucketItemService.linkBucket(bucket);
+        return bucket;
     }
 
     public BucketResponse findOne(Integer userId) {
@@ -41,7 +43,7 @@ public class BucketService {
         return repository.findByUser(userService.findById(userId)).orElseThrow();
     }
 
-    public void update(BucketRequest request, Bucket updateBucket) {
+    public Bucket update(BucketRequest request, Bucket updateBucket) {
         if (updateBucket.getBucketItems() != null) {
             for (BucketItem bucketItem : updateBucket.getBucketItems()) {
                 bucketItemService.removeBucket(bucketItem);
@@ -50,22 +52,24 @@ public class BucketService {
         updateBucket.setBucketItems(bucketItemMapper.transferBucketItemDtoToList(request.getOrderItem()));
         bucketItemService.linkBucket(updateBucket);
         calculationQuantityAndPrice(updateBucket);
-        repository.save(updateBucket);
+        return repository.save(updateBucket);
     }
 
     private void calculationQuantityAndPrice(Bucket bucket) {
         BigDecimal totalSum = BigDecimal.ZERO;
         Integer totalQuantity = 0;
         for (BucketItem bucketItem: bucket.getBucketItems()) {
-            totalSum = totalSum.add(BigDecimal.valueOf(bucketItem.getQuantity() * bucketItem.getItem().getPrice()
-                    * (1 + bucketItem.getItem().getSale())));
+            BigDecimal priceWithoutSale = BigDecimal.valueOf(bucketItem.getQuantity()).multiply(BigDecimal.valueOf(bucketItem.getItem().getPrice()));
+            BigDecimal sale = BigDecimal.ONE.subtract(BigDecimal.valueOf(bucketItem.getItem().getSale()));
+            BigDecimal price = priceWithoutSale.multiply(sale);
+            totalSum = totalSum.add(price);
             totalQuantity += bucketItem.getQuantity();
         }
-        bucket.setTotalPrice(totalSum);
+        bucket.setTotalPrice(totalSum.setScale(1, RoundingMode.HALF_UP));
         bucket.setTotalQuantity(totalQuantity);
     }
 
-    public void removeItemFromBucket(User user) {
+    public Bucket removeItemFromBucket(User user) {
         Bucket bucket = repository.findByUser(user).orElseThrow();
         if (bucket.getBucketItems() != null) {
             for (BucketItem bucketItem: bucket.getBucketItems()) {
@@ -74,6 +78,6 @@ public class BucketService {
         }
         bucket.setTotalQuantity(0);
         bucket.setTotalPrice(BigDecimal.ZERO);
-        repository.save(bucket);
+        return repository.save(bucket);
     }
 }

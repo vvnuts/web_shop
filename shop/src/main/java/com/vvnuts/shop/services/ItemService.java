@@ -17,8 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.List;
-
 @Service
 @RequiredArgsConstructor
 public class ItemService {
@@ -71,7 +69,7 @@ public class ItemService {
             updateItem.setQuantity(updateDTO.getQuantity());
         }
         if (!updateItem.getSale().equals(updateDTO.getSale())) {
-            updateItem.setSale(updateDTO.getSale());
+            updateItem.setSale(Math.round(updateDTO.getSale() * 100)/100.);
         }
         return repository.save(updateItem);
     }

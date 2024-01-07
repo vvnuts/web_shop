@@ -3,7 +3,6 @@ package com.vvnuts.shop.services;
 import com.vvnuts.shop.entities.Bucket;
 import com.vvnuts.shop.entities.BucketItem;
 import com.vvnuts.shop.repositories.BucketItemRepository;
-import com.vvnuts.shop.utils.mappers.BucketItemMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +10,11 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class BucketItemService {
     private final BucketItemRepository repository;
-    private final BucketItemMapper mapper;
 
     public void linkBucket(Bucket bucket) {
+        if (bucket.getBucketItems() == null) {
+            return;
+        }
         for (BucketItem bucketItem: bucket.getBucketItems()) {
             bucketItem.setBucket(bucket);
             repository.save(bucketItem);
@@ -21,6 +22,9 @@ public class BucketItemService {
     }
 
     public void removeBucket(BucketItem bucketItem) {
+        if (bucketItem.getBucket() == null) {
+            return;
+        }
         bucketItem.setBucket(null);
         repository.save(bucketItem);
     }

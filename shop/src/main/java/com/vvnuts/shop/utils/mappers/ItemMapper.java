@@ -22,7 +22,7 @@ public class ItemMapper {
                 .description(itemRequest.getDescription())
                 .price(itemRequest.getPrice())
                 .quantity(itemRequest.getQuantity())
-                .sale(itemRequest.getSale())
+                .sale(Math.round(itemRequest.getSale()*100)/100.)
                 .build();
         item.setCharacterItems(characterItemMapper.createListCharacterItems(itemRequest));
         return item;
