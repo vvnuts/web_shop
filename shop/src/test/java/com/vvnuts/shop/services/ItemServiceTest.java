@@ -221,11 +221,11 @@ class ItemServiceTest {
         when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
 
         //when
-        Item userWithoutImage = underTest.deleteImage(ITEM_ID);
+        Item itemWithoutImage = underTest.deleteImage(ITEM_ID);
 
         //then
         Mockito.verify(repository, times(1)).save(item);
-        Assertions.assertThat(userWithoutImage.getImage()).isNull();
+        Assertions.assertThat(itemWithoutImage.getImage()).isNull();
     }
 
     @Test

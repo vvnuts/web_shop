@@ -4,6 +4,7 @@ import com.vvnuts.shop.dtos.requests.CategoryRequest;
 import com.vvnuts.shop.dtos.responses.CategoryResponse;
 import com.vvnuts.shop.entities.*;
 import com.vvnuts.shop.exceptions.FileIsEmptyException;
+import com.vvnuts.shop.exceptions.ImageIsAlreadyNull;
 import com.vvnuts.shop.repositories.CategoryRepository;
 import com.vvnuts.shop.utils.mappers.CategoryMapper;
 import com.vvnuts.shop.utils.ImageUtils;
@@ -22,7 +23,7 @@ public class CategoryService {
     private final CategoryMapper mapper;
     private final CharacteristicService characteristicService;
 
-    public void create(CategoryRequest categoryRequest) {
+    public Category create(CategoryRequest categoryRequest) {
         Category newCategory = mapper.transferCategoryDtoToCategory(categoryRequest);
         for (Category parent: newCategory.getParents()) {
             parent.getChildren().add(newCategory);
@@ -30,7 +31,7 @@ public class CategoryService {
         for (Characteristic characteristic: newCategory.getCharacteristics()) {
             characteristic.getCategories().add(newCategory);
         }
-        repository.save(newCategory);
+        return repository.save(newCategory);
     }
 
     public Category findById(Integer id) {
@@ -41,7 +42,7 @@ public class CategoryService {
         return mapper.convertEntityToListResponse(repository.findAll());
     }
 
-    public void update(CategoryRequest request, Category updateCategory) {
+    public Category update(CategoryRequest request, Category updateCategory) {
         Category updateDTO = mapper.transferCategoryDtoToCategory(request);
         if (!updateCategory.getCategoryName().equals(updateDTO.getCategoryName())) {
             updateCategory.setCategoryName(updateDTO.getCategoryName());
@@ -57,10 +58,10 @@ public class CategoryService {
         }
 
         characteristicService.replaceCharacteristicsInCategory(updateCategory, updateDTO);
-        repository.save(updateCategory);
+        return repository.save(updateCategory);
     }
 
-    public void delete(Integer categoryId) {
+    public void delete(Integer categoryId) { //TODO подумать над удалением из списка удаляемых если несколько родителей
         Category category = findById(categoryId);
         for (Category parent : category.getParents()) {
             parent.getChildren().remove(category);
@@ -83,24 +84,30 @@ public class CategoryService {
         }
     }
 
-    public void uploadImage(MultipartFile file, Integer categoryId) throws IOException {
+    public Category uploadImage(MultipartFile file, Integer categoryId) throws IOException {
         if (file.isEmpty()){
             throw new FileIsEmptyException("Файл пуст.");
         }
         Category category = findById(categoryId);
         category.setImage(ImageUtils.compressImage(file.getBytes()));
-        repository.save(category);
+        return repository.save(category);
     }
 
     @Transactional
     public byte[] downloadImage(Integer categoryId) {
         Category category = findById(categoryId);
+        if (category.getImage() == null) {
+            return null;
+        }
         return ImageUtils.decompressImage(category.getImage());
     }
 
-    public void deleteImage(Integer userId) {
+    public Category deleteImage(Integer userId) {
         Category category = findById(userId);
+        if (category.getImage() == null) {
+            throw new ImageIsAlreadyNull("Изображение и так уже пустое!");
+        }
         category.setImage(null);
-        repository.save(category);
+        return repository.save(category);
     }
 }
