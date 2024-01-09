@@ -1,11 +1,13 @@
 FROM maven:3.8.5-openjdk-17 AS build
-WORKDIR /app
-COPY . /app/.
+WORKDIR /
+COPY /src /src
 COPY pom.xml /
-RUN mvn -f /app/pom.xml clean package -DskipTests
+RUN mvn -f /pom.xml clean package -DskipTests
 
 FROM openjdk:17-jdk-slim
-WORKDIR /app
-COPY --from=build /target/*.jar /app/*.jar
+WORKDIR /
+COPY /src /src
+COPY --from=build /target/*.jar shop.jar
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/app/*.jar"]
+ENTRYPOINT ["java","-jar","shop.jar"]
+

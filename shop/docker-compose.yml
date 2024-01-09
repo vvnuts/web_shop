@@ -1,5 +1,7 @@
 version: '3.8'
-
+volumes:
+  db-data:
+    driver: local
 services:
   app:
     image: backend-app
@@ -14,7 +16,6 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://service-db/vvnuts
     ports:
       - '8080:8080'
-
   service-db:
     image: postgres:15.1-alpine
     container_name: postgres
@@ -24,8 +25,5 @@ services:
     ports:
       - '5432:5432'
     volumes:
-      - ./src/main/resources/data.sql:/docker-entrypoint-initdb.d/data.sql
+      - ./src/main/resources/data:/docker-entrypoint-initdb.d
       - db-data:/var/lib/postgresql/data
-
-volumes:
-  db-data:
