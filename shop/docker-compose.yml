@@ -1,26 +1,31 @@
-version: '3'
-volumes:
-  db-data:
-    driver: local
+version: '3.8'
+
 services:
   app:
     image: backend-app
     build:
       context: .
+      dockerfile: Dockerfile
     container_name: app
     depends_on:
-      - db
-    env_file:
-      - .env
+      - service-db
+    environment:
+      - SERVER_PORT= 8080
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://service-db/vvnuts
     ports:
       - '8080:8080'
-  db:
+
+  service-db:
     image: postgres:15.1-alpine
     container_name: postgres
     environment:
-      - POSTGRES_USER=${POSTGRES_USERNAME}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DATABASE}
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - '5432:5432'
     volumes:
-      - ./src/main/resources/data:/docker-entrypoint-initdb.d
+      - ./src/main/resources/data.sql:/docker-entrypoint-initdb.d/data.sql
       - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
