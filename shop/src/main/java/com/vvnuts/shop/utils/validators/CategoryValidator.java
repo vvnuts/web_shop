@@ -27,7 +27,7 @@ public class CategoryValidator {
         ValidationErrorResponse response = new ValidationErrorResponse();
         response.getViolations().addAll(isAllCategoryFound(request.getParents()));
         response.getViolations().addAll(isAllCharacteristicFound(request.getCharacteristics()));
-        if (response.getViolations().size() > 0) {
+        if (!response.getViolations().isEmpty()) {
             throw new NotFoundRelatedObjectException(response);
         }
     }
@@ -42,7 +42,7 @@ public class CategoryValidator {
         List<Category> categories = categoryMapper.getCategoryListFromIds(request.getParents());
         categories.add(category);
         if (hasCycle(category, categories)) {
-            throw new CycleHasFormedException("При текущих родителях образуется цикл");
+            throw new CycleHasFormedException("При текущих родителях образуется цикл!");
         }
 
         return category;

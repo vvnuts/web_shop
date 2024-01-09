@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -47,14 +48,14 @@ public class Item {
     private byte[] image;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "item", cascade = CascadeType.ALL)
-    private List<CharacterItem> characterItems;
+    private List<CharacterItem> characterItems = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "item", cascade = CascadeType.ALL)
-    private List<Review> reviews;
+    private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "item", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<BucketItem> bucketItems;
+    private List<BucketItem> bucketItems = new ArrayList<>();
 
     public Item(Integer quantity, Integer price, Double sale) {
         this.quantity = quantity;

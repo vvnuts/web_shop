@@ -128,44 +128,36 @@ class CategoryServiceTest {
         Category category = createCategory();
         category.getParents().get(0).getChildren().add(category);
         category.getParents().get(1).getChildren().add(category);
-        category.getChildren().get(0).getParents().add(new Category());
-        category.getChildren().get(1).getParents().add(new Category());
+        category.getChildren().get(0).getParents().add(category);
+        category.getChildren().get(1).getParents().add(category);
         when(repository.findById(CATEGORY_ID)).thenReturn(Optional.of(category));
 
         //when
         underTest.delete(CATEGORY_ID);
 
         //then
-        Mockito.verify(repository, times(2)).save(any());
+        Mockito.verify(repository, times(4)).save(any());
         Mockito.verify(repository, times(1)).delete(any());
-        Assertions.assertThat(category.getParents().get(0).getChildren().size()).isEqualTo(0);
-        Assertions.assertThat(category.getParents().get(1).getChildren().size()).isEqualTo(0);
-        Assertions.assertThat(category.getChildren().get(0).getParents().size()).isEqualTo(1);
-        Assertions.assertThat(category.getChildren().get(1).getParents().size()).isEqualTo(1);
+        Assertions.assertThat(category.getParents().get(0).getChildren().size()).isEqualTo(2);
+        Assertions.assertThat(category.getParents().get(1).getChildren().size()).isEqualTo(2);
+        Assertions.assertThat(category.getChildren().get(0).getParents().size()).isEqualTo(2);
+        Assertions.assertThat(category.getChildren().get(0).getParents().size()).isEqualTo(2);
+
     }
 
     @Test
-    void categoryService_delete_canDeleteCategoryWithoutNodeWithOtherParent() {
+    void categoryService_delete_canDeleteCategoryWithoutParentsAndChildren() {
         //given
-        Category category = createCategory();
-        category.getParents().get(0).getChildren().add(category);
-        category.getParents().get(1).getChildren().add(category);
-        category.getChildren().get(0).getParents().add(new Category());
-        category.getChildren().get(0).getParents().add(category);
-        category.getChildren().get(1).getParents().add(new Category());
+        Category category = new Category();
         when(repository.findById(CATEGORY_ID)).thenReturn(Optional.of(category));
 
         //when
         underTest.delete(CATEGORY_ID);
 
         //then
-        Mockito.verify(repository, times(3)).save(any());
+        Mockito.verify(repository, never()).save(any());
         Mockito.verify(repository, times(1)).delete(any());
-        Assertions.assertThat(category.getParents().get(0).getChildren().size()).isEqualTo(0);
-        Assertions.assertThat(category.getParents().get(1).getChildren().size()).isEqualTo(0);
-        Assertions.assertThat(category.getChildren().get(0).getParents().size()).isEqualTo(1);
-        Assertions.assertThat(category.getChildren().get(0).getParents().get(0)).isNotEqualTo(category);
-        Assertions.assertThat(category.getChildren().size()).isEqualTo(1);
+
     }
 
     @Test

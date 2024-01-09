@@ -19,13 +19,17 @@ public class BucketItemMapper {
     public List<BucketItem> transferBucketItemDtoToList(List<OrderItemRequest> orderItemsDTO) {
         List<BucketItem> bucketItems = new ArrayList<>();
         for (OrderItemRequest orderItemRequest : orderItemsDTO) {
-            BucketItem bucketItem = BucketItem.builder()
-                    .item(itemService.findById(orderItemRequest.getItem()))
-                    .quantity(orderItemRequest.getQuantity())
-                    .build();
+            BucketItem bucketItem = transferBucketItemDtoToEntity(orderItemRequest);
             bucketItems.add(bucketItem);
         }
         return bucketItems;
+    }
+
+    public BucketItem transferBucketItemDtoToEntity(OrderItemRequest orderItemRequest) {
+        return BucketItem.builder()
+                .item(itemService.findById(orderItemRequest.getItem()))
+                .quantity(orderItemRequest.getQuantity())
+                .build();
     }
 
     public List<OrderItemResponse> convertEntityToListResponse (List<BucketItem> bucketItems) {

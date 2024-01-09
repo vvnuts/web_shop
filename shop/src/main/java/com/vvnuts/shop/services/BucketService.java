@@ -1,10 +1,12 @@
 package com.vvnuts.shop.services;
 
 import com.vvnuts.shop.dtos.requests.BucketRequest;
+import com.vvnuts.shop.dtos.requests.OrderItemRequest;
 import com.vvnuts.shop.dtos.responses.BucketResponse;
 import com.vvnuts.shop.entities.Bucket;
 import com.vvnuts.shop.entities.BucketItem;
 import com.vvnuts.shop.entities.User;
+import com.vvnuts.shop.repositories.BucketItemRepository;
 import com.vvnuts.shop.repositories.BucketRepository;
 import com.vvnuts.shop.utils.mappers.BucketItemMapper;
 import com.vvnuts.shop.utils.mappers.BucketMapper;
@@ -21,6 +23,7 @@ public class BucketService {
     private final BucketMapper mapper;
     private final BucketItemMapper bucketItemMapper;
     private final BucketItemService bucketItemService;
+    private final BucketItemRepository bucketItemRepository;
     private final UserService userService;
 
     public Bucket create(BucketRequest request) {
@@ -53,6 +56,18 @@ public class BucketService {
         bucketItemService.linkBucket(updateBucket);
         calculationQuantityAndPrice(updateBucket);
         return repository.save(updateBucket);
+    }
+
+    public Bucket addItemToBucket(OrderItemRequest request, Bucket bucket) {
+        BucketItem addItem = bucketItemMapper.transferBucketItemDtoToEntity(request);
+        bucket.getBucketItems().add(addItem);
+        addItem.setBucket(bucket);
+        bucketItemRepository.save(addItem);
+        bucket.setTotalQuantity(bucket.getTotalQuantity() + addItem.getQuantity());
+        BigDecimal sale = BigDecimal.ONE.subtract(BigDecimal.valueOf(addItem.getItem().getSale()));
+        BigDecimal price = BigDecimal.valueOf(addItem.getItem().getPrice()).multiply(sale).multiply(BigDecimal.valueOf(request.getQuantity()));
+        bucket.setTotalPrice(bucket.getTotalPrice().add(price));
+        return repository.save(bucket);
     }
 
     private void calculationQuantityAndPrice(Bucket bucket) {

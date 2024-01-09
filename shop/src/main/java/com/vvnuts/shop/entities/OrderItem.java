@@ -1,5 +1,6 @@
 package com.vvnuts.shop.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonView;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -28,5 +29,6 @@ public class OrderItem {
 
     @ManyToOne()
     @JoinColumn(name = "order_id")
+    @JsonIgnore
     private Order order;
 }

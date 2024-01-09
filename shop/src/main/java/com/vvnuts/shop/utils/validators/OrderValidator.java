@@ -32,14 +32,14 @@ public class OrderValidator {
                             + request.getUser() + " not found"));
         }
         response.getViolations().addAll(orderItemValidator.isListOrderItemValid(request.getOrderItemRequests()));
-        if (response.getViolations().size() > 0) {
+        if (!response.getViolations().isEmpty()) {
             throw new OrderItemValidException(response);
         }
     }
 
     public Order validate(UUID id) {
         Order order = repository.findById(id).orElseThrow();
-        if (order.getStatus().equals(Status.WAITING)) {
+        if (!order.getStatus().equals(Status.WAITING)) {
             throw new OrderStatusException("Вы не можете вносить  данный заказ изменения!");
         }
         return order;

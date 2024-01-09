@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -25,11 +26,11 @@ public class Bucket {
     private User user;
 
     @Column(name = "total_price")
-    private BigDecimal totalPrice;
+    private BigDecimal totalPrice = BigDecimal.ZERO;
 
     @Column(name = "total_quantity")
-    private Integer totalQuantity;
+    private Integer totalQuantity = 0;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "bucket")
-    private List<BucketItem> bucketItems;
+    private List<BucketItem> bucketItems = new ArrayList<>();
 }

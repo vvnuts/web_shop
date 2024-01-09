@@ -6,6 +6,7 @@ import com.vvnuts.shop.entities.Order;
 import com.vvnuts.shop.entities.OrderItem;
 import com.vvnuts.shop.entities.enums.Status;
 import com.vvnuts.shop.repositories.ItemRepository;
+import com.vvnuts.shop.repositories.OrderItemRepository;
 import com.vvnuts.shop.repositories.OrderRepository;
 import com.vvnuts.shop.utils.mappers.OrderMapper;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class OrderService {
     private final OrderRepository repository;
+    private final OrderItemRepository orderItemRepository;
     private final ItemRepository itemRepository;
     private final OrderMapper mapper;
     private final BucketService bucketService;
@@ -26,7 +28,12 @@ public class OrderService {
     public Order create(OrderRequest dtoEntity) {
         Order newOrder = mapper.transferToCreateEntity(dtoEntity);
         calculationQuantityAndPrice(newOrder);
-        return repository.save(newOrder);
+        newOrder = repository.save(newOrder);
+        for (OrderItem orderItem: newOrder.getOrderItems() ) {
+            orderItem.setOrder(newOrder);
+            orderItemRepository.save(orderItem);
+        }
+        return newOrder;
     }
 
     public Order approveOrder(UUID orderId) {

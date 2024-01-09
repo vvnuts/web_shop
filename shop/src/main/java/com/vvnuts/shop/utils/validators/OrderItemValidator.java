@@ -16,7 +16,7 @@ import java.util.Optional;
 public class OrderItemValidator {
     private final ItemRepository itemRepository;
 
-    private Violation validate(OrderItemRequest request) {
+    public Violation validate(OrderItemRequest request) {
         Optional<Item> optional = itemRepository.findById(request.getItem());
         if (optional.isEmpty()) {
             return new Violation("Item", "Продукт с id " + request.getItem() + " not found");
@@ -36,9 +36,11 @@ public class OrderItemValidator {
     public List<Violation> isListOrderItemValid(List<OrderItemRequest> requests) {
         List<Violation> violations = new ArrayList<>();
         for (OrderItemRequest request: requests) {
-            violations.add(validate(request));
+            Violation violation = validate(request);
+            if (violation != null) {
+                violations.add(validate(request));
+            }
         }
         return violations;
     }
-
 }

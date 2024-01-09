@@ -18,7 +18,7 @@ public class CharacteristicValidator {
     public void validate(CharacteristicRequest request) {
         ValidationErrorResponse response = new ValidationErrorResponse();
         response.getViolations().addAll(categoryValidator.isAllCategoryFound(request.getCategories()));
-        if (response.getViolations().size() > 0) {
+        if (!response.getViolations().isEmpty()) {
             throw new NotFoundRelatedObjectException(response);
         }
     }

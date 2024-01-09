@@ -4,6 +4,7 @@ import com.vvnuts.shop.dtos.requests.BucketRequest;
 import com.vvnuts.shop.dtos.requests.OrderItemRequest;
 import com.vvnuts.shop.dtos.responses.BucketResponse;
 import com.vvnuts.shop.entities.*;
+import com.vvnuts.shop.repositories.BucketItemRepository;
 import com.vvnuts.shop.repositories.BucketRepository;
 import com.vvnuts.shop.utils.mappers.BucketItemMapper;
 import com.vvnuts.shop.utils.mappers.BucketMapper;
@@ -36,6 +37,8 @@ class BucketServiceTest {
     private BucketItemMapper bucketItemMapper;
     @Mock
     private BucketItemService bucketItemService;
+    @Mock
+    private BucketItemRepository bucketItemRepository;
     @Mock
     private UserService userService;
     @InjectMocks
@@ -124,6 +127,25 @@ class BucketServiceTest {
     }
 
     @Test
+    void bucketService_addItemToBucket_returnBucketWithNewItem() {
+        //given
+        OrderItemRequest request = createOrderRequest();
+        BucketItem bucketItem = createBucketItem();
+        Bucket bucket = createBucket();
+        when(bucketItemMapper.transferBucketItemDtoToEntity(request)).thenReturn(bucketItem);
+        when(repository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        //then
+        Bucket result = underTest.addItemToBucket(request, bucket);
+
+        //when
+        Mockito.verify(bucketItemRepository, times(1)).save(any());
+        Mockito.verify(repository, times(1)).save(any());
+        Assertions.assertThat(result.getTotalQuantity()).isEqualTo(13);
+        Assertions.assertThat(result.getTotalPrice()).isEqualTo(BigDecimal.valueOf(2401.0));
+    }
+
+    @Test
     void bucketService_removeItemFromBucket_removeBucketItems() {
         //given
         Bucket bucket = createBucket();
@@ -177,12 +199,26 @@ class BucketServiceTest {
                 .build();
     }
 
+    private OrderItemRequest createOrderRequest() {
+        return OrderItemRequest.builder()
+                .item(3)
+                .quantity(10)
+                .build();
+    }
+
     private Bucket createBucket() {
         return Bucket.builder()
                 .id(USER_ID)
                 .bucketItems(createListOfBucketItem(BUCKET_ITEMS_ID))
                 .totalPrice(BigDecimal.ONE)
                 .totalQuantity(3)
+                .build();
+    }
+
+    private BucketItem createBucketItem() {
+        return BucketItem.builder()
+                .item(new Item(30, 300, 0.2))
+                .quantity(10)
                 .build();
     }
 

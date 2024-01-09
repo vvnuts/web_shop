@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -25,9 +24,18 @@ public class CharacterItemValidator {
 
     public void validate(CharacterItemRequest request) {
         ValidationErrorResponse response = new ValidationErrorResponse();
-        Violation violation = isCharacteristicFound(request.getCharacteristic());
-        response.getViolations().add(Objects.requireNonNullElseGet(violation, () -> isValueComplyType(request)));
-        if (response.getViolations().size() > 0) {
+        Violation characteristicFound = isCharacteristicFound(request.getCharacteristic());
+
+        if (characteristicFound == null) {
+            Violation valueComplyType = isValueComplyType(request);
+            if (valueComplyType != null) {
+                response.getViolations().add(valueComplyType);
+            }
+        } else {
+            response.getViolations().add(characteristicFound);
+        }
+
+        if (!response.getViolations().isEmpty()) {
             throw new CharacterItemValidException(response);
         }
     }
@@ -63,8 +71,15 @@ public class CharacterItemValidator {
     public List<Violation> isListCharacterItemValid(List<CharacterItemRequest> requests) {
         List<Violation> violations = new ArrayList<>();
         for (CharacterItemRequest request: requests) {
-            Violation violation = isCharacteristicFound(request.getCharacteristic());
-            violations.add(Objects.requireNonNullElseGet(violation, () -> isValueComplyType(request)));
+            Violation characteristicFound = isCharacteristicFound(request.getCharacteristic());
+            if (characteristicFound == null) {
+                Violation valueComplyType = isValueComplyType(request);
+                if (valueComplyType != null) {
+                    violations.add(valueComplyType);
+                }
+            } else {
+                violations.add(characteristicFound);
+            }
         }
         return violations;
     }

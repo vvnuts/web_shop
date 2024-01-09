@@ -1,6 +1,7 @@
 package com.vvnuts.shop.controllers;
 
 import com.vvnuts.shop.dtos.requests.BucketRequest;
+import com.vvnuts.shop.dtos.requests.OrderItemRequest;
 import com.vvnuts.shop.dtos.responses.BucketResponse;
 import com.vvnuts.shop.entities.Bucket;
 import com.vvnuts.shop.services.BucketService;
@@ -28,9 +29,9 @@ public class BucketController {
         return ResponseEntity.ok(HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<BucketResponse> findOne(@PathVariable @Min(0) Integer id) {
-        BucketResponse response = service.findOne(id);
+    @GetMapping("/{userId}")
+    public ResponseEntity<BucketResponse> findOne(@PathVariable @Min(0) Integer userId) {
+        BucketResponse response = service.findOne(userId);
         return ResponseEntity.status(HttpStatus.OK)
                 .body(response);
     }
@@ -40,6 +41,14 @@ public class BucketController {
                                              @RequestBody @Valid BucketRequest request) {
         Bucket bucket = validator.validate(request, id);
         service.update(request, bucket);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
+
+    @PatchMapping("/{id}")
+    public ResponseEntity<HttpStatus> addItemToBucket(@PathVariable @Min(0) Integer id,
+                                             @RequestBody @Valid OrderItemRequest request) {
+        Bucket bucket = validator.validate(request, id);
+        service.addItemToBucket(request, bucket);
         return ResponseEntity.ok(HttpStatus.OK);
     }
 }

@@ -7,6 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,11 +35,11 @@ public class Characteristic {
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "characteristics")
     @JsonIgnore
-    private List<Category> categories;
+    private List<Category> categories = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "characteristic", cascade = CascadeType.REMOVE)
     @JsonIgnore
-    private List<CharacterItem> characterItems;
+    private List<CharacterItem> characterItems = new ArrayList<>();
 
     @Override
     public boolean equals(Object o) {

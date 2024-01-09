@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -34,17 +35,17 @@ public class Category implements Comparable<Category>{
     @Column(name = "image")
     private byte[] image;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "parent_child",
             joinColumns = @JoinColumn(name = "parent_id"),
             inverseJoinColumns = @JoinColumn(name = "child_id")
     )
-    private List<Category> children;
+    private List<Category> children = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "children")
     @JsonIgnore
-    private List<Category> parents;
+    private List<Category> parents = new ArrayList<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -53,11 +54,11 @@ public class Category implements Comparable<Category>{
             inverseJoinColumns = @JoinColumn(name = "characteristic_id")
     )
     @JsonIgnore
-    private List<Characteristic> characteristics;
+    private List<Characteristic> characteristics = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "category", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Item> items;
+    private List<Item> items = new ArrayList<>();
 
     @Override
     public int compareTo(Category o) {

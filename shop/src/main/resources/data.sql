@@ -86,12 +86,12 @@ VALUES
     ('Michael', 'Johnson', 'michaeljohnson@example.com', '$2a$10$wyGIHpBcunI7CvMGIeiKMOwOg8ZM6QTvaFPzUvZcIm39VrLECvhYu', 'ROLE_USER'),
     ('Emily', 'Williams', 'emilywilliams@example.com', '$2a$10$TU3i7bfUQ6tEXSpcgwQojuuvwGMZVN2lFNhsM0Oj9QLZbw9XinOz2', 'ROLE_USER');
 
-INSERT INTO buckets (user_id)
+INSERT INTO buckets (user_id, total_price, total_quantity)
 VALUES
-(1),
-(2),
-(3),
-(4);
+(1, 0, 0),
+(2, 0, 0),
+(3, 0, 0),
+(4, 0, 0);
 
 INSERT INTO reviews (mark, review_text, item_id, user_id)
 VALUES (5, 'Great product!', 1, 4),

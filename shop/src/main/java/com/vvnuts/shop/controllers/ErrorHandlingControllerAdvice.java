@@ -76,6 +76,7 @@ public class ErrorHandlingControllerAdvice {
             ImageIsAlreadyNull.class
     })
     @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ResponseBody
     public String onRuntimeException(RuntimeException e) {
         return e.getMessage();
     }

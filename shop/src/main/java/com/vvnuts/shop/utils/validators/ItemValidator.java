@@ -29,7 +29,7 @@ public class ItemValidator {
                             + request.getCategoryId() + " not found"));
         }
         response.getViolations().addAll(characterItemValidator.isListCharacterItemValid(request.getCharacterItems()));
-        if (response.getViolations().size() > 0) {
+        if (!response.getViolations().isEmpty()) {
             throw new CharacterItemValidException(response);
         }
     }

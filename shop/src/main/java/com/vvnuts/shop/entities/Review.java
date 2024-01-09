@@ -27,7 +27,7 @@ public class Review {
     private String text;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "review", cascade = CascadeType.ALL)
-    private List<ReviewImage> images;
+    private List<ReviewImage> images = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "item_id")

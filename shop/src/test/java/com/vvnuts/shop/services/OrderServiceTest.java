@@ -6,6 +6,7 @@ import com.vvnuts.shop.entities.Order;
 import com.vvnuts.shop.entities.OrderItem;
 import com.vvnuts.shop.entities.enums.Status;
 import com.vvnuts.shop.repositories.ItemRepository;
+import com.vvnuts.shop.repositories.OrderItemRepository;
 import com.vvnuts.shop.repositories.OrderRepository;
 import com.vvnuts.shop.utils.mappers.OrderMapper;
 import org.assertj.core.api.Assertions;
@@ -26,6 +27,8 @@ import static org.mockito.Mockito.*;
 class OrderServiceTest {
     @Mock
     private OrderRepository repository;
+    @Mock
+    private OrderItemRepository orderItemRepository;
     @Mock
     private ItemRepository itemRepository;
     @Mock
@@ -50,8 +53,11 @@ class OrderServiceTest {
 
         //then
         Mockito.verify(repository, times(1)).save(any());
+        Mockito.verify(orderItemRepository, times(order.getOrderItems().size())).save(any());
         Assertions.assertThat(result.getTotalPrice()).isEqualTo(BigDecimal.valueOf(8500.0));
         Assertions.assertThat(result.getTotalQuantity()).isEqualTo(15);
+        Assertions.assertThat(result.getOrderItems().get(0).getOrder()).isEqualTo(result);
+        Assertions.assertThat(result.getOrderItems().get(1).getOrder()).isEqualTo(result);
     }
 
     @Test
